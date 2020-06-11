@@ -24,7 +24,7 @@ data Operator =
     Subtraction |
     Multiplication |
     Division
-    deriving (Eq)
+    deriving (Eq, Show)
 
 operatorPrecedence :: Operator -> Int
 operatorPrecedence operator = case operator of

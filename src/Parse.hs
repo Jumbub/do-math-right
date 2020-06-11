@@ -3,8 +3,8 @@ module Parse
         parse,
         simplifyInput,
         splitInput,
-        parseOperatorInput,
-        parseOperandInput
+        parseSplitInput,
+        addImplicitOperations,
     ) where
 
 import Definitions
@@ -12,8 +12,11 @@ import Data.Char
 import Data.Maybe
 import Text.Read
 
+type OperandOrOperator = [Either Operand Operator]
+
 parse :: String -> ([Operand], [Operator])
 parse input = ([], [])
+
 
 
 -- Simplify input!
@@ -24,67 +27,60 @@ simplifyInput expression = functionsToPostfix $ convertToFunctions expression
 -- Simplify input #1
 -- "\sin(5x)-(-1)" => "\sin(5x)-\neg(1)"
 convertToFunctions :: String -> String
-convertToFunctions expression = ""
+convertToFunctions expression = expression
 
 -- Simplify input #2
 -- "\sin(5x)-\neg(1)" => "5x`sin`-1`neg`"
 functionsToPostfix :: String -> String
-functionsToPostfix expression = ""
-
--- "\sin(x)" => "(x)sin\"
-moveFunctionToAfterBracket :: String -> String -> String
-moveFunctionToAfterBracket expression replacement = ""
-
--- "a(b(c)d)e" => "ab(c)d)e"
-removeNextOpeningBracket :: String -> String -> String
-removeNextOpeningBracket expression replacement = ""
-
--- "a(b(c)d)e" => "a(b(c)dXe"
-replaceNextMatchingClosingBracket :: String -> String -> String
-replaceNextMatchingClosingBracket expression replacement = ""
+functionsToPostfix expression = expression
 
 
 
--- Split operands from operators!
+-- Split input!
 
-splitInput :: String -> ([Operand], [Operator])
-splitInput expression = groupOperandsAndOperators $ splitOperandsFromOperators expression
+splitInput :: String -> [String]
+splitInput input = splitOperators $ splitFunctions $ splitNumbers input
 
--- Split operands from operators #1
--- "5x`sin`-1`neg`" => ["5x", "`sin`-", "1", "`neg`"]
-splitOperandsFromOperators :: String -> [String]
-splitOperandsFromOperators input = []
+-- Split input #1
+-- "5x`sin`-1`neg`" => ["5", "`sin`-", "1", "`neg`"]
+splitNumbers:: String -> [String]
+splitNumbers input = [input]
 
--- Split operands from operators #2
--- ["5x", "`sin`-", "1", "`neg`"] => (["5x", "1"], ["`sin`-", "`neg`"])
-groupOperandsAndOperators :: [String] -> ([Operand], [Operator])
-groupOperandsAndOperators input = ([], [])
+-- Split input #2
+-- ["5", "`sin`-", "1", "`neg`"] => ["5", "`sin`", "-", "1", "`neg`"]
+splitFunctions :: [String] -> [String]
+splitFunctions input = input
+
+-- Split input #3
+-- [")-"] => [")", "-"]
+splitOperators :: [String] -> [String]
+splitOperators input = input
 
 
 
--- Parse operators!
+-- Parse split input!
 
-parseOperatorInput :: [String] -> [Operator]
-parseOperatorInput groups = parseOperators $ splitOperatorGroups groups
+parseSplitInput :: [String] -> [OperandOrOperator]
+parseSplitInput input = parseOperands $ parseOperators input
 
--- Operator parsing #1
--- ["`sin`-", "`neg`"] => ["`sin`", "-", "`neg`"]
-splitOperatorGroups :: [String] -> [String]
-splitOperatorGroups input = []
-
--- Operator parsing #2
--- ["`sin`", "-", "`neg`"] => [SINE, SUBTRACT, NEGATIVE]
-parseOperators :: [String] -> [Operator]
+-- Split input #2
+-- ["5x", "`sin`", "-", "1", "`neg`"] => ["5x", SINE, SUBTRACT, "1", NEGATE]
+parseOperators :: [String] -> [Either Operand String]
 parseOperators input = []
 
+-- Split input #2
+-- ["5x", "`sin`", "-", "1", "`neg`"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
+parseOperands :: [Either Operand String] -> [OperandOrOperator]
+parseOperands input = []
 
 
--- Parse operands!
 
-parseOperandInput :: [String] -> [Operand]
-parseOperandInput groups = splitOperandGroups groups
+-- Add implicit operations!
 
--- Operand parsing #1
--- ["5x", "1"] => [(["5", "x"], [MULTIPLY]), "1"]
-splitOperandGroups :: [String] -> [Operand]
-splitOperandGroups input = []
+addImplicitOperations :: [OperandOrOperator] -> [OperandOrOperator]
+addImplicitOperations input = addImplicitMultiply input
+
+-- Add implicit operations #2
+-- [5, "x"] => [5, MULTIPLY, "x"]
+addImplicitMultiply :: [OperandOrOperator] -> [OperandOrOperator]
+addImplicitMultiply input = input
