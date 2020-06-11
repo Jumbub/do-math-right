@@ -1,12 +1,18 @@
 module Operation (
     Operator(..),
     operationPrecedence,
-    Operand
+    Operand,
+    Fact,
+    Result,
 ) where
 
 -- TODO: this will be changed to a burrito at some point
 -- because it will represent values such as `x + y`
 type Operand = Integer
+
+type Fact = (String, Operand)
+
+type Result = Either Fact Operand
 
 data Operator =
     Addition |
