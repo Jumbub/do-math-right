@@ -9,7 +9,7 @@ solveSpec = hspec $ do
   describe "literals" $ do
 
     it "0 => 0" $ do
-      solve "0" [] `shouldBe` ""
+      solve "0" [] `shouldBe` ("", Nothing)
 
     -- it "159 => 159" $ do
     --   solve "159" [] `shouldBe` "159"

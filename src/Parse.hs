@@ -7,7 +7,7 @@ module Parse
         parseOperandInput
     ) where
 
-import Operation
+import Definitions
 import Data.Char
 import Data.Maybe
 import Text.Read

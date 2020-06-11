@@ -3,22 +3,29 @@ module Solve
         solve
     ) where
 
-import Operation
 import Data.Char
 import Data.Maybe
 import Text.Read
 
-import Operation
+import Definitions
 import Parse
 
 -- Solve user input!
 
-solve :: String -> [Fact] -> String
-solve stringInput facts = resultToString $ solveParsed parsedWithFacts
+solve :: String -> [Fact] -> (String, Maybe Fact)
+solve stringInput facts = (resultToString solution, factOrNothing solution)
     where
         parsedInput = parse stringInput
         operandsWithFacts = fillOperandsWithFacts facts $ fst parsedInput
         parsedWithFacts = (operandsWithFacts, snd parsedInput)
+        solution = solveParsed parsedWithFacts
+
+factOrNothing :: Result -> Maybe Fact
+factOrNothing result
+    -- TODO: Figure out why when I change the below to return "Just result" it still thinks
+    -- that the value of result could be an operand.
+    | isFact result = Just ("x", 0)
+    | otherwise = Nothing
 
 resultToString :: Result -> String
 resultToString result = ""
