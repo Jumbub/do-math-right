@@ -40,36 +40,30 @@ functionsToPostfix expression = expression
 -- Split input!
 
 splitInput :: String -> [String]
-splitInput input = splitOperators $ splitFunctions $ splitNumbers input
+splitInput singleString =
+      concat $ map (\x -> seperateString isNotDigitOrUpper x)
+    $ concat $ map (\x -> seperateString isDigit x)
+    $ concat $ map (\x -> seperateString isUpper x) [singleString]
+    where
+        isNotDigitOrUpper = (\y -> (not (isDigit y) && not (isUpper y)))
 
--- Split input #1
--- "5xSIN-1NEG" => ["5", "SIN-", "1", "NEG"]
-splitNumbers :: String -> [String]
-splitNumbers input = splitNumbers' input Nothing "" []
+-- "aBCdeF" => ["a", "BC", "d", "F"], where identifier is `isUpper`
+seperateString :: (Char -> Bool) -> String -> [String]
+seperateString getType input = seperateString' getType input Nothing "" []
 
-splitNumbers' :: String -> Maybe Bool -> String -> [String] -> [String]
-splitNumbers' [] _ [] splits = splits
-splitNumbers' [] _ group splits = splits ++ [group]
-splitNumbers' remaining Nothing group splits = splitNumbers' (tail remaining) (Just $ isDigit $ current) [current] []
+seperateString' :: (Char -> Bool) -> String -> Maybe Bool -> String -> [String] -> [String]
+seperateString' _ [] _ [] splits = splits
+seperateString' _ [] _ group splits = splits ++ [group]
+seperateString' getType remaining Nothing group splits = seperateString' getType (tail remaining) (Just $ getType $ current) [current] []
     where
         current = head remaining
-splitNumbers' remaining (Just lastDigit) group splits
-    | lastDigit == currentDigit = splitNumbers' nextRemaining (Just currentDigit) (group ++ [current]) splits
-    | otherwise = splitNumbers' nextRemaining (Just currentDigit) [current] (splits ++ [group])
+seperateString' getType remaining (Just lastValue) group splits
+    | lastValue == currentValue = seperateString' getType nextRemaining (Just currentValue) (group ++ [current]) splits
+    | otherwise = seperateString' getType nextRemaining (Just currentValue) [current] (splits ++ [group])
     where
         current = head remaining
-        currentDigit = isDigit current
+        currentValue = getType current
         nextRemaining = tail remaining
-
--- Split input #2
--- ["5", "SIN-", "1", "NEG"] => ["5", "SIN", "-", "1", "NEG"]
-splitFunctions :: [String] -> [String]
-splitFunctions input = input
-
--- Split input #3
--- [")-"] => [")", "-"]
-splitOperators :: [String] -> [String]
-splitOperators input = input
 
 
 

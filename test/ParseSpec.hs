@@ -8,22 +8,23 @@ import Parse
 import Definitions
 
 groupedTests = [
-        ("splitInput", [
+        ("can split the operands and operators", splitInput, [
             ("", []),
-            ("1+2", ["1", "+", "2"]),
+            ("1", ["1"]),
+            ("x", ["x"]),
+            ("PI", ["PI"]),
             ("123+456", ["123", "+", "456"]),
-            ("1+2-3", ["1", "+", "2", "-", "3"]),
-            ("1-(1+1)", ["1", "-(", "1", "+", "1", ")"]),
-            ("2SIN", ["2", "SIN"]),
-            ("1+2SIN/1", ["1", "+", "2", "SIN/", "1"])
+            ("1-((-1)+1)", ["1", "-", "(", "(", "-", "1", ")", "+", "1", ")"]),
+            ("SIN(2x)", ["SIN", "(", "2", "x", ")"]),
+            ("1y+SIN(2/2)/z", ["1", "y", "+", "SIN", "(", "2", "/", "2", ")", "/", "z"])
         ])
     ]
 
 parseSpec :: IO ()
 parseSpec = hspec $ do
-    forM_ groupedTests $ \(label, tests) -> do
+    forM_ groupedTests $ \(label, func, tests) -> do
         describe label $ do
             forM_ tests $ \(input, output) -> do
-                it input $ do
-                    splitInput input `shouldBe` output
+                it ("'" ++ input ++ "'") $ do
+                    func input `shouldBe` output
 
