@@ -41,28 +41,29 @@ functionsToPostfix expression = expression
 
 splitInput :: String -> [String]
 splitInput singleString =
-      concat $ map (\x -> seperateString isNotDigitOrUpper x)
-    $ concat $ map (\x -> seperateString isDigit x)
-    $ concat $ map (\x -> seperateString isUpper x) [singleString]
-    where
-        isNotDigitOrUpper = (\y -> (not (isDigit y) && not (isUpper y)))
+      concat $ map (\x -> seperateWhenDifferent notBothUpperOrDigits x)
+    $ concat $ map (\x -> seperateWhenDifferent notBothUpper x)
+    $ concat $ map (\x -> seperateWhenDifferent notBothDigits x) [singleString]
+     where
+        notBothDigits = \a b -> xor (isDigit a) (isDigit b)
+        notBothUpper = \a b -> xor (isUpper a) (isUpper b)
+        notBothUpperOrDigits = \a b -> not (isDigit a && isDigit b || isUpper a && isUpper b)
 
 -- "aBCdeF" => ["a", "BC", "d", "F"], where identifier is `isUpper`
-seperateString :: (Char -> Bool) -> String -> [String]
-seperateString getType input = seperateString' getType input Nothing "" []
+seperateWhenDifferent :: (Char -> Char -> Bool) -> String -> [String]
+seperateWhenDifferent isDifferent input = seperateWhenDifferent' isDifferent input Nothing "" []
 
-seperateString' :: (Char -> Bool) -> String -> Maybe Bool -> String -> [String] -> [String]
-seperateString' _ [] _ [] splits = splits
-seperateString' _ [] _ group splits = splits ++ [group]
-seperateString' getType remaining Nothing group splits = seperateString' getType (tail remaining) (Just $ getType $ current) [current] []
+seperateWhenDifferent' :: (Char -> Char -> Bool) -> String -> Maybe Char -> String -> [String] -> [String]
+seperateWhenDifferent' _ [] _ [] splits = splits
+seperateWhenDifferent' _ [] _ group splits = splits ++ [group]
+seperateWhenDifferent' isDifferent remaining Nothing group splits = seperateWhenDifferent' isDifferent (tail remaining) (Just current) [current] []
     where
         current = head remaining
-seperateString' getType remaining (Just lastValue) group splits
-    | lastValue == currentValue = seperateString' getType nextRemaining (Just currentValue) (group ++ [current]) splits
-    | otherwise = seperateString' getType nextRemaining (Just currentValue) [current] (splits ++ [group])
+seperateWhenDifferent' isDifferent remaining (Just last) group splits
+    | not $ isDifferent last current = seperateWhenDifferent' isDifferent nextRemaining (Just current) (group ++ [current]) splits
+    | otherwise = seperateWhenDifferent' isDifferent nextRemaining (Just current) [current] (splits ++ [group])
     where
         current = head remaining
-        currentValue = getType current
         nextRemaining = tail remaining
 
 
