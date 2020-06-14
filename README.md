@@ -11,22 +11,22 @@ The goal of this project is to parse and solve mathematical queries.
 
 ### Goals
 
+Arithmetic:
 
-- [ ] Parse numerical operands, and operators `+` `-` `/` `*` `(` `)`
+- [ ] whole numbers `100`
+- [ ] basic operators `+` `-` `/` `*`
+- [ ] scoping operators `(` `)`
+- [ ] decimal numbers `1.0`
+- [ ] constants `PI`
+- [ ] functions `SIN(180)`
 
-    - [ ] Solve numerical expression `1 + 1`
+Algebra:
 
-    - [ ] Solve numerical expression `1 * (-2)`
-
-    - [ ] Solve numerical expression `(2 + 1) * 3`
-
-<br>
-
-- [ ] Parse variable operands, and operator `simplify`
-
-    - [ ] Simplify single variable expressions `(1 + 2)x + x`
-
-    - [ ] Solve single variable equations `(1 + 2)x + x`
+- [ ] variable assignment `x = 1`
+- [ ] solving with context `2x` (`x = 1`)
+- [ ] solving for variable `2x = 1`
+- [ ] simplifying expression `1x + 6x`
+- [ ] multi variable solving, with context `1x + 2y` (`x = 1`, `y = 2`)
 
 ## Development
 
