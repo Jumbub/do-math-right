@@ -26,12 +26,12 @@ simplifyInput :: String -> String
 simplifyInput expression = functionsToPostfix $ convertToFunctions expression
 
 -- Simplify input #1
--- "\sin(5x)-(-1)" => "\sin(5x)-\neg(1)"
+-- "SIN(5x)-(-1)" => "SIN(5x)-NEG(1)"
 convertToFunctions :: String -> String
 convertToFunctions expression = expression
 
 -- Simplify input #2
--- "\sin(5x)-\neg(1)" => "5x`sin`-1`neg`"
+-- "SIN(5x)-NEG(1)" => "5xSIN-1NEG"
 functionsToPostfix :: String -> String
 functionsToPostfix expression = expression
 
@@ -43,7 +43,7 @@ splitInput :: String -> [String]
 splitInput input = splitOperators $ splitFunctions $ splitNumbers input
 
 -- Split input #1
--- "5x`sin`-1`neg`" => ["5", "`sin`-", "1", "`neg`"]
+-- "5xSIN-1NEG" => ["5", "SIN-", "1", "NEG"]
 splitNumbers :: String -> [String]
 splitNumbers input = splitNumbers' input Nothing "" []
 
@@ -62,7 +62,7 @@ splitNumbers' remaining (Just lastDigit) group splits
         nextRemaining = tail remaining
 
 -- Split input #2
--- ["5", "`sin`-", "1", "`neg`"] => ["5", "`sin`", "-", "1", "`neg`"]
+-- ["5", "SIN-", "1", "NEG"] => ["5", "SIN", "-", "1", "NEG"]
 splitFunctions :: [String] -> [String]
 splitFunctions input = input
 
@@ -79,12 +79,12 @@ parseSplitInput :: [String] -> [OperandOrOperator]
 parseSplitInput input = parseOperands $ parseOperators input
 
 -- Split input #2
--- ["5x", "`sin`", "-", "1", "`neg`"] => ["5x", SINE, SUBTRACT, "1", NEGATE]
+-- ["5x", "SIN", "-", "1", "NEG"] => ["5x", SINE, SUBTRACT, "1", NEGATE]
 parseOperators :: [String] -> [Either Operand String]
 parseOperators input = []
 
 -- Split input #2
--- ["5x", "`sin`", "-", "1", "`neg`"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
+-- ["5x", "SIN", "-", "1", "NEG"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
 parseOperands :: [Either Operand String] -> [OperandOrOperator]
 parseOperands input = []
 
