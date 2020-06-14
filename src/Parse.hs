@@ -9,6 +9,7 @@ module Parse
 
 import Definitions
 import Data.Char
+import Data.Bits
 import Data.Maybe
 import Text.Read
 
@@ -43,8 +44,22 @@ splitInput input = splitOperators $ splitFunctions $ splitNumbers input
 
 -- Split input #1
 -- "5x`sin`-1`neg`" => ["5", "`sin`-", "1", "`neg`"]
-splitNumbers:: String -> [String]
-splitNumbers input = [input]
+splitNumbers :: String -> [String]
+splitNumbers input = splitNumbers' input Nothing "" []
+
+splitNumbers' :: String -> Maybe Bool -> String -> [String] -> [String]
+splitNumbers' [] _ [] splits = splits
+splitNumbers' [] _ group splits = splits ++ [group]
+splitNumbers' remaining Nothing group splits = splitNumbers' (tail remaining) (Just $ isDigit $ current) [current] []
+    where
+        current = head remaining
+splitNumbers' remaining (Just lastDigit) group splits
+    | lastDigit .&. currentDigit = splitNumbers' nextRemaining (Just currentDigit) (group ++ [current]) splits
+    | otherwise = splitNumbers' nextRemaining (Just currentDigit) [current] (splits ++ [group])
+    where
+        current = head remaining
+        currentDigit = isDigit current
+        nextRemaining = tail remaining
 
 -- Split input #2
 -- ["5", "`sin`-", "1", "`neg`"] => ["5", "`sin`", "-", "1", "`neg`"]

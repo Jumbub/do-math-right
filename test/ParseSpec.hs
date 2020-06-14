@@ -23,7 +23,7 @@ parseSpec = hspec $ do
       splitInput "123+456" `shouldBe` ["123", "+", "456"]
 
     it "'1+2-3' => []" $ do
-      splitInput "123+456" `shouldBe` ["1", "+", "2", "-", "3"]
+      splitInput "1+2-3" `shouldBe` ["1", "+", "2", "-", "3"]
 
     it "'2`sin`' => []" $ do
       splitInput "2`sin`" `shouldBe` ["2", "`sin`"]
