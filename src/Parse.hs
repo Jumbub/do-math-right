@@ -54,7 +54,7 @@ splitNumbers' remaining Nothing group splits = splitNumbers' (tail remaining) (J
     where
         current = head remaining
 splitNumbers' remaining (Just lastDigit) group splits
-    | lastDigit .&. currentDigit = splitNumbers' nextRemaining (Just currentDigit) (group ++ [current]) splits
+    | lastDigit == currentDigit = splitNumbers' nextRemaining (Just currentDigit) (group ++ [current]) splits
     | otherwise = splitNumbers' nextRemaining (Just currentDigit) [current] (splits ++ [group])
     where
         current = head remaining
