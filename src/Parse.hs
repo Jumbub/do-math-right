@@ -1,9 +1,9 @@
 module Parse
     (
         parse,
-        simplifyInput,
+        cleanInput,
         splitInput,
-        parseSplitInput,
+        parseInput,
         addImplicitOperations,
     ) where
 
@@ -22,8 +22,8 @@ parse input = ([], [])
 
 -- Simplify input!
 
-simplifyInput :: String -> String
-simplifyInput expression = functionsToPostfix $ convertToFunctions expression
+cleanInput :: String -> String
+cleanInput expression = functionsToPostfix $ convertToFunctions expression
 
 -- Simplify input #1
 -- "SIN(5x)-(-1)" => "SIN(5x)-NEG(1)"
