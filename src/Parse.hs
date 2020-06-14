@@ -49,7 +49,7 @@ splitInput singleString =
         notBothUpper = \a b -> xor (isUpper a) (isUpper b)
         notBothUpperOrDigits = \a b -> not (isDigit a && isDigit b || isUpper a && isUpper b)
 
--- "aBCdeF" => ["a", "BC", "d", "F"], where identifier is `isUpper`
+-- E.g. "aBCdeF" => ["a", "BC", "d", "F"], where identifier is `isUpper`
 seperateWhenDifferent :: (Char -> Char -> Bool) -> String -> [String]
 seperateWhenDifferent isDifferent input = seperateWhenDifferent' isDifferent input Nothing "" []
 
@@ -70,8 +70,8 @@ seperateWhenDifferent' isDifferent remaining (Just last) group splits
 
 -- Parse split input!
 
-parseSplitInput :: [String] -> [OperandOrOperator]
-parseSplitInput input = parseOperands $ parseOperators input
+parseInput :: [String] -> [OperandOrOperator]
+parseInput input = parseOperands $ parseOperators input
 
 -- Split input #2
 -- ["5x", "SIN", "-", "1", "NEG"] => ["5x", SINE, SUBTRACT, "1", NEGATE]
