@@ -4,7 +4,6 @@ module InteractiveSolve (
 
 import Data.Maybe
 
-import Definitions
 import Solve
 
 solveInteractive :: IO ()
@@ -18,7 +17,7 @@ solveWithFacts facts = do
         putStrLn result
         if (isJust fact)
             -- TODO: figure out why my type assertion of `isJust` is not working
-            then solveWithFacts (("x", 0) : facts)
+            then solveWithFacts (("x", ((0, 1), ([], []))) : facts)
             else solveWithFacts facts
     else do
         putStrLn "Exiting!"

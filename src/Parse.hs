@@ -1,17 +1,18 @@
-module Parse
-    (
-        parse,
-        cleanInput,
-        splitInput,
-        parseInput,
-        addImplicitOperations,
-    ) where
+module Parse (
+    parse,
+    cleanInput,
+    splitInput,
+    parseInput,
+    addImplicitOperations,
+) where
 
-import Definitions
 import Data.Char
 import Data.Bits
 import Data.Maybe
 import Text.Read
+
+import Operand
+import Operator
 
 type OperandOrOperator = [Either Operand Operator]
 

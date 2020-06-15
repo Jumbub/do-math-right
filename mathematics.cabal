@@ -24,9 +24,9 @@ source-repository head
 
 library
   exposed-modules:
-      Definitions
       InteractiveSolve
-      Operators
+      Operand
+      Operator
       Parse
       Solve
   other-modules:
