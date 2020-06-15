@@ -1,4 +1,4 @@
-# calculator
+# do-math
 
 The goal of this project is to parse and solve mathematical queries.
 
@@ -27,6 +27,10 @@ Algebra:
 - [ ] solving for variable `2x = 1`
 - [ ] simplifying expression `1x + 6x`
 - [ ] multi variable solving, with context `1x + 2y` (`x = 1`, `y = 2`)
+
+Display:
+
+- [ ] show steps taken to find solution
 
 Parsing:
 
