@@ -2,7 +2,7 @@ module Parse (
     parse,
     cleanInput,
     splitInput,
-    parseInput,
+    parseSplits,
     addImplicitOperations,
 ) where
 
@@ -18,23 +18,6 @@ type OperandOrOperator = [Either Operand Operator]
 
 parse :: String -> ([Operand], [Operator])
 parse input = ([], [])
-
-
-
--- Simplify input!
-
-cleanInput :: String -> String
-cleanInput expression = functionsToPostfix $ convertToFunctions expression
-
--- Simplify input #1
--- "SIN(5x)-(-1)" => "SIN(5x)-NEG(1)"
-convertToFunctions :: String -> String
-convertToFunctions expression = expression
-
--- Simplify input #2
--- "SIN(5x)-NEG(1)" => "5xSIN-1NEG"
-functionsToPostfix :: String -> String
-functionsToPostfix expression = expression
 
 
 
@@ -71,18 +54,42 @@ seperateWhenDifferent' isDifferent remaining (Just last) group splits
 
 -- Parse split input!
 
-parseInput :: [String] -> [OperandOrOperator]
-parseInput input = parseOperands $ parseOperators input
+parseSplits :: [String] -> [Either Operand Operator]
+parseSplits input = map parseSplit input
 
--- Split input #2
--- ["5x", "SIN", "-", "1", "NEG"] => ["5x", SINE, SUBTRACT, "1", NEGATE]
-parseOperators :: [String] -> [Either Operand String]
-parseOperators input = []
+parseSplit :: String -> Either Operand Operator
+parseSplit split
+    | isJust operand = Left (fromJust operand)
+    | isJust operator = Right (fromJust operator)
+    | otherwise = error ("cannot parse split '" ++ split ++ "'")
+    where
+        operand = stringToOperand split
+        operator = stringToOperator split
+
+lazyIsNumber :: String -> Bool
+lazyIsNumber input = isDigit $ head input
 
 -- Split input #2
 -- ["5x", "SIN", "-", "1", "NEG"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
 parseOperands :: [Either Operand String] -> [OperandOrOperator]
 parseOperands input = []
+
+
+
+-- Simplify input!
+
+cleanInput :: String -> String
+cleanInput expression = functionsToPostfix $ convertToFunctions expression
+
+-- Simplify input #1
+-- "SIN(5x)-(-1)" => "SIN(5x)-NEG(1)"
+convertToFunctions :: String -> String
+convertToFunctions expression = expression
+
+-- Simplify input #2
+-- "SIN(5x)-NEG(1)" => "5xSIN-1NEG"
+functionsToPostfix :: String -> String
+functionsToPostfix expression = expression
 
 
 

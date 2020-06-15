@@ -1,5 +1,5 @@
 module Operator (
-    Operator,
+    Operator(..),
     operatorFunction,
     operatorPrecedence,
     stringToOperator,
@@ -26,31 +26,33 @@ data Operator =
 
     deriving (Eq, Show)
 
-operatorToString :: Operator -> String
+operatorToString :: Operator -> Maybe String
 operatorToString operator = case operator of
-    Addition -> "+"
-    Subtraction -> "-"
-    Multiplication -> "*"
-    Division -> "/"
-    Decimal -> "."
-    LeftParentheses -> "("
-    RightParentheses -> ")"
-    Sine -> "SIN"
-    Cosine -> "COS"
-    Tangent -> "TAN"
+    Addition -> Just "+"
+    Subtraction -> Just "-"
+    Multiplication -> Just "*"
+    Division -> Just "/"
+    Decimal -> Just "."
+    LeftParentheses -> Just "("
+    RightParentheses -> Just ")"
+    Sine -> Just "SIN"
+    Cosine -> Just "COS"
+    Tangent -> Just "TAN"
+    _ -> Nothing
 
-stringToOperator :: String -> Operator
+stringToOperator :: String -> Maybe Operator
 stringToOperator operator = case operator of
-    "+" -> Addition
-    "-" -> Subtraction
-    "*" -> Multiplication
-    "/" -> Division
-    "." -> Decimal
-    "(" -> LeftParentheses
-    ")" -> RightParentheses
-    "SIN" -> Sine
-    "COS" -> Cosine
-    "TAN" -> Tangent
+    "+" -> Just Addition
+    "-" -> Just Subtraction
+    "*" -> Just Multiplication
+    "/" -> Just Division
+    "." -> Just Decimal
+    "(" -> Just LeftParentheses
+    ")" -> Just RightParentheses
+    "SIN" -> Just Sine
+    "COS" -> Just Cosine
+    "TAN" -> Just Tangent
+    _ -> Nothing
 
 operatorPrecedence :: Operator -> Int
 operatorPrecedence operator = case operator of
