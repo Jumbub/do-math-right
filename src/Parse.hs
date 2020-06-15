@@ -66,9 +66,6 @@ parseSplit split
         operand = stringToOperand split
         operator = stringToOperator split
 
-lazyIsNumber :: String -> Bool
-lazyIsNumber input = isDigit $ head input
-
 -- Split input #2
 -- ["5x", "SIN", "-", "1", "NEG"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
 parseOperands :: [Either Operand String] -> [OperandOrOperator]
