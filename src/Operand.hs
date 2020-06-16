@@ -1,6 +1,8 @@
 module Operand (
     Operand,
     stringToOperand,
+    num,
+    var,
 ) where
 
 import Data.Maybe
@@ -21,3 +23,9 @@ stringToOperand string
 
 lazyIsNumber :: String -> Bool
 lazyIsNumber input = isDigit $ head input
+
+num :: Int -> Operand
+num number = ((number, 1), ([], []))
+
+var :: Char -> Operand
+var variable = ((1, 1), ([variable], []))

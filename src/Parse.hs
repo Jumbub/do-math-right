@@ -10,11 +10,10 @@ import Data.Char
 import Data.Bits
 import Data.Maybe
 import Text.Read
+import Data.Either
 
 import Operand
 import Operator
-
-type OperandOrOperator = [Either Operand Operator]
 
 parse :: String -> ([Operand], [Operator])
 parse input = ([], [])
@@ -68,7 +67,7 @@ parseSplit split
 
 -- Split input #2
 -- ["5x", "SIN", "-", "1", "NEG"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
-parseOperands :: [Either Operand String] -> [OperandOrOperator]
+parseOperands :: [Either Operand String] -> [Either Operand Operator]
 parseOperands input = []
 
 
@@ -92,10 +91,18 @@ functionsToPostfix expression = expression
 
 -- Add implicit operations!
 
-addImplicitOperations :: [OperandOrOperator] -> [OperandOrOperator]
+addImplicitOperations :: [Either Operand Operator] -> [Either Operand Operator]
 addImplicitOperations input = addImplicitMultiply input
 
 -- Add implicit operations #2
--- [5, "x"] => [5, MULTIPLY, "x"]
-addImplicitMultiply :: [OperandOrOperator] -> [OperandOrOperator]
-addImplicitMultiply input = input
+-- [5, "x"] => [5, Multiplication, "x"]
+addImplicitMultiply :: [Either Operand Operator] -> [Either Operand Operator]
+addImplicitMultiply input = addImplicitMultiply' False input
+
+addImplicitMultiply' :: Bool -> [Either Operand Operator] -> [Either Operand Operator]
+addImplicitMultiply' lastOperand expression
+    | null expression = []
+    | lastOperand = [Right Multiplication, head expression] ++ addImplicitMultiply' thisOperand (tail expression)
+    | otherwise = [head expression] ++ addImplicitMultiply' thisOperand (tail expression)
+    where
+        thisOperand = isLeft $ head expression
