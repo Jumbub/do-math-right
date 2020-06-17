@@ -1,6 +1,7 @@
 module Operator (
     Operator(..),
     operatorFunction,
+    operatorArguments,
     operatorPrecedence,
     stringToOperator,
     operatorToString
@@ -82,4 +83,10 @@ operatorArguments operator = case operator of
 
 operatorFunction :: Operator -> ([Operand] -> Operand)
 operatorFunction operator = case operator of
-    Addition -> (\y -> head y)
+    Addition -> addition
+
+addition :: [Operand] -> Operand
+addition [((aNum, aDen), aVars), ((bNum, bDen), bVars)] = ((numerator, denominator), aVars)
+    where
+        numerator = aNum * bDen + bNum * aDen
+        denominator = aDen * bDen

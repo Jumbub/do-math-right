@@ -20,6 +20,11 @@ solve input = "success"
 -- Perform an operation on the operand stack
 
 performOperation ::  Operator -> [Operand] -> [Operand]
-performOperation operation operands = result
+performOperation operation operands
+    | notEnoughOperands = error "Attempting to perform operation without enough arguments"
+    | otherwise = (drop numArguments operands) ++ [function arguments]
     where
-        result = []
+        numArguments = operatorArguments operation
+        arguments = take numArguments operands
+        notEnoughOperands = length arguments /= numArguments
+        function = operatorFunction operation

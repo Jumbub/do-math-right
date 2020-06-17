@@ -13,7 +13,7 @@ import Operator
 operationTests = [
         (
             "1+1",
-            ([num 1, num 1], Multiplication),
+            ([num 1, num 1], Addition),
             [num 2]
         )
     ]
