@@ -68,34 +68,24 @@ parseSplit split
 -- Add implicit operations!
 
 addImplicitOperations :: [Either Operand Operator] -> [Either Operand Operator]
-addImplicitOperations input = multiplyOperandsByParentheses $ multiplyJointOperands input
-
--- Add implicit operations #1
--- 2xy => 2*x*y
-multiplyJointOperands :: [Either Operand Operator] -> [Either Operand Operator]
-multiplyJointOperands input = multiplyJointOperands' False input
-
-multiplyJointOperands' :: Bool -> [Either Operand Operator] -> [Either Operand Operator]
-multiplyJointOperands' lastIsOperand expression
-    | null expression = []
-    | lastIsOperand && currentIsOperand = [Right Multiplication, head expression] ++ multiplyJointOperands' currentIsOperand (tail expression)
-    | otherwise = [head expression] ++ multiplyJointOperands' currentIsOperand (tail expression)
-    where
-        currentIsOperand = isLeft $ head expression
+addImplicitOperations input = addImplicitMultiplication input
 
 -- This value is just used as a default for the parentheses
 notParentheses = Right Sine
 
 -- Add implicit operations #2
 -- (2)x => (2)*x
-multiplyOperandsByParentheses :: [Either Operand Operator] -> [Either Operand Operator]
-multiplyOperandsByParentheses input = multiplyOperandsByParentheses' notParentheses input
+addImplicitMultiplication :: [Either Operand Operator] -> [Either Operand Operator]
+addImplicitMultiplication input = addImplicitMultiplication' notParentheses input
 
-multiplyOperandsByParentheses' :: Either Operand Operator -> [Either Operand Operator] -> [Either Operand Operator]
-multiplyOperandsByParentheses' lastTerm expression
+addImplicitMultiplication' :: Either Operand Operator -> [Either Operand Operator] -> [Either Operand Operator]
+addImplicitMultiplication' lastTerm expression
     | null expression = []
-    | insert = [Right Multiplication, currentTerm] ++ multiplyOperandsByParentheses' currentTerm (tail expression)
-    | otherwise = [currentTerm] ++ multiplyOperandsByParentheses' currentTerm (tail expression)
+    | insert = [Right Multiplication, currentTerm] ++ addImplicitMultiplication' currentTerm (tail expression)
+    | otherwise = [currentTerm] ++ addImplicitMultiplication' currentTerm (tail expression)
     where
         currentTerm = head expression
-        insert = lastTerm == Right RightParentheses && isLeft currentTerm || isLeft lastTerm && currentTerm == Right LeftParentheses
+        insert =
+            lastTerm == Right RightParentheses && isLeft currentTerm
+            || isLeft lastTerm && currentTerm == Right LeftParentheses
+            || isLeft lastTerm && isLeft currentTerm
