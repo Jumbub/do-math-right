@@ -15,8 +15,8 @@ import Data.Either
 import Operand
 import Operator
 
-parse :: String -> ([Operand], [Operator])
-parse input = ([], [])
+parse :: String -> [Either Operand Operator]
+parse input = addImplicitOperations $ parseSplits $ splitInput $ cleanInput input
 
 -- Clean input!
 

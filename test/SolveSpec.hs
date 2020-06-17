@@ -2,33 +2,25 @@ module SolveSpec (solveSpec) where
 
 import Test.Hspec
 import Control.Exception (evaluate)
+import Control.Monad
+import Data.Tuple
+import Data.Either
+
 import Solve
+import Operand
+import Operator
+
+operationTests = [
+        (
+            "1+1",
+            ([num 1, num 1], Multiplication),
+            [num 2]
+        )
+    ]
 
 solveSpec :: IO ()
 solveSpec = hspec $ do
-  describe "literals" $ do
-
-    it "0 => 0" $ do
-      solve "0" [] `shouldBe` ("", Nothing)
-
-    -- it "159 => 159" $ do
-    --   solve "159" [] `shouldBe` "159"
-
-    -- it "-159 => -159" $ do
-    --   solve "-159" [] `shouldBe` "-159"
-
-  -- describe "multiple literals" $ do
-
-  --   it " => Error" $ do
-  --     solve "" `shouldBe` "Bad equation: no return values"
-
-  --   it "159 -159 => Error" $ do
-  --     solve "159 -159" `shouldBe` "Bad equation: multiple return values"
-
-  --   it "159 -159 0 951 => Error" $ do
-  --     solve "159 -159 0 951" `shouldBe` "Bad equation: multiple return values"
-
-  -- describe "literal addition" $ do
-
-  --   it "1 + 1 => 2" $ do
-  --     solve "1 + 1" `shouldBe` "2"
+    describe "can perform operations" $ do
+        forM_ operationTests $ \(label, (operandStack, operation), output) -> do
+            it ("'" ++ label ++ "'") $ do
+                performOperation operation operandStack `shouldBe` output

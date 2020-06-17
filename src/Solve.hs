@@ -1,8 +1,6 @@
 module Solve (
     solve,
-    Result,
-    Operand,
-    Fact,
+    performOperation,
 ) where
 
 import Data.Char
@@ -14,38 +12,14 @@ import Parse
 import Operator
 import Operand
 
-type Result = Either Fact Operand
-type Fact = (String, Operand)
-
-isFact = isLeft
-isOperand = isRight
-
 -- Solve user input!
 
-solve :: String -> [Fact] -> (String, Maybe Fact)
-solve stringInput facts = (resultToString solution, factOrNothing solution)
+solve :: String -> String
+solve input = "success"
+
+-- Perform an operation on the operand stack
+
+performOperation ::  Operator -> [Operand] -> [Operand]
+performOperation operation operands = result
     where
-        parsedInput = parse stringInput
-        operandsWithFacts = fillOperandsWithFacts facts $ fst parsedInput
-        parsedWithFacts = (operandsWithFacts, snd parsedInput)
-        solution = solveParsed parsedWithFacts
-
-factOrNothing :: Result -> Maybe Fact
-factOrNothing result
-    -- TODO: Figure out why when I change the below to return "Just result" it still thinks
-    -- that the value of result could be an operand.
-    | isFact result = Just ("x", ((0, 1), ([], [])))
-    | otherwise = Nothing
-
-resultToString :: Result -> String
-resultToString result = ""
-
--- Solve a parsed equation!
--- (["x", "1"], ["+"]), [("x", 5)] => 6
--- (["x"], ["1"]), [("=")] => ("x", "1")
-solveParsed :: ([Operand], [Operator]) -> Result
-solveParsed expression = Right ((0, 1), ([], []))
-
--- [("x", 5)], ["x"] => ["5"]
-fillOperandsWithFacts :: [Fact] -> [Operand] -> [Operand]
-fillOperandsWithFacts facts operands = []
+        result = []
