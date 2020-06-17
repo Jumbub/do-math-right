@@ -18,7 +18,10 @@ import Operator
 parse :: String -> ([Operand], [Operator])
 parse input = ([], [])
 
+-- Clean input!
 
+cleanInput :: String -> String
+cleanInput input = filter (\y -> y /= ' ') input
 
 -- Split input!
 
@@ -32,7 +35,6 @@ splitInput singleString =
         notBothUpper = \a b -> xor (isUpper a) (isUpper b)
         notBothUpperOrDigits = \a b -> not (isDigit a && isDigit b || isUpper a && isUpper b)
 
--- E.g. "aBCdeF" => ["a", "BC", "d", "F"], where identifier is `isUpper`
 seperateWhenDifferent :: (Char -> Char -> Bool) -> String -> [String]
 seperateWhenDifferent isDifferent input = seperateWhenDifferent' isDifferent input Nothing "" []
 
@@ -49,8 +51,6 @@ seperateWhenDifferent' isDifferent remaining (Just last) group splits
         current = head remaining
         nextRemaining = tail remaining
 
-
-
 -- Parse split input!
 
 parseSplits :: [String] -> [Either Operand Operator]
@@ -65,44 +65,37 @@ parseSplit split
         operand = stringToOperand split
         operator = stringToOperator split
 
--- Split input #2
--- ["5x", "SIN", "-", "1", "NEG"] => [([5, "x"], [MULTIPLY]), SINE, SUBTRACT, 1, NEGATE]
-parseOperands :: [Either Operand String] -> [Either Operand Operator]
-parseOperands input = []
-
-
-
--- Simplify input!
-
-cleanInput :: String -> String
-cleanInput expression = functionsToPostfix $ convertToFunctions expression
-
--- Simplify input #1
--- "SIN(5x)-(-1)" => "SIN(5x)-NEG(1)"
-convertToFunctions :: String -> String
-convertToFunctions expression = expression
-
--- Simplify input #2
--- "SIN(5x)-NEG(1)" => "5xSIN-1NEG"
-functionsToPostfix :: String -> String
-functionsToPostfix expression = expression
-
-
-
 -- Add implicit operations!
 
 addImplicitOperations :: [Either Operand Operator] -> [Either Operand Operator]
-addImplicitOperations input = addImplicitMultiply input
+addImplicitOperations input = multiplyOperandsByParentheses $ multiplyJointOperands input
+
+-- Add implicit operations #1
+-- 2xy => 2*x*y
+multiplyJointOperands :: [Either Operand Operator] -> [Either Operand Operator]
+multiplyJointOperands input = multiplyJointOperands' False input
+
+multiplyJointOperands' :: Bool -> [Either Operand Operator] -> [Either Operand Operator]
+multiplyJointOperands' lastIsOperand expression
+    | null expression = []
+    | lastIsOperand && currentIsOperand = [Right Multiplication, head expression] ++ multiplyJointOperands' currentIsOperand (tail expression)
+    | otherwise = [head expression] ++ multiplyJointOperands' currentIsOperand (tail expression)
+    where
+        currentIsOperand = isLeft $ head expression
+
+-- This value is just used as a default for the parentheses
+notParentheses = Right Sine
 
 -- Add implicit operations #2
--- [5, "x"] => [5, Multiplication, "x"]
-addImplicitMultiply :: [Either Operand Operator] -> [Either Operand Operator]
-addImplicitMultiply input = addImplicitMultiply' False input
+-- (2)x => (2)*x
+multiplyOperandsByParentheses :: [Either Operand Operator] -> [Either Operand Operator]
+multiplyOperandsByParentheses input = multiplyOperandsByParentheses' notParentheses input
 
-addImplicitMultiply' :: Bool -> [Either Operand Operator] -> [Either Operand Operator]
-addImplicitMultiply' lastOperand expression
+multiplyOperandsByParentheses' :: Either Operand Operator -> [Either Operand Operator] -> [Either Operand Operator]
+multiplyOperandsByParentheses' lastTerm expression
     | null expression = []
-    | lastOperand = [Right Multiplication, head expression] ++ addImplicitMultiply' thisOperand (tail expression)
-    | otherwise = [head expression] ++ addImplicitMultiply' thisOperand (tail expression)
+    | insert = [Right Multiplication, currentTerm] ++ multiplyOperandsByParentheses' currentTerm (tail expression)
+    | otherwise = [currentTerm] ++ multiplyOperandsByParentheses' currentTerm (tail expression)
     where
-        thisOperand = isLeft $ head expression
+        currentTerm = head expression
+        insert = lastTerm == Right RightParentheses && isLeft currentTerm || isLeft lastTerm && currentTerm == Right LeftParentheses
