@@ -18,6 +18,7 @@ operationTests = [
     ]
 
 solveTests = [
+        ("2*2", "4"),
         ("1-1", "0"),
         ("1+1", "2"),
         ("1", "1")
@@ -34,5 +35,5 @@ solveSpec = hspec $ do
                 performOperation operation operands `shouldBe` output
     describe "can solve expressions" $ do
         forM_ solveTests $ \(input, output) -> do
-            it ("'" ++ input ++ "'") $ do
+            it (input ++ " => " ++ output) $ do
                 solve input `shouldBe` output
