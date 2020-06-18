@@ -39,7 +39,6 @@ operatorToString operator = case operator of
     Sine -> Just "SIN"
     Cosine -> Just "COS"
     Tangent -> Just "TAN"
-    _ -> Nothing
 
 stringToOperator :: String -> Maybe Operator
 stringToOperator operator = case operator of
@@ -86,22 +85,29 @@ operatorFunction operator = case operator of
     Addition -> add
     Subtraction -> Operator.subtract
     Multiplication -> multiply
+    Division -> divide
 
 add :: [Operand] -> Operand
-add [((aNum, aDen), aVars), ((bNum, bDen), bVars)] = ((numerator, denominator), aVars)
+add [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
     where
         numerator = aNum * bDen + bNum * aDen
         denominator = aDen * bDen
 
 subtract :: [Operand] -> Operand
-subtract [((aNum, aDen), aVars), ((bNum, bDen), bVars)] = ((numerator, denominator), aVars)
+subtract [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
     where
         numerator = aNum * bDen - bNum * aDen
         denominator = aDen * bDen
 
 multiply :: [Operand] -> Operand
-multiply [((aNum, aDen), aVars), ((bNum, bDen), bVars)] = ((numerator, denominator), aVars)
+multiply [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
     where
         numerator = aNum * bNum
         denominator = aDen * bDen
+
+divide :: [Operand] -> Operand
+divide [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
+    where
+        numerator = aNum * bDen
+        denominator = aDen * bNum
 

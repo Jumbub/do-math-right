@@ -23,11 +23,9 @@ stringToOperand string
 
 operandToString :: Operand -> String
 operandToString ((num, den), (varNum, varDen))
-    | one = show 1
-    | wholeNumber = show num
-    where
-        one = num == den
-        wholeNumber = den == 1
+    | num == den = show 1
+    | den == 1 = show num
+    | rem num den == 0 = show $ div num den
 
 num :: Int -> Operand
 num number = ((number, 1), ([], []))
