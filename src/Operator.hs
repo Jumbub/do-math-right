@@ -84,6 +84,13 @@ operatorArguments operator = case operator of
 operatorFunction :: Operator -> ([Operand] -> Operand)
 operatorFunction operator = case operator of
     Addition -> addition
+    Subtraction -> subtraction
+
+subtraction :: [Operand] -> Operand
+subtraction [((aNum, aDen), aVars), ((bNum, bDen), bVars)] = ((numerator, denominator), aVars)
+    where
+        numerator = aNum * bDen - bNum * aDen
+        denominator = aDen * bDen
 
 addition :: [Operand] -> Operand
 addition [((aNum, aDen), aVars), ((bNum, bDen), bVars)] = ((numerator, denominator), aVars)
