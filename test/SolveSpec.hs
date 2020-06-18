@@ -18,7 +18,8 @@ operationTests = [
     ]
 
 solveTests = [
-        ("1", "1")
+        ("1", "1"),
+        ("1+1", "2")
     ]
 
 operandsToString :: [Operand] -> String
