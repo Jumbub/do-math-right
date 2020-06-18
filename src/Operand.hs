@@ -1,6 +1,7 @@
 module Operand (
     Operand,
     stringToOperand,
+    operandToString,
     num,
     var,
 ) where
@@ -20,12 +21,15 @@ stringToOperand string
         number = readMaybe string :: Maybe Int
         isVariable = length string == 1 && isLower (head string)
 
-
-lazyIsNumber :: String -> Bool
-lazyIsNumber input = isDigit $ head input
+operandToString :: Operand -> String
+operandToString ((num, den), (varNum, varDen))
+    | wholeNumber = show num
+    where
+        wholeNumber = num == den
 
 num :: Int -> Operand
 num number = ((number, 1), ([], []))
 
 var :: Char -> Operand
 var variable = ((1, 1), ([variable], []))
+

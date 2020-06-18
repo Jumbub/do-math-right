@@ -12,15 +12,25 @@ import Operator
 
 operationTests = [
         (
-            "1+1",
             ([num 1, num 1], Addition),
             [num 2]
         )
     ]
 
+solveTests = [
+        ("1", "1")
+    ]
+
+operandsToString :: [Operand] -> String
+operandsToString operands = show (map operandToString operands)
+
 solveSpec :: IO ()
 solveSpec = hspec $ do
     describe "can perform operations" $ do
-        forM_ operationTests $ \(label, (operandStack, operation), output) -> do
-            it ("'" ++ label ++ "'") $ do
-                performOperation operation operandStack `shouldBe` output
+        forM_ operationTests $ \((operands, operation), output) -> do
+            it ("'" ++ operandsToString operands ++ ", " ++ (show operation) ++ "'") $ do
+                performOperation operation operands `shouldBe` output
+    describe "can solve expressions" $ do
+        forM_ solveTests $ \(input, output) -> do
+            it ("'" ++ input ++ "'") $ do
+                solve input `shouldBe` output

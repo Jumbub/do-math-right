@@ -15,7 +15,23 @@ import Operand
 -- Solve user input!
 
 solve :: String -> String
-solve input = "success"
+solve input = solvedAsString
+    where
+        solvedAsString = operandToString solved
+        solved = solve' parsed [] []
+        parsed = parse input
+
+solve' :: [Either Operand Operator] -> [Operand] -> [[Operator]] -> Operand
+solve' terms operandStack operatorStacks
+    | null terms = if length operandStack == 1 then head operandStack else error "Oh no!"
+    | isOperand = solve' (tail terms) (operandStack ++ [operand]) operatorStacks
+    | otherwise = error "Failed to solve expression!"
+    where
+        term = head terms
+        isOperand = isLeft term
+        operand = fromLeft (num 0) term
+        isOperator = isRight term
+        operator = fromRight Multiplication term
 
 -- Perform an operation on the operand stack
 
