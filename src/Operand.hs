@@ -23,9 +23,24 @@ stringToOperand string
 
 operandToString :: Operand -> String
 operandToString ((num, den), (varNum, varDen))
-    | num == den = show 1
-    | den == 1 = show num
-    | rem num den == 0 = show $ div num den
+    | otherwise = decimalToString $ fractionToDecimal num den 10
+
+decimalToString :: (Int, [Int]) -> String
+decimalToString (whole, []) = show whole
+decimalToString (whole, decimals) = (show whole) ++ "." ++ (concat (map (show) decimals))
+
+fractionToDecimal :: Int -> Int -> Int -> (Int, [Int])
+fractionToDecimal num 0 precision = error "Cannot divide by 0!"
+fractionToDecimal num den precision = (div num den, fractionToDecimal' precision den (rem num den) [])
+
+fractionToDecimal' :: Int -> Int -> Int -> [Int] -> [Int]
+fractionToDecimal' precision divisor remainder decimals
+    | noRemainder || maxPrecision = decimals
+    | otherwise = fractionToDecimal' precision divisor (rem numberToDivide divisor) (decimals ++ [div numberToDivide divisor])
+    where
+        noRemainder = remainder == 0
+        maxPrecision = length decimals == precision
+        numberToDivide = 10 * remainder
 
 num :: Int -> Operand
 num number = ((number, 1), ([], []))
