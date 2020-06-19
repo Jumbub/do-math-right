@@ -39,6 +39,7 @@ Algebra:
 Display:
 
 - [ ] show steps taken to find solution
+- [ ] output in Latex syntax
 
 Parsing:
 
