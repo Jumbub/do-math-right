@@ -1,14 +1,8 @@
 # do-math
 
-The goal of this project is to parse and solve mathematical queries.
+Solving mathemetical queries without any floating point innacuracies.
 
 ## Project
-
-### Things to think about
-
-- [ ] How do you get the most accurate results possible when performing multiple operations which only give approximate results (e.g. `sine`)
-- [ ] How do you handle a case where the operator cannot produce a single operand output (e.g. `x + 1`)
-- [ ] How do you handle solving a function which causes one side to be "plus or minus" (e.g. `|x| = 1`)
 
 ### Goals
 
@@ -36,14 +30,26 @@ Algebra:
 - [ ] solving for variable, with context `2x + 2y` (`x = 1`)
 - [ ] solving for variable, with no context `2x = 2y`
 
+Interactivity:
+
+- [ ] input and output loop
+- [ ] use facts from previous result e.g. `ANS` or `x = 1`
+
 Display:
 
 - [ ] show steps taken to find solution
 - [ ] output in Latex syntax
+- [ ] expression syntax errors
 
 Parsing:
 
 - [ ] parsing Latex syntax
+
+### Things to think about
+
+- [ ] How do you get the most accurate results possible when performing multiple operations which only give approximate results (e.g. `sine`)
+- [ ] How do you handle a case where the operator cannot produce a single operand output (e.g. `x + 1`)
+- [ ] How do you handle solving a function which causes one side to be "plus or minus" (e.g. `|x| = 1`)
 
 ## Development
 
