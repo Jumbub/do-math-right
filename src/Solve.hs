@@ -28,7 +28,7 @@ solve' terms operands operators
     | null terms && null operators = head operands
     | null terms = solve' [] (performOperation (head operators) operands) (tail operators)
     | isOperand = solve' (tail terms) (operand : operands) operators
-    | doLastOperation = solve' terms (performOperation lastOperator operands) operators
+    | doLastOperation = solve' terms (performOperation lastOperator operands) (tail operators)
     | otherwise = solve' (tail terms) operands (operator : operators)
     where
         doLastOperation = if (null operators)

@@ -57,6 +57,7 @@ test-suite mathematics-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      OperandSpec
       ParseSpec
       SolveSpec
       Paths_mathematics

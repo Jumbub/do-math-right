@@ -15,7 +15,7 @@ The goal of this project is to parse and solve mathematical queries.
 Arithmetic:
 
 - [x] whole numbers `100`
-- [ ] basic operators `+` `-` `/` `*`
+- [x] basic operators `+` `-` `/` `*`
 - [ ] scoping operators `(` `)`
 - [ ] decimal numbers `1.0`
 - [ ] constants `PI`
