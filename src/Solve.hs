@@ -28,10 +28,10 @@ solve' terms operands operators
     | null terms && null operators = head operands
     | null terms = solve' [] (performOperation (head operators) operands) (tail operators)
     | isOperand = solve' (tail terms) (operand : operands) operators
-    | doLastOperation = solve' terms (performOperation lastOperator operands) (tail operators)
+    | useOperatorsInStack = solve' terms (performOperation (head operators) operands) (tail operators)
     | otherwise = solve' (tail terms) operands (operator : operators)
     where
-        doLastOperation = if (null operators)
+        useOperatorsInStack = if (null operators)
             then False
             else (operatorPrecedence operator) < (operatorPrecedence (head operators))
         term = head terms
@@ -46,7 +46,7 @@ solve' terms operands operators
 performOperation ::  Operator -> [Operand] -> [Operand]
 performOperation operation operands
     | notEnoughOperands = error "Not enough operands to perform operation!"
-    | otherwise = (drop numArguments operands) ++ [function arguments]
+    | otherwise = (function arguments : (drop numArguments operands))
     where
         numArguments = operatorArguments operation
         arguments = take numArguments operands
