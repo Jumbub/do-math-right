@@ -17,7 +17,7 @@ Arithmetic:
 - [x] whole numbers `100`
 - [x] basic operators `+` `-` `/` `*`
 - [x] scoping operators `(` `)`
-- [ ] decimal numbers `1.0`
+- [x] decimal numbers `1.0`
 - [ ] constants `PI`
 - [ ] functions `SIN(180)`
 

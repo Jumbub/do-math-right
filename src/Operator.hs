@@ -88,6 +88,7 @@ operatorFunction operator = case operator of
     Division -> divide
     LeftParentheses -> noOp
     RightParentheses -> noOp
+    Decimal -> decimal
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
@@ -115,3 +116,10 @@ divide [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominato
     where
         numerator = aNum * bDen
         denominator = aDen * bNum
+
+decimal :: [Operand] -> [Operand]
+decimal [((b, 1), ([], [])), ((a, 1), ([], []))] = [((numerator, denominator), ([], []))]
+    where
+        decimalPlaces = length (show b)
+        numerator = (a * decimalPlaces) + b
+        denominator = 10 ^ decimalPlaces
