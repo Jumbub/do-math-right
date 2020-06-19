@@ -61,8 +61,8 @@ operatorPrecedence operator = case operator of
     Multiplication -> 200
     Division -> 200
     Decimal -> 900
-    LeftParentheses -> 50
-    RightParentheses -> 1000
+    LeftParentheses -> 1000
+    RightParentheses -> 0
     Sine -> 300
     Cosine -> 300
     Tangent -> 300
@@ -80,34 +80,38 @@ operatorArguments operator = case operator of
     Cosine -> 1
     Tangent -> 1
 
-operatorFunction :: Operator -> ([Operand] -> Operand)
+operatorFunction :: Operator -> ([Operand] -> [Operand])
 operatorFunction operator = case operator of
     Addition -> add
     Subtraction -> Operator.subtract
     Multiplication -> multiply
     Division -> divide
+    LeftParentheses -> noOp
+    RightParentheses -> noOp
 
-add :: [Operand] -> Operand
-add [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
+noOp :: [Operand] -> [Operand]
+noOp input = input
+
+add :: [Operand] -> [Operand]
+add [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
     where
         numerator = aNum * bDen + bNum * aDen
         denominator = aDen * bDen
 
-subtract :: [Operand] -> Operand
-subtract [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
+subtract :: [Operand] -> [Operand]
+subtract [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
     where
         numerator = aNum * bDen - bNum * aDen
         denominator = aDen * bDen
 
-multiply :: [Operand] -> Operand
-multiply [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
+multiply :: [Operand] -> [Operand]
+multiply [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
     where
         numerator = aNum * bNum
         denominator = aDen * bDen
 
-divide :: [Operand] -> Operand
-divide [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = ((numerator, denominator), aVars)
+divide :: [Operand] -> [Operand]
+divide [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
     where
         numerator = aNum * bDen
         denominator = aDen * bNum
-

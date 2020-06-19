@@ -27,14 +27,17 @@ solve' terms operands operators
     | null terms && null operators && length operands > 1 = error "Too many resulting operands!"
     | null terms && null operators = head operands
     | null terms = solve' [] (performOperation (head operators) operands) (tail operators)
+    | isRightParentheses && ((head operators) == LeftParentheses) = solve' (tail terms) operands (tail operators)
+    | isRightParentheses = solve' terms (performOperation (head operators) operands) (tail operators)
     | isOperand = solve' (tail terms) (operand : operands) operators
     | useOperatorsInStack = solve' terms (performOperation (head operators) operands) (tail operators)
     | otherwise = solve' (tail terms) operands (operator : operators)
     where
-        useOperatorsInStack = if (null operators)
+        useOperatorsInStack = if (null operators || ((head operators) == LeftParentheses))
             then False
             else (operatorPrecedence operator) < (operatorPrecedence (head operators))
         term = head terms
+        isRightParentheses = isOperator && operator == RightParentheses
         isOperand = isLeft term
         operand = fromLeft (num 0) term
         isOperator = isRight term
@@ -46,7 +49,7 @@ solve' terms operands operators
 performOperation ::  Operator -> [Operand] -> [Operand]
 performOperation operation operands
     | notEnoughOperands = error "Not enough operands to perform operation!"
-    | otherwise = (function arguments : (drop numArguments operands))
+    | otherwise = (function arguments) ++ (drop numArguments operands)
     where
         numArguments = operatorArguments operation
         arguments = take numArguments operands
