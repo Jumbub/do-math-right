@@ -20,6 +20,7 @@ data Operator =
     RightParentheses |
 
     Decimal |
+    Negation |
 
     Sine |
     Cosine |
@@ -61,6 +62,7 @@ operatorPrecedence operator = case operator of
     Multiplication -> 200
     Division -> 200
     Decimal -> 900
+    Negation -> 800
     LeftParentheses -> 1000
     RightParentheses -> 0
     Sine -> 300
@@ -74,6 +76,7 @@ operatorArguments operator = case operator of
     Multiplication -> 2
     Division -> 2
     Decimal -> 2
+    Negation -> 1
     LeftParentheses -> 0
     RightParentheses -> 0
     Sine -> 1
@@ -89,6 +92,7 @@ operatorFunction operator = case operator of
     LeftParentheses -> noOp
     RightParentheses -> noOp
     Decimal -> decimal
+    Negation -> negation
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
@@ -123,3 +127,6 @@ decimal [((b, 1), ([], [])), ((a, 1), ([], []))] = [((numerator, denominator), (
         decimalPlaces = length (show b)
         numerator = (a * decimalPlaces) + b
         denominator = 10 ^ decimalPlaces
+
+negation :: [Operand] -> [Operand]
+negation [((aNum, aDen), aVars)] = [((-aNum, aDen), aVars)]

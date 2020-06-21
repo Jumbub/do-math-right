@@ -49,6 +49,16 @@ parseTests = [
 
 implicitOperatorTests = [
         (
+            "1+(-2)",
+            [Left $ num 1, Right Addition, Right LeftParentheses, Right Subtraction, Left $ num 2, Right RightParentheses],
+            [Left $ num 1, Right Addition, Right LeftParentheses, Right Negation, Left $ num 2, Right RightParentheses]
+        ),
+        (
+            "-2",
+            [Right Subtraction, Left $ num 2],
+            [Right Negation, Left $ num 2]
+        ),
+        (
             "(2x)x",
             [Right LeftParentheses, Left $ num 2, Left $ var 'x', Right RightParentheses, Left $ var 'x'],
             [

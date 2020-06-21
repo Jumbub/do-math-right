@@ -68,7 +68,7 @@ parseSplit split
 -- Add implicit operations!
 
 addImplicitOperations :: [Either Operand Operator] -> [Either Operand Operator]
-addImplicitOperations input = addImplicitMultiplication input
+addImplicitOperations input = replaceSubtractionWithNegation $ addImplicitMultiplication input
 
 -- This value is just used as a default for the parentheses
 notParentheses = Right Sine
@@ -89,3 +89,13 @@ addImplicitMultiplication' lastTerm expression
             lastTerm == Right RightParentheses && isLeft currentTerm
             || isLeft lastTerm && currentTerm == Right LeftParentheses
             || isLeft lastTerm && isLeft currentTerm
+
+-- Add implicit operations #2
+-- (-1) => (Negation 1)
+replaceSubtractionWithNegation :: [Either Operand Operator] -> [Either Operand Operator]
+replaceSubtractionWithNegation input = tail $ replaceSubtractionWithNegation' (Right LeftParentheses:input)
+
+replaceSubtractionWithNegation' :: [Either Operand Operator] -> [Either Operand Operator]
+replaceSubtractionWithNegation' [] = []
+replaceSubtractionWithNegation' (Right LeftParentheses:Right Subtraction:rest) = [Right LeftParentheses, Right Negation] ++ (replaceSubtractionWithNegation' rest)
+replaceSubtractionWithNegation' (current:rest) = [current] ++ (replaceSubtractionWithNegation' rest)
