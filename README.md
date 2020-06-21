@@ -32,7 +32,7 @@ Algebra:
 
 Interactivity:
 
-- [ ] input and output loop
+- [x] input and output loop
 - [ ] use facts from previous result e.g. `ANS` or `x = 1`
 
 Display:
