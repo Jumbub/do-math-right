@@ -1,6 +1,6 @@
-name:                mathematics
+name:                do-math
 version:             0.0.1.0
-github:              "Jumbub/mathematics"
+github:              "Jumbub/do-math"
 license:             MIT
 author:              "Jamie Bray"
 maintainer:          "jamie@jamiebray.xyz"
@@ -16,7 +16,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/Jumbub/mathematics#readme>
+description:         Please see the README on GitHub at <https://github.com/Jumbub/do-math#readme>
 
 dependencies:
 - base >= 4.7 && < 5
@@ -27,7 +27,7 @@ library:
   source-dirs: src
 
 executables:
-  mathematics-exe:
+  do-math-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -35,10 +35,10 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - mathematics
+    - do-math
 
 tests:
-  mathematics-test:
+  do-math-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
@@ -46,4 +46,4 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - mathematics
+    - do-math
