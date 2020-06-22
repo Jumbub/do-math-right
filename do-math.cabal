@@ -29,6 +29,7 @@ library
       Operator
       Parse
       Solve
+      Utility
   other-modules:
       Paths_do_math
   hs-source-dirs:

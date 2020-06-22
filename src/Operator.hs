@@ -8,6 +8,7 @@ module Operator (
 ) where
 
 import Operand
+import Utility
 
 data Operator =
 
@@ -110,10 +111,12 @@ subtract [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denomina
         denominator = aDen * bDen
 
 multiply :: [Operand] -> [Operand]
-multiply [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
+multiply [((bNum, bDen), (bNumVars, bDenVars)), ((aNum, aDen), (aNumVars, aDenVars))] = [((numerator, denominator), (numeratorVars, denominatorVars))]
     where
         numerator = aNum * bNum
         denominator = aDen * bDen
+        numeratorVars = uniqueValues (aNumVars ++ bNumVars)
+        denominatorVars = uniqueValues (aDenVars ++ bDenVars)
 
 divide :: [Operand] -> [Operand]
 divide [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
