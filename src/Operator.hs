@@ -9,25 +9,7 @@ module Operator (
 
 import Operand
 import Utility
-
-data Operator =
-
-    Addition |
-    Subtraction |
-    Multiplication |
-    Division |
-
-    LeftParentheses |
-    RightParentheses |
-
-    Decimal |
-    Negation |
-
-    Sine |
-    Cosine |
-    Tangent
-
-    deriving (Eq, Show)
+import Type
 
 operatorToString :: Operator -> Maybe String
 operatorToString operator = case operator of
@@ -35,6 +17,7 @@ operatorToString operator = case operator of
     Subtraction -> Just "-"
     Multiplication -> Just "*"
     Division -> Just "/"
+    Power -> Just "^"
     Decimal -> Just "."
     LeftParentheses -> Just "("
     RightParentheses -> Just ")"
@@ -49,6 +32,7 @@ stringToOperator operator = case operator of
     "*" -> Just Multiplication
     "/" -> Just Division
     "." -> Just Decimal
+    "^" -> Just Power
     "(" -> Just LeftParentheses
     ")" -> Just RightParentheses
     "SIN" -> Just Sine
@@ -62,6 +46,7 @@ operatorPrecedence operator = case operator of
     Subtraction -> 100
     Multiplication -> 200
     Division -> 200
+    Power -> 850
     Decimal -> 900
     Negation -> 800
     LeftParentheses -> 1000
@@ -99,37 +84,38 @@ noOp :: [Operand] -> [Operand]
 noOp input = input
 
 add :: [Operand] -> [Operand]
-add [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
+add [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
     where
         numerator = aNum * bDen + bNum * aDen
         denominator = aDen * bDen
 
 subtract :: [Operand] -> [Operand]
-subtract [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
+subtract [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
     where
         numerator = aNum * bDen - bNum * aDen
         denominator = aDen * bDen
 
 multiply :: [Operand] -> [Operand]
-multiply [((bNum, bDen), (bNumVars, bDenVars)), ((aNum, aDen), (aNumVars, aDenVars))] = [((numerator, denominator), (numeratorVars, denominatorVars))]
+multiply [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
     where
         numerator = aNum * bNum
         denominator = aDen * bDen
-        numeratorVars = uniqueValues (aNumVars ++ bNumVars)
-        denominatorVars = uniqueValues (aDenVars ++ bDenVars)
+multiply [(Variable b), (Variable a)]
+    | a == b = [Expression ([Variable a, num 2], Power)]
+    | otherwise = [Expression ([Variable a, Variable b], Multiplication)]
 
 divide :: [Operand] -> [Operand]
-divide [((bNum, bDen), bVars), ((aNum, aDen), aVars)] = [((numerator, denominator), aVars)]
+divide [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
     where
         numerator = aNum * bDen
         denominator = aDen * bNum
 
 decimal :: [Operand] -> [Operand]
-decimal [((b, 1), ([], [])), ((a, 1), ([], []))] = [((numerator, denominator), ([], []))]
+decimal [(Fraction (b, 1)), (Fraction (a, 1))] = [(Fraction (numerator, denominator))]
     where
         decimalPlaces = length (show b)
         numerator = (a * decimalPlaces) + b
         denominator = 10 ^ decimalPlaces
 
 negation :: [Operand] -> [Operand]
-negation [((aNum, aDen), aVars)] = [((-aNum, aDen), aVars)]
+negation [(Fraction (num, den))] = [(Fraction (-num, den))]

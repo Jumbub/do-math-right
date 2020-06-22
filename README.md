@@ -51,6 +51,14 @@ Parsing:
 - [ ] How do you handle a case where the operator cannot produce a single operand output (e.g. `x + 1`)
 - [ ] How do you handle solving a function which causes one side to be "plus or minus" (e.g. `|x| = 1`)
 
+### Syntax rules
+
+- Negative numbers `(-1)` must be wrapped in parentheses
+   - otherwise there is ambiguity: `-5^2` could be `-(5^2) = -25` or `(-5)^2 = -25`
+- Variables `x` are all lower case
+- Constants `PI` are all upper case
+- Functions `POW(base, exponent)` are all upper case, and have arguments wrapped in parentheses and comman seperated
+
 ## Development
 
 ### Software Requirements
