@@ -1,10 +1,46 @@
 # do-math
 
-Solving mathemetical queries without any floating point innacuracies.
+Solving mathemetical queries without any implicit floating point innacuracies.
 
-## Project
+## How it's achieved,
 
-### Goals
+#### Don't represent numbers as floats, (duh)
+
+##### Store numbers as fractions `numberator / denominator`
+
+An expression of `3 + 2` is calculated as `(3/1) + (2/1)`
+
+A user input of `0.2` is converted to a fractional representation `2/10`
+
+The fractional representation of any number `n`, with `d` decimal points is `(n * 10^d) / (10^d)`
+
+##### Only create decimal numbers at display time
+
+The decimal value of an expression is only evaluated for the sake of human readability
+
+<br>
+
+#### Be clear about the decimal accuracy of a result,
+
+##### All results have an associated `accuracy`
+
+An expression such as `3 + 2` will have an accuracy of `perfect` because the `+` operator does not produce any innacuracies
+
+An expression such as `10 / 3` will have an accuracy of `d` where `d` is the decimal point at which the division operation stopped
+
+All expressions containing irrational numbers like `pi`, or functional approximations like `sin` generate values with an `accuracy`
+
+<br>
+
+#### Replay operations to achieve higher accuracies,
+
+If an expression resolves to an `accuracy` level under your `requested accuracy`, it will increase the decimal precision at which it operates at to increase the accuracy.
+
+An expression `SIN(PI)` may initially resolve to an accuracy of `5` decimal points. But if you request an accuracy of 7 decimal points, it will increase the decimal accuracy of `PI` and the number of iterations by the `SIN` approximation.
+
+<br>
+
+## Goals
 
 Arithmetic:
 
@@ -45,19 +81,23 @@ Parsing:
 
 - [ ] parsing Latex syntax
 
-### Things to think about
+Research:
 
-- [ ] How do you get the most accurate results possible when performing multiple operations which only give approximate results (e.g. `sine`)
-- [ ] How do you handle a case where the operator cannot produce a single operand output (e.g. `x + 1`)
-- [ ] How do you handle solving a function which causes one side to be "plus or minus" (e.g. `|x| = 1`)
+- [ ] Can we determine the required accuracy of irrational numbers or function approximations _before_ generating the first result
+- [ ] How do we a number in the state of "plus or minus" (e.g. solving for `x` in `|x| = 1`)
 
-### Syntax rules
+<br>
 
+## Input syntax
+
+- Whitespace is ignored
 - Negative numbers `(-1)` must be wrapped in parentheses
    - otherwise there is ambiguity: `-5^2` could be `-(5^2) = -25` or `(-5)^2 = -25`
 - Variables `x` are all lower case
 - Constants `PI` are all upper case
-- Functions `POW(base, exponent)` are all upper case, and have arguments wrapped in parentheses and comman seperated
+- Functions `POW(2, 10)` are all upper case, and arguments are wrapped in parentheses and comma seperated
+
+<br>
 
 ## Development
 
@@ -66,10 +106,6 @@ Parsing:
 - [Stack](https://docs.haskellstack.org/en/stable/README/)
 
 ### Building locally
-
-`git clone ...`
-
-`cd calculator`
 
 `stack install`
 
