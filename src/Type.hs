@@ -27,7 +27,10 @@ data Operator =
 type Fraction = (Int, Int)
 type Variable = Char
 
-data Expression a b = Fraction a | Variable b | Expression ([Expression a b], Operator)
+data Expression =
+    Fraction Fraction |
+    Variable Variable |
+    Expression ([Expression], Operator)
     deriving (Eq, Show)
 
-type Operand = Expression (Int, Int) Char
+type Operand = Expression
