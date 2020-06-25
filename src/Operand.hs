@@ -16,7 +16,7 @@ import Type
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand string
-    | isJust number = Just $ Fraction (fromJust number, 1)
+    | isJust number = Just $ Fraction (fromJust number, 1, Perfect)
     | isVariable = Just $ Variable (head string)
     | otherwise = Nothing
     where
@@ -24,7 +24,7 @@ stringToOperand string
         isVariable = length string == 1 && isLower (head string)
 
 operandToString :: Operand -> String
-operandToString (Fraction (num, den))
+operandToString (Fraction (num, den, precision))
     | isDecimal = decimalString
     | otherwise = show num ++ "/" ++ show den
     where
@@ -59,10 +59,10 @@ decimalToString (whole, []) = show whole
 decimalToString (whole, decimals) = (show whole) ++ "." ++ (concat $ map show decimals)
 
 num :: Int -> Operand
-num number = Fraction (number, 1)
+num number = Fraction (number, 1, Perfect)
 
 frac :: Int -> Int -> Operand
-frac num den = Fraction (num, den)
+frac num den = Fraction (num, den, Perfect)
 
 var :: Char -> Operand
 var letter = Variable letter

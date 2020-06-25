@@ -84,19 +84,19 @@ noOp :: [Operand] -> [Operand]
 noOp input = input
 
 add :: [Operand] -> [Operand]
-add [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
+add [(Fraction (bNum, bDen, bAcc)), (Fraction (aNum, aDen, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
     where
         numerator = aNum * bDen + bNum * aDen
         denominator = aDen * bDen
 
 subtract :: [Operand] -> [Operand]
-subtract [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
+subtract [(Fraction (bNum, bDen, bAcc)), (Fraction (aNum, aDen, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
     where
         numerator = aNum * bDen - bNum * aDen
         denominator = aDen * bDen
 
 multiply :: [Operand] -> [Operand]
-multiply [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
+multiply [(Fraction (bNum, bDen, bAcc)), (Fraction (aNum, aDen, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
     where
         numerator = aNum * bNum
         denominator = aDen * bDen
@@ -105,17 +105,17 @@ multiply [(Variable b), (Variable a)]
     | otherwise = [Expression ([Variable a, Variable b], Multiplication)]
 
 divide :: [Operand] -> [Operand]
-divide [(Fraction (bNum, bDen)), (Fraction (aNum, aDen))] = [(Fraction (numerator, denominator))]
+divide [(Fraction (bNum, bDen, aAcc)), (Fraction (aNum, aDen, bAcc))] = [(Fraction (numerator, denominator, aAcc))]
     where
         numerator = aNum * bDen
         denominator = aDen * bNum
 
 decimal :: [Operand] -> [Operand]
-decimal [(Fraction (b, 1)), (Fraction (a, 1))] = [(Fraction (numerator, denominator))]
+decimal [(Fraction (b, 1, bAcc)), (Fraction (a, 1, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
     where
         decimalPlaces = length (show b)
         numerator = (a * decimalPlaces) + b
         denominator = 10 ^ decimalPlaces
 
 negation :: [Operand] -> [Operand]
-negation [(Fraction (num, den))] = [(Fraction (-num, den))]
+negation [(Fraction (num, den, accuracy))] = [(Fraction (-num, den, accuracy))]
