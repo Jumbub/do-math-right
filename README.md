@@ -1,4 +1,4 @@
-# do-math
+# 🖩 do-math
 
 Solving mathemetical queries without any implicit floating point innacuracies.
 
