@@ -13,6 +13,7 @@ import Data.List
 import Text.Read
 
 import Type
+import Utility
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand string
@@ -24,30 +25,22 @@ stringToOperand string
         isVariable = length string == 1 && isLower (head string)
 
 operandToString :: Context -> Operand -> String
-operandToString ctx (Fraction (num, den, precision))
-    | isDecimal = decimalString
-    | otherwise = show num ++ "/" ++ show den
-    where
-        isDecimal = isJust decimal
-        isFraction = isNothing decimal
-        decimal = fractionToDecimal num den 10
-        isOne = num == den && num == 1
-        decimalString = decimalToString (fromJust decimal)
 operandToString ctx (Variable var) = [var]
 operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
+operandToString Context {accuracy=Perfect} (Fraction (num, den, precision))
+    | num == den || den == 1 = show num
+    | otherwise = show num ++ "/" ++ show den
+operandToString Context {accuracy=PlusOrMinus dpAccuracy} (Fraction (num, den, precision))
+    = decimalToString $ fractionToDecimal (decimalPlaces dpAccuracy) num den
 
-fractionToDecimal :: Int -> Int -> Int -> Maybe (Int, [Int])
-fractionToDecimal num 0 precision = error "Cannot divide by 0!"
-fractionToDecimal num den precision
-    | isJust decimals = Just (div num den, (fromJust decimals))
-    | otherwise = Nothing
-    where
-        decimals = fractionToDecimal' precision den (rem num den) []
+fractionToDecimal :: Int -> Int -> Int -> (Int, [Int])
+fractionToDecimal _ _ 0 = error "Cannot divide by 0!"
+fractionToDecimal acc num den = (div num den, (fractionToDecimal' acc den (rem num den) []))
 
-fractionToDecimal' :: Int -> Int -> Int -> [Int] -> Maybe [Int]
+fractionToDecimal' :: Int -> Int -> Int -> [Int] -> [Int]
 fractionToDecimal' precision divisor remainder decimals
-    | maxPrecision = Nothing
-    | noRemainder = Just decimals
+    | maxPrecision = []
+    | noRemainder = decimals
     | otherwise = fractionToDecimal' precision divisor (rem numberToDivide divisor) (decimals ++ [div numberToDivide divisor])
     where
         noRemainder = remainder == 0

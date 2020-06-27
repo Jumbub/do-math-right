@@ -1,5 +1,7 @@
 module Utility (
-    uniqueValues
+    uniqueValues,
+    gcd,
+    decimalPlaces,
 ) where
 
 uniqueValues :: [Char] -> [Char]
@@ -16,3 +18,9 @@ existsIn _ [] = False
 existsIn check array
     | check == (head array) = True
     | otherwise = existsIn check (tail array)
+
+decimalPlaces :: (Int, Int) -> Int
+decimalPlaces (num, den) = digits den - digits num
+
+digits :: Int -> Int
+digits x = round $ logBase 10.0 (fromIntegral x)

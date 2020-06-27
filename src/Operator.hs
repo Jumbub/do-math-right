@@ -74,20 +74,32 @@ operatorArguments operator = case operator of
 
 operatorFunction :: Operator -> ((Context, [Operand]) -> (Context, [Operand]))
 operatorFunction operator = case operator of
-    Addition -> contextless add
-    Decimal -> contextless decimal
-    Division -> contextless divide
+    Addition -> simplifyable $ contextless add
+    Decimal -> simplifyable $ contextless decimal
+    Division -> simplifyable $ contextless divide
     LeftParentheses -> contextless noOp
     Multiplication -> contextless multiply
-    Negation -> contextless negation
+    Negation -> simplifyable $ contextless negation
     RightParentheses -> contextless noOp
-    Subtraction -> contextless Operator.subtract
+    Subtraction -> simplifyable $ contextless Operator.subtract
 
 contextless :: ([Operand] -> [Operand]) -> ((Context, [Operand]) -> (Context, [Operand]))
 contextless operation = \(ctx, operands) -> (ctx, operation operands)
 
 operandless :: (Context -> Context) -> ((Context, [Operand]) -> (Context, [Operand]))
 operandless operation = \(ctx, operands) -> (operation ctx, operands)
+
+simplifyable :: ((Context, [Operand]) -> (Context, [Operand])) -> ((Context, [Operand]) -> (Context, [Operand]))
+simplifyable operation = \(ctx, operands) -> (simplifyFraction $ operation (ctx, operands))
+
+simplifyFraction :: (Context, [Operand]) -> (Context, [Operand])
+simplifyFraction (ctx, [Fraction (num, den, acc)]) = (ctx, [Fraction (numerator, denominator, acc)])
+    where
+        commonDen = gcd num den
+        numerator = num `div` commonDen * flip
+        denominator = den `div` commonDen * flip
+        flip = if (num < 0 && den < 0) || (den < 0 && num >= 0) then -1 else 1
+
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
@@ -130,4 +142,4 @@ negation :: [Operand] -> [Operand]
 negation [(Fraction (num, den, accuracy))] = [(Fraction (-num, den, accuracy))]
 
 approximate :: Context -> Context
-approximate ctx = ctx { Type.approximate = False }
+approximate ctx = ctx { Type.accuracy = Perfect }

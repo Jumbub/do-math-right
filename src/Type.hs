@@ -5,6 +5,7 @@ module Type (
     Accuracy(..),
     Context(..),
     defaultContext,
+    approximate,
 ) where
 
 data Operator =
@@ -47,8 +48,12 @@ data Expression =
 type Operand = Expression
 
 data Context = Context {
-    approximate :: Bool
+    accuracy :: Accuracy
 } deriving (Eq, Show)
 
 defaultContext :: Context
-defaultContext = Context {approximate = False}
+defaultContext = Context {accuracy = Perfect}
+
+approximate :: Context -> Bool
+approximate Context {accuracy = Perfect} = False
+approximate _ = True
