@@ -38,47 +38,56 @@ stringToOperator operator = case operator of
     "SIN" -> Just Sine
     "COS" -> Just Cosine
     "TAN" -> Just Tangent
+    "APPROXIMATE" -> Just Approximate
     _ -> Nothing
 
 operatorPrecedence :: Operator -> Int
 operatorPrecedence operator = case operator of
     Addition -> 100
-    Subtraction -> 100
-    Multiplication -> 200
-    Division -> 200
-    Power -> 850
+    Approximate -> 50
+    Cosine -> 300
     Decimal -> 900
-    Negation -> 800
+    Division -> 200
     LeftParentheses -> 1000
+    Multiplication -> 200
+    Negation -> 800
+    Power -> 850
     RightParentheses -> 0
     Sine -> 300
-    Cosine -> 300
+    Subtraction -> 100
     Tangent -> 300
 
 operatorArguments :: Operator -> Int
 operatorArguments operator = case operator of
     Addition -> 2
-    Subtraction -> 2
-    Multiplication -> 2
-    Division -> 2
+    Approximate -> 0
+    Cosine -> 1
     Decimal -> 2
-    Negation -> 1
+    Division -> 2
     LeftParentheses -> 0
+    Multiplication -> 2
+    Negation -> 1
     RightParentheses -> 0
     Sine -> 1
-    Cosine -> 1
+    Subtraction -> 2
     Tangent -> 1
 
-operatorFunction :: Operator -> ([Operand] -> [Operand])
+operatorFunction :: Operator -> ((Context, [Operand]) -> (Context, [Operand]))
 operatorFunction operator = case operator of
-    Addition -> add
-    Subtraction -> Operator.subtract
-    Multiplication -> multiply
-    Division -> divide
-    LeftParentheses -> noOp
-    RightParentheses -> noOp
-    Decimal -> decimal
-    Negation -> negation
+    Addition -> contextless add
+    Decimal -> contextless decimal
+    Division -> contextless divide
+    LeftParentheses -> contextless noOp
+    Multiplication -> contextless multiply
+    Negation -> contextless negation
+    RightParentheses -> contextless noOp
+    Subtraction -> contextless Operator.subtract
+
+contextless :: ([Operand] -> [Operand]) -> ((Context, [Operand]) -> (Context, [Operand]))
+contextless operation = \(ctx, operands) -> (ctx, operation operands)
+
+operandless :: (Context -> Context) -> ((Context, [Operand]) -> (Context, [Operand]))
+operandless operation = \(ctx, operands) -> (operation ctx, operands)
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
@@ -119,3 +128,6 @@ decimal [(Fraction (b, 1, bAcc)), (Fraction (a, 1, aAcc))] = [(Fraction (numerat
 
 negation :: [Operand] -> [Operand]
 negation [(Fraction (num, den, accuracy))] = [(Fraction (-num, den, accuracy))]
+
+approximate :: Context -> Context
+approximate ctx = ctx { Type.approximate = False }

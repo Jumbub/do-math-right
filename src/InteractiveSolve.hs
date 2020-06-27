@@ -7,6 +7,7 @@ import System.IO
 
 import Solve
 import Operand
+import Type
 
 solveInteractive :: IO ()
 solveInteractive = do
@@ -15,13 +16,13 @@ solveInteractive = do
         \║do-math║\n\
         \╚═══════╝\n\
         \Enter '1+1'\n"
-    solveInteractive'
+    solveInteractive' defaultContext
 
-solveInteractive' :: IO ()
-solveInteractive' = do
+solveInteractive' :: Context -> IO ()
+solveInteractive' context = do
     putStr ">  "
     hFlush stdout
     input <- getLine
-    let output = solve input
+    let (context', output) = solve context input
     putStrLn $ "=> " ++ output
-    solveInteractive'
+    solveInteractive' context'

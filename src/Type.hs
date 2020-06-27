@@ -3,10 +3,11 @@ module Type (
     Operator(..),
     Expression(..),
     Accuracy(..),
+    Context(..),
+    defaultContext,
 ) where
 
 data Operator =
-
     Addition |
     Subtraction |
     Multiplication |
@@ -21,7 +22,9 @@ data Operator =
 
     Sine |
     Cosine |
-    Tangent
+    Tangent |
+
+    Approximate
 
     deriving (Eq, Show)
 
@@ -42,3 +45,10 @@ data Expression =
     deriving (Eq, Show)
 
 type Operand = Expression
+
+data Context = Context {
+    approximate :: Bool
+} deriving (Eq, Show)
+
+defaultContext :: Context
+defaultContext = Context {approximate = False}

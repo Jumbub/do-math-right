@@ -9,6 +9,7 @@ import Data.Either
 import Solve
 import Operand
 import Operator
+import Type
 
 operationTests = [
         (
@@ -36,16 +37,21 @@ solveTests = [
         ("1", "1")
     ]
 
-operandsToString :: [Operand] -> String
-operandsToString operands = show (map operandToString operands)
+operandsToString :: Context -> [Operand] -> String
+operandsToString context operands = show (map (operandToString context) operands)
 
 solveSpec :: IO ()
 solveSpec = hspec $ do
-    describe "can perform operations" $ do
+    let ctx = defaultContext
+    describe "can perform operations (default context)" $ do
         forM_ operationTests $ \((operands, operation), output) -> do
-            it ("'" ++ operandsToString operands ++ ", " ++ (show operation) ++ "'") $ do
-                performOperation operation operands `shouldBe` output
-    describe "can solve expressions" $ do
+            it ("'" ++ operandsToString ctx operands ++ ", " ++ (show operation) ++ "'") $ do
+                let (ctx', actual) = performOperation ctx operation operands
+                actual `shouldBe` output
+                ctx' `shouldBe` ctx
+    describe "can solve expressions (default context)" $ do
         forM_ solveTests $ \(input, output) -> do
             it (input ++ " => " ++ output) $ do
-                solve input `shouldBe` output
+                let (ctx', actual) = solve ctx input
+                actual `shouldBe` output
+                ctx' `shouldBe` ctx

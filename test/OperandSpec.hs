@@ -8,6 +8,7 @@ import Data.Maybe
 import Data.Either
 
 import Operand
+import Type
 
 stringify = [
         -- (((2,2), ("x", "x")), "2x/2x"),
@@ -28,4 +29,4 @@ operandSpec = hspec $ do
     describe "can convert operand to string" $ do
         forM_ stringify $ \(input, output) -> do
             it (show input ++ " => " ++ output) $ do
-                (operandToString input) `shouldBe` output
+                operandToString defaultContext input `shouldBe` output

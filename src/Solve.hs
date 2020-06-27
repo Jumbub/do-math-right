@@ -11,33 +11,35 @@ import Data.Either
 import Parse
 import Operator
 import Operand
+import Type
 
 -- Solve user input!
 
-solve :: String -> String
-solve input = solvedAsString
+solve :: Context -> String -> (Context, String)
+solve ctx input = (ctx', operandToString ctx' output)
     where
-        solvedAsString = operandToString solved
-        solved = solve' parsed [] []
-        parsed = parse input
+        (ctx', output) = solve' ctx (parse input) [] []
 
-solve' :: [Either Operand Operator] -> [Operand] -> [Operator] -> Operand
-solve' terms operands operators
+solve' :: Context -> [Either Operand Operator] -> [Operand] -> [Operator] -> (Context, Operand)
+solve' ctx terms operands operators
     | null terms && null operators && null operands = error "No resulting operands!"
     | null terms && null operators && length operands > 1 = error "Too many resulting operands!"
-    | null terms && null operators = head operands
-    | null terms = solve' [] (performOperation (head operators) operands) (tail operators)
-    | isRightParentheses && ((head operators) == LeftParentheses) = solve' (tail terms) operands (tail operators)
-    | isRightParentheses = solve' terms (performOperation (head operators) operands) (tail operators)
-    | isOperand = solve' (tail terms) (operand : operands) operators
-    | useOperatorsInStack = solve' terms (performOperation (head operators) operands) (tail operators)
-    | otherwise = solve' (tail terms) operands (operator : operators)
+    | null terms && null operators = (ctx, head operands)
+    | null terms = doOperationFromStack
+    | isRightParentheses && nextOnStackLeftParentheses = solve' ctx (tail terms) operands (tail operators)
+    | isRightParentheses = doOperationFromStack
+    | isOperand = solve' ctx (tail terms) (operand : operands) operators
+    | useOperatorsInStack = doOperationFromStack
+    | otherwise = solve' ctx (tail terms) operands (operator : operators)
     where
+        doOperationFromStack = solve' ctx' terms operands' (tail operators)
+        (ctx', operands') = performOperation ctx (head operators) operands
         useOperatorsInStack = if (null operators || ((head operators) == LeftParentheses))
             then False
             else (operatorPrecedence operator) < (operatorPrecedence (head operators))
         term = head terms
         isRightParentheses = isOperator && operator == RightParentheses
+        nextOnStackLeftParentheses = (head operators) == LeftParentheses
         isOperand = isLeft term
         operand = fromLeft (num 0) term
         isOperator = isRight term
@@ -46,11 +48,12 @@ solve' terms operands operators
 
 -- Perform an operation on the operand stack
 
-performOperation ::  Operator -> [Operand] -> [Operand]
-performOperation operation operands
+performOperation ::  Context -> Operator -> [Operand] -> (Context, [Operand])
+performOperation ctx operation operands
     | notEnoughOperands = error "Not enough operands to perform operation!"
-    | otherwise = (function arguments) ++ (drop numArguments operands)
+    | otherwise = (ctx', arguments' ++ drop numArguments operands)
     where
+        (ctx', arguments') = function (ctx, arguments)
         numArguments = operatorArguments operation
         arguments = take numArguments operands
         notEnoughOperands = length arguments /= numArguments

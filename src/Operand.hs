@@ -23,8 +23,8 @@ stringToOperand string
         number = readMaybe string :: Maybe Int
         isVariable = length string == 1 && isLower (head string)
 
-operandToString :: Operand -> String
-operandToString (Fraction (num, den, precision))
+operandToString :: Context -> Operand -> String
+operandToString ctx (Fraction (num, den, precision))
     | isDecimal = decimalString
     | otherwise = show num ++ "/" ++ show den
     where
@@ -33,8 +33,8 @@ operandToString (Fraction (num, den, precision))
         decimal = fractionToDecimal num den 10
         isOne = num == den && num == 1
         decimalString = decimalToString (fromJust decimal)
-operandToString (Variable var) = [var]
-operandToString (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
+operandToString ctx (Variable var) = [var]
+operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
 
 fractionToDecimal :: Int -> Int -> Int -> Maybe (Int, [Int])
 fractionToDecimal num 0 precision = error "Cannot divide by 0!"
