@@ -7,6 +7,8 @@ module Operator (
     operatorToString
 ) where
 
+import Data.List
+
 import Operand
 import Utility
 import Type
@@ -41,7 +43,7 @@ stringToOperator operator = case operator of
     "APPROXIMATE" -> Just Approximate
     _ -> Nothing
 
-operatorPrecedence :: Operator -> Int
+operatorPrecedence :: Operator -> Integer
 operatorPrecedence operator = case operator of
     Addition -> 100
     Approximate -> 50
@@ -57,7 +59,7 @@ operatorPrecedence operator = case operator of
     Subtraction -> 100
     Tangent -> 300
 
-operatorArguments :: Operator -> Int
+operatorArguments :: Operator -> Integer
 operatorArguments operator = case operator of
     Addition -> 2
     Approximate -> 0
@@ -134,7 +136,7 @@ divide [(Fraction (bNum, bDen, aAcc)), (Fraction (aNum, aDen, bAcc))] = [(Fracti
 decimal :: [Operand] -> [Operand]
 decimal [(Fraction (b, 1, bAcc)), (Fraction (a, 1, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
     where
-        decimalPlaces = length (show b)
+        decimalPlaces = genericLength (show b)
         numerator = (a * decimalPlaces) + b
         denominator = 10 ^ decimalPlaces
 

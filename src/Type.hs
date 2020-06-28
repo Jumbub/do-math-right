@@ -4,6 +4,7 @@ module Type (
     Expression(..),
     Accuracy(..),
     Context(..),
+    Fraction,
     defaultContext,
     approximate,
 ) where
@@ -29,14 +30,14 @@ data Operator =
 
     deriving (Eq, Show)
 
-type SimpleFraction = (Int, Int)
+type SimpleFraction = (Integer, Integer)
 
 data Accuracy =
     Perfect |
     PlusOrMinus SimpleFraction
     deriving (Eq, Show)
 
-type Fraction = (Int, Int, Accuracy)
+type Fraction = (Integer, Integer, Accuracy)
 type Variable = Char
 
 data Expression =

@@ -7,6 +7,7 @@ import Data.Char
 import Data.Maybe
 import Text.Read
 import Data.Either
+import Data.List
 
 import Parse
 import Operator
@@ -51,10 +52,10 @@ solve' ctx terms operands operators
 performOperation ::  Context -> Operator -> [Operand] -> (Context, [Operand])
 performOperation ctx operation operands
     | notEnoughOperands = error "Not enough operands to perform operation!"
-    | otherwise = (ctx', arguments' ++ drop numArguments operands)
+    | otherwise = (ctx', arguments' ++ genericDrop numArguments operands)
     where
         (ctx', arguments') = function (ctx, arguments)
         numArguments = operatorArguments operation
-        arguments = take numArguments operands
-        notEnoughOperands = length arguments /= numArguments
+        arguments = genericTake numArguments operands
+        notEnoughOperands = genericLength arguments /= numArguments
         function = operatorFunction operation

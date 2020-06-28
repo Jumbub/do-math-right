@@ -11,6 +11,7 @@ import Data.Maybe
 import Data.Char
 import Data.List
 import Text.Read
+import Data.List
 
 import Type
 import Utility
@@ -21,7 +22,7 @@ stringToOperand string
     | isVariable = Just $ Variable (head string)
     | otherwise = Nothing
     where
-        number = readMaybe string :: Maybe Int
+        number = readMaybe string :: Maybe Integer
         isVariable = length string == 1 && isLower (head string)
 
 operandToString :: Context -> Operand -> String
@@ -33,28 +34,28 @@ operandToString Context {accuracy=Perfect} (Fraction (num, den, precision))
 operandToString Context {accuracy=PlusOrMinus dpAccuracy} (Fraction (num, den, precision))
     = decimalToString $ fractionToDecimal (decimalPlaces dpAccuracy) num den
 
-fractionToDecimal :: Int -> Int -> Int -> (Int, [Int])
+fractionToDecimal :: Integer -> Integer -> Integer -> (Integer, [Integer])
 fractionToDecimal _ _ 0 = error "Cannot divide by 0!"
 fractionToDecimal acc num den = (div num den, (fractionToDecimal' acc den (rem num den) []))
 
-fractionToDecimal' :: Int -> Int -> Int -> [Int] -> [Int]
+fractionToDecimal' :: Integer -> Integer -> Integer -> [Integer] -> [Integer]
 fractionToDecimal' precision divisor remainder decimals
     | maxPrecision = []
     | noRemainder = decimals
     | otherwise = fractionToDecimal' precision divisor (rem numberToDivide divisor) (decimals ++ [div numberToDivide divisor])
     where
         noRemainder = remainder == 0
-        maxPrecision = length decimals == precision
+        maxPrecision = (genericLength decimals) == precision
         numberToDivide = 10 * remainder
 
-decimalToString :: (Int, [Int]) -> String
+decimalToString :: (Integer, [Integer]) -> String
 decimalToString (whole, []) = show whole
 decimalToString (whole, decimals) = (show whole) ++ "." ++ (concat $ map show decimals)
 
-num :: Int -> Operand
+num :: Integer -> Operand
 num number = Fraction (number, 1, Perfect)
 
-frac :: Int -> Int -> Operand
+frac :: Integer -> Integer -> Operand
 frac num den = Fraction (num, den, Perfect)
 
 var :: Char -> Operand
