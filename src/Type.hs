@@ -49,11 +49,13 @@ data Expression =
 type Operand = Expression
 
 data Context = Context {
-    accuracy :: Accuracy
+    accuracy :: Accuracy,
+    maxDecimalCalculations :: Integer,
+    maxDisplayedDecimals :: Integer
 } deriving (Eq, Show)
 
 defaultContext :: Context
-defaultContext = Context {accuracy = Perfect}
+defaultContext = Context {accuracy = Perfect, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
 
 approximate :: Context -> Bool
 approximate Context {accuracy = Perfect} = False

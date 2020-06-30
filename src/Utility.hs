@@ -23,4 +23,4 @@ decimalPlaces :: (Integer, Integer) -> Integer
 decimalPlaces (num, den) = digits den - digits num
 
 digits :: Integer -> Integer
-digits x = round $ logBase 10.0 (fromIntegral x)
+digits x = 1 + (round $ logBase 10.0 (fromIntegral x))
