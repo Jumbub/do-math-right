@@ -15,6 +15,7 @@ import Data.List
 
 import Type
 import Utility
+import Decimal
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand string
@@ -28,29 +29,16 @@ stringToOperand string
 operandToString :: Context -> Operand -> String
 operandToString ctx (Variable var) = [var]
 operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
-operandToString Context {fractionResult=True} (Fraction (num, den, precision))
+operandToString Context {fractionResult=True} (Fraction (num, den, Exact))
     | num == den || den == 1 = show num
     | otherwise = show num ++ "/" ++ show den
-operandToString Context {Type.decimalPlaces=dp} (Fraction (num, den, precision))
-    = decimalToString $ fractionToDecimal dp num den
-
-fractionToDecimal :: Integer -> Integer -> Integer -> (Integer, [Integer])
-fractionToDecimal _ _ 0 = error "Cannot divide by 0!"
-fractionToDecimal acc num den = (div num den, (fractionToDecimal' acc den (rem num den) []))
-
-fractionToDecimal' :: Integer -> Integer -> Integer -> [Integer] -> [Integer]
-fractionToDecimal' precision divisor remainder decimals
-    | maxPrecision = []
-    | noRemainder = decimals
-    | otherwise = fractionToDecimal' precision divisor (rem numberToDivide divisor) (decimals ++ [div numberToDivide divisor])
+operandToString Context {fractionResult=True} (Fraction (num, den, PlusOrMinus (accNum, accDen)))
+    | num == den || den == 1 = show num ++ innaccuracy
+    | otherwise = show num ++ "/" ++ show den ++ innaccuracy
     where
-        noRemainder = remainder == 0
-        maxPrecision = (genericLength decimals) == precision
-        numberToDivide = 10 * remainder
-
-decimalToString :: (Integer, [Integer]) -> String
-decimalToString (whole, []) = show whole
-decimalToString (whole, decimals) = (show whole) ++ "." ++ (concat $ map show decimals)
+        innaccuracy = " ± " ++ show accNum ++ "/" ++ show accDen
+operandToString ctx (Fraction (num, den, accuracy))
+    = decimalToString $ fractionToDecimal ctx (num, den, accuracy)
 
 num :: Integer -> Operand
 num number = Fraction (number, 1, Exact)

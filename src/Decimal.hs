@@ -72,11 +72,11 @@ findRecurring recs decs prev
 
 findPlusOrMinus :: Integer -> Integer -> [Integer] -> Maybe Decimal
 findPlusOrMinus whole precision decimals
-    | isPlusOrMinus = Just $ PlusOrMinusDecimal (whole, decimals', (1, 10 ^ precision))
+    | isPlusOrMinus = Just $ PlusOrMinusDecimal (whole, decimals', (1, (10 ^ precision) * 2))
     | otherwise = Nothing
     where
         isPlusOrMinus = genericLength decimals > precision
-        decimals' = Data.List.take (fromIntegral precision) decimals
+        decimals' = Data.List.take (fromIntegral precision) decimals ++ [5]
 
 -- addToStates :: Integer -> Integer -> [DivState] -> [DivState]
 -- addToStates cur rem states =
