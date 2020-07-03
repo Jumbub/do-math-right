@@ -92,16 +92,12 @@ operandless :: (Context -> Context) -> ((Context, [Operand]) -> (Context, [Opera
 operandless operation = \(ctx, operands) -> (operation ctx, operands)
 
 simplifyable :: ((Context, [Operand]) -> (Context, [Operand])) -> ((Context, [Operand]) -> (Context, [Operand]))
-simplifyable operation = \(ctx, operands) -> (simplifyFraction $ operation (ctx, operands))
+simplifyable operation = \(ctx, operands) -> (Operator.simplifyFraction $ operation (ctx, operands))
 
 simplifyFraction :: (Context, [Operand]) -> (Context, [Operand])
 simplifyFraction (ctx, [Fraction (num, den, acc)]) = (ctx, [Fraction (numerator, denominator, acc)])
     where
-        commonDen = gcd num den
-        numerator = num `div` commonDen * flip
-        denominator = den `div` commonDen * flip
-        flip = if (num < 0 && den < 0) || (den < 0 && num >= 0) then -1 else 1
-
+        (numerator, denominator) = Utility.simplifyFraction (num, den)
 
 noOp :: [Operand] -> [Operand]
 noOp input = input

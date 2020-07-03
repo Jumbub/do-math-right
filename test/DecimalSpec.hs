@@ -11,13 +11,13 @@ import Decimal
 import Type
 
 fractionToDecimalTests = [
-        -- (PlusOrMinusDecimal (12, [34], (1, 1000))),
-        -- (PlusOrMinusDecimal (12, [], (1, 1000))),
-        -- (RecurringDecimal (12, [34], [])),
-        -- (RecurringDecimal (12, [34], [56])),
-        -- (RecurringDecimal (12, [], [34])),
-        -- (RecurringDecimal (12, [34], [])),
-        -- (RecurringDecimal (12, [], [])),
+        ((1, 1000000, PlusOrMinus (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (3, 500000))),
+        ((1, 1000000, PlusOrMinus (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (200001, 200000))),
+        ((1, 100000, PlusOrMinus (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,1], (1, 1))),
+        ((1, 1, PlusOrMinus (1, 1)), PlusOrMinusDecimal (1, [], (1, 1))),
+        ((1, 128, Perfect), PlusOrMinusDecimal (0, [0,0,7,8,1], (1, 100000))),
+        ((1, 21, Perfect), PlusOrMinusDecimal (0, [0,4,7,6,1], (1, 100000))),
+        ((1, 1000000, Perfect), PlusOrMinusDecimal (0, [0,0,0,0,0], (1, 100000))),
         ((7, 12, Perfect), RecurringDecimal (0, [5,8], [3])),
         ((9, 11, Perfect), RecurringDecimal (0, [], [8,1])),
         ((10, 3, Perfect), RecurringDecimal (3, [], [3])),
@@ -42,7 +42,7 @@ decimalToStringTests = [
 
 decimalSpec :: IO ()
 decimalSpec = hspec $ do
-    let context = defaultContext
+    let context = defaultContext {accuracy = Perfect, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
     describe "fraction to decimal" $ do
         forM_ fractionToDecimalTests $ \(input, output) -> do
             it (show input ++ " => " ++ show output) $ do

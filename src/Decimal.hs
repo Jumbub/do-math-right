@@ -10,6 +10,7 @@ import Data.Maybe
 import Debug.Trace
 
 import Type
+import Utility
 
 data Decimal =
     PerfectDecimal (Integer, [Integer]) |
@@ -19,21 +20,30 @@ data Decimal =
 
 fractionToDecimal :: Context -> Fraction -> Decimal
 fractionToDecimal _ (_, 0, _) = error "Cannot divide by 0!"
-fractionToDecimal context (numerator, denominator, Perfect)
-    | isJust recurringPattern = RecurringDecimal (whole, beforeRecurring, theRecurring)
-    | otherwise = PerfectDecimal (whole, decimalsWithoutRems)
+fractionToDecimal context (numerator, denominator, accuracy)
+    | isMoreInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited ++ [5], innaccuracy)
+    | isInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, (accNum, accDen))
+    | isRecurringDecimal = RecurringDecimal (whole, beforeRecurring, theRecurring)
+    | isJust plusOrMinus = fromJust plusOrMinus
+    | otherwise = PerfectDecimal (whole, decimalsWithoutRemsLimited)
     where
+        isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
+        isInnaccurate = not $ isPerfectAccuracy accuracy
+        (accNum, accDen) = fromPlusOrMinus accuracy
+        innaccuracy = simplifyFraction $ Utility.addFraction (accNum, accDen) (5, 10 ^ (precision + 1))
         whole = numerator `div` denominator
         remainder = numerator `rem` denominator
-        precision = maxDecimalCalculations context
-        hiddenPrecision = maxDisplayedDecimals context
-        decimalsWithRems = findDecimalsWithRems hiddenPrecision denominator remainder []
+        precision = maxDisplayedDecimals context
+        hiddenPrecision = precision + 5
+        plusOrMinus = findPlusOrMinus whole precision decimalsWithoutRems
         recurringPattern = findRecurring Data.Map.empty decimalsWithRems []
-        (beforeRecurring, theRecurring) = fromJust recurringPattern
+        isRecurringDecimal = isJust recurringPattern && ((genericLength beforeRecurring + genericLength theRecurring) <= precision)
+        (beforeRecurring, theRecurring) = fromMaybe ([], []) recurringPattern
+        decimalsWithRems = findDecimalsWithRems hiddenPrecision denominator remainder []
         decimalsWithoutRems = Data.List.map (\(dec, rem) -> dec) decimalsWithRems
+        decimalsWithoutRemsLimited = Data.List.take (fromIntegral precision) decimalsWithoutRems
 
 findDecimalsWithRems :: Integer -> Integer -> Integer -> [(Integer, Integer)] -> [(Integer, Integer)]
-findDecimalsWithRems a b c d | trace (show (a, b, c, d)) False = undefined
 findDecimalsWithRems precision divisor lastRemainder decimals
     | maxPrecision || dividingZero = decimals
     | otherwise = findDecimalsWithRems precision divisor remainder (decimals ++ [(decimal, lastRemainder)])
@@ -48,7 +58,6 @@ findDecimalsWithRems precision divisor lastRemainder decimals
 type RecurringMap = Map (Integer, Integer) ([Integer], [Integer])
 
 findRecurring :: RecurringMap -> [(Integer, Integer)] -> [Integer] -> Maybe ([Integer], [Integer])
-findRecurring a b c | trace (show ("findRecurring", (a, b, c))) False = undefined
 findRecurring recs decs prev
     | Data.List.null decs = Nothing
     | noPattern = findRecurring recs'' (tail decs) (prev ++ [decimalValue])
@@ -60,6 +69,14 @@ findRecurring recs decs prev
         (decimalValue, _) = dec
         recs' = Data.Map.insert dec (prev, []) recs
         recs'' = Data.Map.map (\(prev, rec) -> (prev, rec ++ [decimalValue])) recs'
+
+findPlusOrMinus :: Integer -> Integer -> [Integer] -> Maybe Decimal
+findPlusOrMinus whole precision decimals
+    | isPlusOrMinus = Just $ PlusOrMinusDecimal (whole, decimals', (1, 10 ^ precision))
+    | otherwise = Nothing
+    where
+        isPlusOrMinus = genericLength decimals > precision
+        decimals' = Data.List.take (fromIntegral precision) decimals
 
 -- addToStates :: Integer -> Integer -> [DivState] -> [DivState]
 -- addToStates cur rem states =
