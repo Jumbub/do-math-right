@@ -34,14 +34,12 @@ Did this calculator just ignore me?!
 
 <br>
 
-##
-
 
 ## How calculating is done correctly,
 
 #### Don't represent numbers as floats, (duh)
 
-##### Store numbers as fractions `numberator / denominator`
+##### Store numbers as fractions `numerator / denominator`
 
 An expression of `3 + 2` is calculated as `(3/1) + (2/1)`
 
@@ -65,14 +63,12 @@ An expression such as `3 + 2` will have a `exact` accuracy because both operands
 
 An expression such as `1 / (10^10)` will not have an `exact` accuracy, because although all numbers and operations in this expression _can_ produce a rational number, in this case the decimal conversion of this number will be inexact. This is because the decimal conversion only generates decimals to the Nth decimal point, if an exact or recurring decimal is not found before then we create a documented approximation for the rest of the decimals. (e.g. where the decimal calculation limit is 5, `1 / (10^100) = 0.000005 ± 0.000005`)
 
-All expressions containing irrational numbers like `pi`, or functional approximations like `sin` generate values with an `accuracy`
+All expressions containing irrational numbers like `pi`, or functional approximations like `sin` are going to produce results with inexact `accuracy`, because those numbers cannot be evaluated exactly.
 
 <br>
 <br>
 
-🚧 Information beyond this point is theoretical 🚧
-
-<br>
+🚧 Details beyond this point are not implemented 🚧
 
 #### Replay operations to achieve higher accuracies,
 
