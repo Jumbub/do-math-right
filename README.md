@@ -1,8 +1,43 @@
-# 🖩 do-math
+# 🖩 do-math-right
 
-Solving mathemetical queries without any implicit floating point innacuracies.
+Solve expressions _without_ <strong>floating point innacuracies</strong> or <strong> implicit approximations</strong>.
 
-## How it's achieved,
+<br>
+
+## Calculators are liars
+
+<br>
+
+##### They lie about the accuracy of irrational numbers!
+
+Calculate ["pi"](https://www.google.com/search?q=pi), you will be told that the answer is exactly `3.14159265359`
+
+But, everyone knows that Pi has more than 11 decimal places?!
+
+<br>
+
+##### They even lie about rational numbers!
+
+Calculate ["10 / 3"](https://www.google.com/search?q=10/3), you will be told that the answer is exactly `3.33333333333`
+
+But, most people know that 10 divided by 3 will produce a decimal with a 3 that recurs forever?!
+
+<br>
+
+##### Heck, they even lie about whole numbers!
+
+Calculate ["10^20 + 1"](https://www.google.com/search?q=10/3), you will be told that the answer is exactly `1e+20`
+
+But, `1e+20 = 10^20`. Where did my `+ 1` go?
+
+Did this calculator just ignore me?!
+
+<br>
+
+##
+
+
+## How calculating is done correctly,
 
 #### Don't represent numbers as floats, (duh)
 
@@ -28,9 +63,14 @@ Evaluating the decimal value of a fraction _can_ produce innacuracies, therefore
 
 An expression such as `3 + 2` will have a `exact` accuracy because both operands, `3` and `2` are rational numbers, and the operator `+` produces an exact result.
 
-An expression such as `1 / (10^10000)` will not have an `exact` accuracy, because although all numbers and operations in this expression _can_ produce a rational number, the decimal conversion of this number will not be exact.
+An expression such as `1 / (10^10)` will not have an `exact` accuracy, because although all numbers and operations in this expression _can_ produce a rational number, in this case the decimal conversion of this number will be inexact. This is because the decimal conversion only generates decimals to the Nth decimal point, if an exact or recurring decimal is not found before then we create a documented approximation for the rest of the decimals. (e.g. where the decimal calculation limit is 5, `1 / (10^100) = 0.000005 ± 0.000005`)
 
 All expressions containing irrational numbers like `pi`, or functional approximations like `sin` generate values with an `accuracy`
+
+<br>
+<br>
+
+🚧 Information beyond this point is theoretical 🚧
 
 <br>
 
