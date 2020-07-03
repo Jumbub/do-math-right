@@ -3,7 +3,7 @@ module Type (
     Operator(..),
     Expression(..),
     Accuracy(..),
-    isPerfectAccuracy,
+    isExactAccuracy,
     fromPlusOrMinus,
     Context(..),
     Fraction,
@@ -34,16 +34,16 @@ data Operator =
 
 type SimpleFraction = (Integer, Integer)
 
-isPerfectAccuracy :: Accuracy -> Bool
-isPerfectAccuracy Perfect = True
-isPerfectAccuracy (PlusOrMinus _) = False
+isExactAccuracy :: Accuracy -> Bool
+isExactAccuracy Exact = True
+isExactAccuracy (PlusOrMinus _) = False
 
 fromPlusOrMinus :: Accuracy -> SimpleFraction
 fromPlusOrMinus (PlusOrMinus fraction) = fraction
 fromPlusOrMinus _ = error "Nu-uh."
 
 data Accuracy =
-    Perfect |
+    Exact |
     PlusOrMinus SimpleFraction
     deriving (Eq, Show)
 
@@ -65,8 +65,8 @@ data Context = Context {
 } deriving (Eq, Show)
 
 defaultContext :: Context
-defaultContext = Context {accuracy = Perfect, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
+defaultContext = Context {accuracy = Exact, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
 
 approximate :: Context -> Bool
-approximate Context {accuracy = Perfect} = False
+approximate Context {accuracy = Exact} = False
 approximate _ = True

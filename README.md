@@ -10,13 +10,15 @@ Solving mathemetical queries without any implicit floating point innacuracies.
 
 An expression of `3 + 2` is calculated as `(3/1) + (2/1)`
 
-A user input of `0.2` is converted to a fractional representation `2/10`
+A user input of `0.2` is converted to a fractional representation `(2/10)`
 
-The fractional representation of any number `n`, with `d` decimal points is `(n * 10^d) / (10^d)`
+The fractional representation of any number `n`, with `d` decimal points is converted using `(n * 10^d) / (10^d)`.
 
 ##### Only create decimal numbers at display time
 
 The decimal value of an expression is only evaluated for the sake of human readability
+
+Evaluating the decimal value of a fraction _can_ produce innacuracies, therefore if we delay production of that value, we can limit the spread of that innaccuracy.
 
 <br>
 
@@ -24,9 +26,9 @@ The decimal value of an expression is only evaluated for the sake of human reada
 
 ##### All results have an associated `accuracy`
 
-An expression such as `3 + 2` will have an accuracy of `perfect` because the `+` operator does not produce any innacuracies
+An expression such as `3 + 2` will have a `exact` accuracy because both operands, `3` and `2` are rational numbers, and the operator `+` produces an exact result.
 
-An expression such as `10 / 3` will have an accuracy of `d` where `d` is the decimal point at which the division operation stopped
+An expression such as `1 / (10^10000)` will not have an `exact` accuracy, because although all numbers and operations in this expression _can_ produce a rational number, the decimal conversion of this number will not be exact.
 
 All expressions containing irrational numbers like `pi`, or functional approximations like `sin` generate values with an `accuracy`
 

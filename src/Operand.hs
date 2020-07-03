@@ -18,7 +18,7 @@ import Utility
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand string
-    | isJust number = Just $ Fraction (fromJust number, 1, Perfect)
+    | isJust number = Just $ Fraction (fromJust number, 1, Exact)
     | isVariable = Just $ Variable (head string)
     | otherwise = Nothing
     where
@@ -28,7 +28,7 @@ stringToOperand string
 operandToString :: Context -> Operand -> String
 operandToString ctx (Variable var) = [var]
 operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
-operandToString Context {accuracy=Perfect} (Fraction (num, den, precision))
+operandToString Context {accuracy=Exact} (Fraction (num, den, precision))
     | num == den || den == 1 = show num
     | otherwise = show num ++ "/" ++ show den
 operandToString Context {accuracy=PlusOrMinus dpAccuracy} (Fraction (num, den, precision))
@@ -53,10 +53,10 @@ decimalToString (whole, []) = show whole
 decimalToString (whole, decimals) = (show whole) ++ "." ++ (concat $ map show decimals)
 
 num :: Integer -> Operand
-num number = Fraction (number, 1, Perfect)
+num number = Fraction (number, 1, Exact)
 
 frac :: Integer -> Integer -> Operand
-frac num den = Fraction (num, den, Perfect)
+frac num den = Fraction (num, den, Exact)
 
 var :: Char -> Operand
 var letter = Variable letter

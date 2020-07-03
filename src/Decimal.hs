@@ -13,7 +13,7 @@ import Type
 import Utility
 
 data Decimal =
-    PerfectDecimal (Integer, [Integer]) |
+    ExactDecimal (Integer, [Integer]) |
     RecurringDecimal (Integer, [Integer], [Integer]) |
     PlusOrMinusDecimal (Integer, [Integer], (Integer, Integer))
     deriving (Show, Eq)
@@ -25,10 +25,10 @@ fractionToDecimal context (numerator, denominator, accuracy)
     | isInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, (accNum, accDen))
     | isRecurringDecimal = RecurringDecimal (whole, beforeRecurring, theRecurring)
     | isJust plusOrMinus = fromJust plusOrMinus
-    | otherwise = PerfectDecimal (whole, decimalsWithoutRemsLimited)
+    | otherwise = ExactDecimal (whole, decimalsWithoutRemsLimited)
     where
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
-        isInnaccurate = not $ isPerfectAccuracy accuracy
+        isInnaccurate = not $ isExactAccuracy accuracy
         (accNum, accDen) = fromPlusOrMinus accuracy
         innaccuracy = simplifyFraction $ Utility.addFraction (accNum, accDen) (5, 10 ^ (precision + 1))
         whole = numerator `div` denominator
@@ -104,12 +104,12 @@ digitsToString :: [Integer] -> String
 digitsToString digits = concat $ Data.List.map show digits
 
 decimalToString :: Decimal -> String
-decimalToString (PerfectDecimal (whole, [])) = show whole
-decimalToString (PerfectDecimal (whole, decimals)) = show whole ++ "." ++ digitsToString decimals
-decimalToString (RecurringDecimal (whole, decimals, [])) = decimalToString (PerfectDecimal (whole, decimals))
+decimalToString (ExactDecimal (whole, [])) = show whole
+decimalToString (ExactDecimal (whole, decimals)) = show whole ++ "." ++ digitsToString decimals
+decimalToString (RecurringDecimal (whole, decimals, [])) = decimalToString (ExactDecimal (whole, decimals))
 decimalToString (RecurringDecimal (whole, [], recurring))
-    = decimalToString (PerfectDecimal (whole, [])) ++ ".(" ++ digitsToString recurring ++ ")"
+    = decimalToString (ExactDecimal (whole, [])) ++ ".(" ++ digitsToString recurring ++ ")"
 decimalToString (RecurringDecimal (whole, decimals, recurring))
-    = decimalToString (PerfectDecimal (whole, decimals)) ++ "(" ++ digitsToString recurring ++ ")"
+    = decimalToString (ExactDecimal (whole, decimals)) ++ "(" ++ digitsToString recurring ++ ")"
 decimalToString (PlusOrMinusDecimal (whole, decimals, (numerator, denominator)))
-    = decimalToString (PerfectDecimal (whole, decimals)) ++ " ± " ++ show numerator ++ "/" ++ show denominator
+    = decimalToString (ExactDecimal (whole, decimals)) ++ " ± " ++ show numerator ++ "/" ++ show denominator

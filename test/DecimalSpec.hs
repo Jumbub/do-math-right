@@ -15,17 +15,17 @@ fractionToDecimalTests = [
         ((1, 1000000, PlusOrMinus (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (200001, 200000))),
         ((1, 100000, PlusOrMinus (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,1], (1, 1))),
         ((1, 1, PlusOrMinus (1, 1)), PlusOrMinusDecimal (1, [], (1, 1))),
-        ((1, 128, Perfect), PlusOrMinusDecimal (0, [0,0,7,8,1], (1, 100000))),
-        ((1, 21, Perfect), PlusOrMinusDecimal (0, [0,4,7,6,1], (1, 100000))),
-        ((1, 1000000, Perfect), PlusOrMinusDecimal (0, [0,0,0,0,0], (1, 100000))),
-        ((7, 12, Perfect), RecurringDecimal (0, [5,8], [3])),
-        ((9, 11, Perfect), RecurringDecimal (0, [], [8,1])),
-        ((10, 3, Perfect), RecurringDecimal (3, [], [3])),
-        ((4, 2, Perfect), PerfectDecimal (2, [])),
-        ((2, 2, Perfect), PerfectDecimal (1, [])),
-        ((1, 4, Perfect), PerfectDecimal (0, [2,5])),
-        ((1, 2, Perfect), PerfectDecimal (0, [5])),
-        ((1, 1, Perfect), PerfectDecimal (1, []))
+        ((1, 128, Exact), PlusOrMinusDecimal (0, [0,0,7,8,1], (1, 100000))),
+        ((1, 21, Exact), PlusOrMinusDecimal (0, [0,4,7,6,1], (1, 100000))),
+        ((1, 1000000, Exact), PlusOrMinusDecimal (0, [0,0,0,0,0], (1, 100000))),
+        ((7, 12, Exact), RecurringDecimal (0, [5,8], [3])),
+        ((9, 11, Exact), RecurringDecimal (0, [], [8,1])),
+        ((10, 3, Exact), RecurringDecimal (3, [], [3])),
+        ((4, 2, Exact), ExactDecimal (2, [])),
+        ((2, 2, Exact), ExactDecimal (1, [])),
+        ((1, 4, Exact), ExactDecimal (0, [2,5])),
+        ((1, 2, Exact), ExactDecimal (0, [5])),
+        ((1, 1, Exact), ExactDecimal (1, []))
     ]
 
 decimalToStringTests = [
@@ -36,13 +36,13 @@ decimalToStringTests = [
         (RecurringDecimal (12, [], [34]), "12.(34)"),
         (RecurringDecimal (12, [34], []), "12.34"),
         (RecurringDecimal (12, [], []), "12"),
-        (PerfectDecimal (12, [34]), "12.34"),
-        (PerfectDecimal (12, []), "12")
+        (ExactDecimal (12, [34]), "12.34"),
+        (ExactDecimal (12, []), "12")
     ]
 
 decimalSpec :: IO ()
 decimalSpec = hspec $ do
-    let context = defaultContext {accuracy = Perfect, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
+    let context = defaultContext {accuracy = Exact, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
     describe "fraction to decimal" $ do
         forM_ fractionToDecimalTests $ \(input, output) -> do
             it (show input ++ " => " ++ show output) $ do
