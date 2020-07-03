@@ -18,23 +18,32 @@ operationTests = [
         )
     ]
 
+fracCtx = defaultContext { fractionResult = True }
+decCtx = defaultContext { fractionResult = False, decimalPlaces = 5 }
+
+same :: String -> [(String, Context, String)]
+same input = [("as fraction", fracCtx, input), ("as decimal", decCtx, input)]
+
+diff :: String -> String -> [(String, Context, String)]
+diff a b = [("as fraction", fracCtx, a), ("as decimal", decCtx, b)]
+
 solveTests = [
-        ("xy", "xy"),
-        ("1-(-1)", "2"),
-        ("0.125 + 0.125", "1/4"),
-        ("0.124", "31/250"),
-        ("2+((4+8)*16/(32-64))", "-4"),
-        ("8*(4+2)", "48"),
-        ("(2+4)*8", "48"),
-        ("1+2-3*4/5", "3/5"),
-        ("8*4+2", "34"),
-        ("2+4*8", "34"),
-        ("2/10", "1/5"),
-        ("10/2", "5"),
-        ("2*3", "6"),
-        ("1-1", "0"),
-        ("1+1", "2"),
-        ("1", "1")
+        ("xy", same "xy"),
+        ("1-(-1)", same "2"),
+        ("0.125 + 0.125", diff "1/4" "0.25"),
+        ("0.124", diff "31/250" "0.124"),
+        ("2+((4+8)*16/(32-64))", same "-4"),
+        ("8*(4+2)", same "48"),
+        ("(2+4)*8", same "48"),
+        ("1+2-3*4/5", diff "3/5" "0.6"),
+        ("8*4+2", same "34"),
+        ("2+4*8", same "34"),
+        ("2/10", diff "1/5" "0.2"),
+        ("10/2", same "5"),
+        ("2*3", same "6"),
+        ("1-1", same "0"),
+        ("1+1", same "2"),
+        ("1", same "1")
     ]
 
 operandsToString :: Context -> [Operand] -> String
@@ -49,9 +58,10 @@ solveSpec = hspec $ do
                 let (ctx', actual) = performOperation ctx operation operands
                 actual `shouldBe` output
                 ctx' `shouldBe` ctx
-    describe "can solve expressions (default context)" $ do
-        forM_ solveTests $ \(input, output) -> do
-            it (input ++ " => " ++ output) $ do
-                let (ctx', actual) = solve ctx input
-                actual `shouldBe` output
-                ctx' `shouldBe` ctx
+    describe "can solve expressions" $ do
+        forM_ solveTests $ \(input, outputs) -> do
+            forM_ outputs $ \(label, ctx, output) -> do
+                it (input ++ " => " ++ output ++ " (" ++ label ++ ")") $ do
+                    let (ctx', actual) = solve ctx input
+                    actual `shouldBe` output
+                    ctx' `shouldBe` ctx

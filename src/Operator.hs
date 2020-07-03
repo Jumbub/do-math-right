@@ -140,4 +140,4 @@ negation :: [Operand] -> [Operand]
 negation [(Fraction (num, den, accuracy))] = [(Fraction (-num, den, accuracy))]
 
 approximate :: Context -> Context
-approximate ctx = ctx { Type.accuracy = Exact }
+approximate ctx = ctx { Type.fractionResult = False }

@@ -28,11 +28,11 @@ stringToOperand string
 operandToString :: Context -> Operand -> String
 operandToString ctx (Variable var) = [var]
 operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
-operandToString Context {accuracy=Exact} (Fraction (num, den, precision))
+operandToString Context {fractionResult=True} (Fraction (num, den, precision))
     | num == den || den == 1 = show num
     | otherwise = show num ++ "/" ++ show den
-operandToString Context {accuracy=PlusOrMinus dpAccuracy} (Fraction (num, den, precision))
-    = decimalToString $ fractionToDecimal (decimalPlaces dpAccuracy) num den
+operandToString Context {Type.decimalPlaces=dp} (Fraction (num, den, precision))
+    = decimalToString $ fractionToDecimal dp num den
 
 fractionToDecimal :: Integer -> Integer -> Integer -> (Integer, [Integer])
 fractionToDecimal _ _ 0 = error "Cannot divide by 0!"

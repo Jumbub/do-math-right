@@ -33,7 +33,7 @@ fractionToDecimal context (numerator, denominator, accuracy)
         innaccuracy = simplifyFraction $ Utility.addFraction (accNum, accDen) (5, 10 ^ (precision + 1))
         whole = numerator `div` denominator
         remainder = numerator `rem` denominator
-        precision = maxDisplayedDecimals context
+        precision = Type.decimalPlaces context
         hiddenPrecision = precision + 5
         plusOrMinus = findPlusOrMinus whole precision decimalsWithoutRems
         recurringPattern = findRecurring Data.Map.empty decimalsWithRems []

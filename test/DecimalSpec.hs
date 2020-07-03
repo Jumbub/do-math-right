@@ -42,7 +42,7 @@ decimalToStringTests = [
 
 decimalSpec :: IO ()
 decimalSpec = hspec $ do
-    let context = defaultContext {accuracy = Exact, maxDecimalCalculations = 10, maxDisplayedDecimals = 5}
+    let context = defaultContext {fractionResult = False, decimalPlaces = 5}
     describe "fraction to decimal" $ do
         forM_ fractionToDecimalTests $ \(input, output) -> do
             it (show input ++ " => " ++ show output) $ do

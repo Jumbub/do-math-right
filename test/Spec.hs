@@ -9,5 +9,5 @@ main :: IO ()
 main = do
     parseSpec
     operandSpec
-    solveSpec
     decimalSpec
+    solveSpec
