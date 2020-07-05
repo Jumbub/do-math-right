@@ -130,7 +130,9 @@ Research:
 
 - Whitespace is ignored
 - Negative numbers `(-1)` must be wrapped in parentheses
-   - otherwise there is ambiguity: `-5^2` could be `-(5^2) = -25` or `(-5)^2 = -25`
+    - otherwise there is ambiguity: `-5^2` could be `-(5^2) = -25` or `(-5)^2 = -25`
+- Decimal numbers between `1` and `-1` must precede with `0`
+    - the number `.2` will fail to be parsed, where the number `0.2` will succeed
 - Variables `x` are all lower case
 - Constants `PI` are all upper case
 - Functions `POW(2, 10)` are all upper case, and arguments are wrapped in parentheses and comma seperated

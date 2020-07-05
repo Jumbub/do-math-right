@@ -1,6 +1,7 @@
 module Parse (
     parse,
     cleanInput,
+    groupSplits,
     splitInput,
     parseSplits,
     addImplicitOperations,
@@ -11,12 +12,13 @@ import Data.Bits
 import Data.Maybe
 import Text.Read
 import Data.Either
+import Debug.Trace
 
 import Operand
 import Operator
 
 parse :: String -> [Either Operand Operator]
-parse input = addImplicitOperations $ parseSplits $ splitInput $ cleanInput input
+parse input = addImplicitOperations $ parseSplits $ groupSplits $ splitInput $ cleanInput input
 
 -- Clean input!
 
@@ -41,15 +43,23 @@ seperateWhenDifferent isDifferent input = seperateWhenDifferent' isDifferent inp
 seperateWhenDifferent' :: (Char -> Char -> Bool) -> String -> Maybe Char -> String -> [String] -> [String]
 seperateWhenDifferent' _ [] _ [] splits = splits
 seperateWhenDifferent' _ [] _ group splits = splits ++ [group]
-seperateWhenDifferent' isDifferent remaining Nothing group splits = seperateWhenDifferent' isDifferent (tail remaining) (Just current) [current] []
+seperateWhenDifferent' isDifferent remaining Nothing group splits = diffResult
     where
         current = head remaining
+        diffResult = seperateWhenDifferent' isDifferent (tail remaining) (Just current) [current] []
 seperateWhenDifferent' isDifferent remaining (Just last) group splits
     | not $ isDifferent last current = seperateWhenDifferent' isDifferent nextRemaining (Just current) (group ++ [current]) splits
     | otherwise = seperateWhenDifferent' isDifferent nextRemaining (Just current) [current] (splits ++ [group])
     where
         current = head remaining
         nextRemaining = tail remaining
+
+-- Group splts!
+
+groupSplits :: [String] -> [String]
+groupSplits (a:".":b:rest) = [a ++ "." ++ b] ++ groupSplits rest
+groupSplits (x:rest) = (x:groupSplits rest)
+groupSplits [] = []
 
 -- Parse split input!
 

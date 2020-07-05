@@ -4,6 +4,7 @@ module Utility (
     decimalPlaces,
     addFraction,
     simplifyFraction,
+    removeTrailingZeros,
 ) where
 
 uniqueValues :: [Char] -> [Char]
@@ -40,3 +41,10 @@ simplifyFraction (num, den) = (numerator, denominator)
         numerator = num `div` commonDen * flip
         denominator = den `div` commonDen * flip
         flip = if (num < 0 && den < 0) || (den < 0 && num >= 0) then -1 else 1
+
+removeTrailingZeros :: String -> String
+removeTrailingZeros input = reverse (removeTrailingZeros' (reverse input))
+
+removeTrailingZeros' :: String -> String
+removeTrailingZeros' ('0' : rest) = removeTrailingZeros' rest
+removeTrailingZeros' rest = rest

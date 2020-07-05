@@ -18,9 +18,21 @@ stringify = [
         (num 1, "1")
     ]
 
+operandify :: [(String, Maybe Operand)]
+operandify = [
+        ("000123.000456000", Just $ frac 15375057 125000),
+        ("123.000456", Just $ frac 15375057 125000),
+        ("1.0", Just $ num 1),
+        ("1", Just $ num 1)
+    ]
+
 operandSpec :: IO ()
 operandSpec = hspec $ do
     describe "can convert operand to string" $ do
         forM_ stringify $ \(input, output) -> do
             it (show input ++ " => " ++ output) $ do
                 operandToString defaultContext input `shouldBe` output
+    describe "can convert string to operand" $ do
+        forM_ operandify $ \(input, output) -> do
+            it (input ++ " => " ++ show output) $ do
+                stringToOperand input `shouldBe` output

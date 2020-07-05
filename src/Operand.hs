@@ -12,19 +12,32 @@ import Data.Char
 import Data.List
 import Text.Read
 import Data.List
+import Data.List.Split
 
 import Type
 import Utility
 import Decimal
 
 stringToOperand :: String -> Maybe Operand
-stringToOperand string
-    | isJust number = Just $ Fraction (fromJust number, 1, Exact)
-    | isVariable = Just $ Variable (head string)
+stringToOperand input
+    | isJust fraction = Just $ Fraction (numerator, denominator, Exact)
+    | isVariable = Just $ Variable (head input)
     | otherwise = Nothing
     where
-        number = readMaybe string :: Maybe Integer
-        isVariable = length string == 1 && isLower (head string)
+        (numerator, denominator) = simplifyFraction $ fromJust fraction
+        fraction = stringToFraction input
+        isVariable = length input == 1 && isLower (head input)
+
+stringToFraction :: String -> Maybe (Integer, Integer)
+stringToFraction input
+    | isNothing entireWholeInt = Nothing
+    | otherwise = Just (numerator, denominator)
+    where
+        numerator = fromJust entireWholeInt
+        denominator = 10 ^ (length cleanDecimals)
+        entireWholeInt = readMaybe (whole ++ cleanDecimals) :: Maybe Integer
+        cleanDecimals = if null decimals then "" else (removeTrailingZeros $ head decimals)
+        (whole:decimals) = splitOn "." input
 
 operandToString :: Context -> Operand -> String
 operandToString ctx (Variable var) = [var]

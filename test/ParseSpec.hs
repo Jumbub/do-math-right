@@ -47,6 +47,17 @@ parseTests = [
         )
     ]
 
+groupTests = [
+        (
+            ["1", ".", "0", "y", "+", "SIN", "(", "2", "/", "32", ".", "54", ")", "/", "z"],
+            ["1.0", "y", "+", "SIN", "(", "2", "/", "32.54", ")", "/", "z"]
+        ),
+        (
+            ["1", ".", "0"],
+            ["1.0"]
+        )
+    ]
+
 implicitOperatorTests = [
         (
             "1+(-2)",
@@ -124,6 +135,10 @@ parseSpec = hspec $ do
         forM_ splitTests $ \(input, output) -> do
             it ("'" ++ input ++ "'") $ do
                 splitInput input `shouldBe` output
+    describe "can group required splits" $ do
+        forM_ groupTests $ \(input, output) -> do
+            it (concat $ input) $ do
+                groupSplits input `shouldBe` output
     describe "can parse the operands and operators" $ do
         forM_ parseTests $ \(input, output) -> do
             it ("'" ++ (concat input) ++ "'") $ do

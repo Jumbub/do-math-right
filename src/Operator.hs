@@ -20,7 +20,6 @@ operatorToString operator = case operator of
     Multiplication -> Just "*"
     Division -> Just "/"
     Power -> Just "^"
-    Decimal -> Just "."
     LeftParentheses -> Just "("
     RightParentheses -> Just ")"
     Sine -> Just "SIN"
@@ -33,7 +32,6 @@ stringToOperator operator = case operator of
     "-" -> Just Subtraction
     "*" -> Just Multiplication
     "/" -> Just Division
-    "." -> Just Decimal
     "^" -> Just Power
     "(" -> Just LeftParentheses
     ")" -> Just RightParentheses
@@ -48,7 +46,6 @@ operatorPrecedence operator = case operator of
     Addition -> 100
     Approximate -> 50
     Cosine -> 300
-    Decimal -> 900
     Division -> 200
     LeftParentheses -> 1000
     Multiplication -> 200
@@ -64,7 +61,6 @@ operatorArguments operator = case operator of
     Addition -> 2
     Approximate -> 0
     Cosine -> 1
-    Decimal -> 2
     Division -> 2
     LeftParentheses -> 0
     Multiplication -> 2
@@ -77,7 +73,6 @@ operatorArguments operator = case operator of
 operatorFunction :: Operator -> ((Context, [Operand]) -> (Context, [Operand]))
 operatorFunction operator = case operator of
     Addition -> simplifyable $ contextless add
-    Decimal -> simplifyable $ contextless decimal
     Division -> simplifyable $ contextless divide
     LeftParentheses -> contextless noOp
     Multiplication -> contextless multiply
@@ -128,13 +123,6 @@ divide [(Fraction (bNum, bDen, aAcc)), (Fraction (aNum, aDen, bAcc))] = [(Fracti
     where
         numerator = aNum * bDen
         denominator = aDen * bNum
-
-decimal :: [Operand] -> [Operand]
-decimal [(Fraction (b, 1, bAcc)), (Fraction (a, 1, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
-    where
-        decimalPlaces = genericLength (show b)
-        numerator = (a * decimalPlaces) + b
-        denominator = 10 ^ decimalPlaces
 
 negation :: [Operand] -> [Operand]
 negation [(Fraction (num, den, accuracy))] = [(Fraction (-num, den, accuracy))]
