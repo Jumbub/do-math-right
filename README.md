@@ -1,4 +1,4 @@
-# 🖩 do-math-right
+# `do-math-right`
 
 Solve expressions without any <strong>floating point innacuracies</strong> or <strong> implicit approximations</strong>.
 
@@ -34,38 +34,82 @@ Did this calculator just ignore me?!
 
 <br>
 
+## `do-math-right` is not a liar!
 
-## How calculating is done correctly,
+<br>
 
-#### Don't represent numbers as floats, (duh)
+##### Doing irrational numbers right!
 
-##### Store numbers as fractions `numerator / denominator`
+Calculating `PI` on _this_ app would result in something _similar_ to: `3.141595 ± 1/200000`
 
-An expression of `3 + 2` is calculated as `(3/1) + (2/1)`
+The symbol `±` denotes `plus or minus`, which is an explicit annotation of the accuracy of the result.
 
-A user input of `0.2` is converted to a fractional representation `(2/10)`
+Therefore if your project only requires an accuracy of `0.0001` units, you can use this result with confidence.
 
-The fractional representation of any number `n`, with `d` decimal points is converted using `(n * 10^d) / (10^d)`.
+> The accuracy level computed by do-math-right is defined by the user
 
-##### Only create decimal numbers at display time
+<br>
 
-The decimal value of an expression is only evaluated for the sake of human readability
+##### Doing rational numbers right!
 
-Evaluating the decimal value of a fraction _can_ produce innacuracies, therefore if we delay production of that value, we can limit the spread of that innaccuracy.
+Calculating `10/3` on _this_ app would result in something similar to: `3.(3)`
+
+The decimal `(3)` denotes `3 recurring`, which describes an infinitely repeating pattern in the decimal.
+
+Therefore regardless of the accuracy of your project, you can use this result with confidence.
+
+<br>
+
+##### Doing whole numbers right!
+
+Calculating `10^20 + 1` on _this_ app would result in the correct answer of `100000000000000000001`.
+
+The numbers in this application are not stored as traditional fixed size floating points.
+
+Therefore this calculator can _theoretically_ perform operations accurately on numbers infinitely large.
+
+<br>
+
+## How does it work?
+
+#### Numbers are never represented as fixed floating points, (duh)
+
+##### Every number is represented as a fraction `numerator / denominator`
+
+All numbers are converted to their fractional representations using the formula `(n * 10^d) / (10^d)`, where `n` is the decimal number, and `d` is the number of decimal places.
+
+`3 + 2` becomes `(3/1) + (2/1)`
+
+`0.2` becomes `(2/10)`
+
+##### Every number can be infinitely large
+
+Numbers in this app can be infinitely large because they are not constrained by the conventional 64 bit size constraints of a floating point in hardware.
 
 <br>
 
 #### Be clear about the decimal accuracy of a result,
 
-##### All results have an associated `accuracy`
+##### Every number has an associated `accuracy`
 
-An expression such as `3 + 2` will have a `exact` accuracy because both operands, `3` and `2` are rational numbers, and the operator `+` produces an exact result.
+The app can operate on `Exact` numbers, or numbers which are within `Plus or minus x`.
 
-An expression such as `1 / (10^10)` will not have an `exact` accuracy, because although all numbers and operations in this expression _can_ produce a rational number, in this case the decimal conversion of this number will be inexact. This is because the decimal conversion only generates decimals to the Nth decimal point, if an exact or recurring decimal is not found before then we create a documented approximation for the rest of the decimals. (e.g. where the decimal calculation limit is 5, `1 / (10^100) = 0.000005 ± 0.000005`)
+An `Exact` number, implies that the number is perfectly accurate.
 
-All expressions containing irrational numbers like `pi`, or functional approximations like `sin` are going to produce results with inexact `accuracy`, because those numbers cannot be evaluated exactly.
+A number `n` with an accuracy of `Plus or minus x` implies that the number is between `n - x` and `n + x`.
+
+Each operation will have it's own effect on the resulting numbers accuracy level.
+
+##### Decimal representations of numbers are only created for display purposes
+
+The app never operates on decimals, it is only used as an _optional_ method of representing the result.
+
+`10 / 3` _could_ resolve to `3.(3)`
+
+`Pi` _could_ resolve to `3.141595 ± 1/200000`
 
 <br>
+
 <br>
 
 🚧 Details beyond this point are not implemented 🚧
@@ -78,7 +122,36 @@ An expression `SIN(PI)` may initially resolve to an accuracy of `5` decimal poin
 
 <br>
 
-## Goals
+## Input syntax
+
+- Whitespace is ignored
+- Negative numbers `(-1)` must be wrapped in parentheses
+    - otherwise there is ambiguity: `-5^2` could be `-(5^2) = -25` or `(-5)^2 = -25`
+- Decimal numbers between `1` and `-1` must precede with `0`
+    - the number `.2` will fail to be parsed, where the number `0.2` will succeed
+- Variables `x` are all lower case
+- Constants `PI` are all upper case
+- Functions `POW(2, 10)` are all upper case, and arguments are wrapped in parentheses and comma seperated
+
+<br>
+
+## Development
+
+### Software Requirements
+
+- [Stack](https://docs.haskellstack.org/en/stable/README/)
+
+### Building locally
+
+`stack install`
+
+`stack build`
+
+### Testing locally
+
+`stack test`
+
+### Goals
 
 Arithmetic:
 
@@ -125,32 +198,3 @@ Research:
 - [ ] How do we a number in the state of "plus or minus" (e.g. solving for `x` in `|x| = 1`)
 
 <br>
-
-## Input syntax
-
-- Whitespace is ignored
-- Negative numbers `(-1)` must be wrapped in parentheses
-    - otherwise there is ambiguity: `-5^2` could be `-(5^2) = -25` or `(-5)^2 = -25`
-- Decimal numbers between `1` and `-1` must precede with `0`
-    - the number `.2` will fail to be parsed, where the number `0.2` will succeed
-- Variables `x` are all lower case
-- Constants `PI` are all upper case
-- Functions `POW(2, 10)` are all upper case, and arguments are wrapped in parentheses and comma seperated
-
-<br>
-
-## Development
-
-### Software Requirements
-
-- [Stack](https://docs.haskellstack.org/en/stable/README/)
-
-### Building locally
-
-`stack install`
-
-`stack build`
-
-### Testing locally
-
-`stack test`
