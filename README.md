@@ -104,9 +104,9 @@ Each operation will have it's own effect on the resulting numbers accuracy level
 
 The app never operates on decimals, it is only used as an _optional_ method of representing the result.
 
-`10 / 3` _could_ resolve to `3.(3)`
+`10 / 3` represented decimally is `3.(3)`
 
-`Pi` _could_ resolve to `3.141595 ± 1/200000`
+`Pi` represented decimally is `3.141595 ± 1/200000`
 
 <br>
 
