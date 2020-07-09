@@ -4,6 +4,7 @@ import ParseSpec
 import SolveSpec
 import OperandSpec
 import DecimalSpec
+import ExactFractionSpec
 
 main :: IO ()
 main = do
@@ -11,3 +12,4 @@ main = do
     operandSpec
     decimalSpec
     solveSpec
+    exactFractionSpec
