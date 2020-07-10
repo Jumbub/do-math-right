@@ -1,5 +1,6 @@
 module ExactFraction (
     ExactFraction,
+    ExactFraction.simplify,
     ExactFraction.add,
     ExactFraction.subtract,
     ExactFraction.multiply,
@@ -33,10 +34,10 @@ add' (an, ad) (bn, bd)
     | otherwise = (an * bd + bn * ad, ad * bd)
 
 subtract' :: ExactFraction -> ExactFraction -> ExactFraction
-subtract' (an, ad) (bn, bd) = add' (an, ad) (-bn, bd)
+subtract' a (bn, bd) = add' a (-bn, bd)
 
 multiply' :: ExactFraction -> ExactFraction -> ExactFraction
 multiply' (an, ad) (bn, bd) = (an * bn, ad * bd)
         
 divide' :: ExactFraction -> ExactFraction -> ExactFraction
-divide' (an, ad) (bn, bd) = multiply' (an, ad) (bd, bn)
+divide' a (bn, bd) = multiply' a (bd, bn)

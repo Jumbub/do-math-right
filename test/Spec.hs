@@ -5,6 +5,7 @@ import SolveSpec
 import OperandSpec
 import DecimalSpec
 import ExactFractionSpec
+import FractionSpec
 
 main :: IO ()
 main = do
@@ -13,3 +14,4 @@ main = do
     decimalSpec
     solveSpec
     exactFractionSpec
+    fractionSpec

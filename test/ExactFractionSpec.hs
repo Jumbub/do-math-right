@@ -39,7 +39,7 @@ divideTests = [
 
 exactFractionSpec :: IO ()
 exactFractionSpec = hspec $ do
-    describe "add" $ do
+    describe "operations on exact fractions" $ do
         forM_ addTests $ \((a, b), c) -> do
             it (show a ++ " + " ++ show b ++ " = " ++ show c) $ do
                 ExactFraction.add a b `shouldBe` c
