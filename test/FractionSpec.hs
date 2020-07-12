@@ -6,6 +6,7 @@ import Control.Monad
 
 import Fraction
 
+half = (1, 2)
 one = (1, 1)
 two = (2, 1)
 
@@ -13,30 +14,36 @@ point1 = (1, 10)
 point2 = (1, 5)
 point3 = (3, 10)
 
-hard1 = PlusOrMinus ((223, 1), (3, 10))
-hard2 = PlusOrMinus ((32, 1), (7, 1000))
+hard1 = ((37, 84), (29, 78))
+hard2 = ((29, 18), (42, 33))
 
 addTests = [
-    ((hard1, hard2), PlusOrMinus ((255, 1), (307, 1000))),
-    ((PlusOrMinus (one, point1), PlusOrMinus (one, point1)), PlusOrMinus (two, point2)),
-    ((PlusOrMinus (one, point1), PlusOrMinus (one, point1)), PlusOrMinus (two, point2)),
-    ((PlusOrMinus (one, point1), Exact one), PlusOrMinus (two, point1)),
-    ((Exact one, PlusOrMinus (one, point1)), PlusOrMinus (two, point1)),
-    ((Exact one, Exact one), Exact two) ]
+    ((hard1, hard2), ((517,252),(1411,858))),
+    (((one, point1), (one, point1)), (two, point2)),
+    (((one, point1), fromExact one), (two, point1)),
+    ((fromExact one, (one, point1)), (two, point1)),
+    ((fromExact one, fromExact one), fromExact two) ]
 
 subtractTests = [
-    ((hard1, hard2), PlusOrMinus ((191, 1), (307, 1000))),
-    ((PlusOrMinus (two, point1), PlusOrMinus (one, point1)), PlusOrMinus (one, point2)),
-    ((PlusOrMinus (two, point1), Exact one), PlusOrMinus (one, point1)),
-    ((Exact two, PlusOrMinus (one, point1)), PlusOrMinus (one, point1)),
-    ((Exact two, Exact one), Exact one) ]
+    ((hard1, hard2), ((-295, 252), (1411, 858))),
+    (((two, point1), (one, point1)), (one, point2)),
+    (((two, point1), fromExact one), (one, point1)),
+    ((fromExact two, (one, point1)), (one, point1)),
+    ((fromExact two, fromExact one), fromExact one) ]
 
 multiplyTests = [
-    ((hard1, hard2), PlusOrMinus ((7136, 1), (11161, 1000))),
-    ((PlusOrMinus (two, point1), PlusOrMinus (one, point1)), PlusOrMinus (two, point3)),
-    ((PlusOrMinus (two, point1), Exact one), PlusOrMinus (two, point1)),
-    ((Exact two, PlusOrMinus (one, point1)), PlusOrMinus (two, point1)),
-    ((Exact two, Exact one), Exact two) ]
+    ((hard1, hard2), ((255751, 216216), (17909, 15444))),
+    (((one, point1), (two, point1)), ((201, 100), point3)),
+    (((one, point1), fromExact two), (two, point2)),
+    ((fromExact one, (two, point1)), (two, point1)),
+    ((fromExact one, fromExact two), fromExact two) ]
+
+divideTests = [
+    ((hard1, hard2), ((8439783, 6962774), (590997, 497341))),
+    (((one, point1), (two, point1)), ((67, 133), (10, 133))),
+    (((one, point1), fromExact two), (half, (1, 20))),
+    ((fromExact one, (two, point1)), ((200, 399), (10, 399))),
+    ((fromExact one, fromExact two), fromExact half) ]
 
 fractionSpec :: IO ()
 fractionSpec = hspec $ do
@@ -50,3 +57,6 @@ fractionSpec = hspec $ do
         forM_ multiplyTests $ \((a, b), c) -> do
             it (show a ++ " * " ++ show b ++ " = " ++ show c) $ do
                 Fraction.multiply a b `shouldBe` c
+        forM_ divideTests $ \((a, b), c) -> do
+            it (show a ++ " / " ++ show b ++ " = " ++ show c) $ do
+                Fraction.divide a b `shouldBe` c

@@ -23,6 +23,7 @@ dependencies:
 - hspec
 - containers
 - split
+- sort
 
 library:
   source-dirs: src

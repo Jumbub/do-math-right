@@ -7,42 +7,67 @@ module Fraction (
     Fraction.subtract,
     Fraction.multiply,
     Fraction.divide,
+    Fraction.fromExact,
 ) where
+
+import Data.Sort
 
 import ExactFraction
 
-data Fraction =
-    Exact ExactFraction |
-    PlusOrMinus (ExactFraction, ExactFraction)
-    deriving (Show, Eq)
+type Fraction = (ExactFraction, ExactFraction)
+
+fromExact :: ExactFraction -> Fraction
+fromExact a = (a, (0, 1))
+
+normalise :: Fraction -> Fraction
+normalise ((0, _), _) = ((0, 1), (0, 1))
+normalise (a, (0, _)) = (a, (0, 1))
 
 simplify :: Fraction -> Fraction
-simplify (Exact a) = Exact $ ExactFraction.simplify a
-simplify (PlusOrMinus (a, ap)) = PlusOrMinus (ExactFraction.simplify a, ExactFraction.simplify ap)
+simplify ((0, _), ap) = ((0, 1), (0, 1))
+simplify (a, ap) = normalise (ExactFraction.simplify a, ExactFraction.simplify ap)
+
+absolute :: Fraction -> Fraction
+absolute (a, ap) = (ExactFraction.absolute a, ap)
 
 flipSign :: Fraction -> Fraction
-flipSign x = Fraction.multiply x (Exact (-1, 1))
+flipSign (a, ap) = (ExactFraction.flipSign a, ap)
 
 reciprocal :: Fraction -> Fraction
-reciprocal (Exact (n, d)) = Exact (d, n)
-reciprocal (PlusOrMinus ((n, d), x)) = PlusOrMinus ((d, n), x)
+reciprocal ((0, d), _) = ((0, 1), (0, 1))
+reciprocal ((n, d), (0, pd)) = ((d, n), (0, 1))
+reciprocal ((n, d), p) = ((d, n), p)
 
 add :: Fraction -> Fraction -> Fraction
-add (Exact a) (Exact b) = Exact (ExactFraction.add a b)
-add (PlusOrMinus (a, ap)) (Exact b) = PlusOrMinus (ExactFraction.add a b, ap)
-add (Exact a) (PlusOrMinus (b, bp)) = PlusOrMinus (ExactFraction.add a b, bp)
-add (PlusOrMinus (a, ap)) (PlusOrMinus (b, bp)) = PlusOrMinus (ExactFraction.add a b, ExactFraction.add ap bp)
+add (a, ap) (b, bp) = (ExactFraction.add a b, ExactFraction.add ap bp)
 
 subtract :: Fraction -> Fraction -> Fraction
-subtract a b = Fraction.add a (flipSign b)
+subtract a b = Fraction.add a (Fraction.flipSign b)
 
 multiply :: Fraction -> Fraction -> Fraction
-multiply (Exact a) (Exact b) = Exact (ExactFraction.multiply a b)
-multiply (PlusOrMinus (a, ap)) (Exact b) = PlusOrMinus (ExactFraction.multiply a b, ap)
-multiply (Exact a) (PlusOrMinus (b, bp)) = PlusOrMinus (ExactFraction.multiply a b, bp)
-multiply (PlusOrMinus (a, ap)) (PlusOrMinus (b, bp)) = PlusOrMinus (ExactFraction.multiply a b, plusOrMinus)
+multiply (a, ap) (b, bp) = (output, plusOrMinus)
     where
-        plusOrMinus = ExactFraction.add (ExactFraction.multiply a bp) (ExactFraction.multiply b ap)
+        w = ExactFraction.multiply (ExactFraction.add a ap) (ExactFraction.add b bp)
+        x = ExactFraction.multiply (ExactFraction.add a ap) (ExactFraction.subtract b bp)
+        y = ExactFraction.multiply (ExactFraction.subtract a ap) (ExactFraction.add b bp)
+        z = ExactFraction.multiply (ExactFraction.subtract a ap) (ExactFraction.subtract b bp)
+        ordered = sortBy ExactFraction.compare [w, x, y, z]
+        minN = head ordered
+        maxN = last ordered
+        dist = ExactFraction.absolute (ExactFraction.subtract maxN minN)
+        plusOrMinus = ExactFraction.divide dist (fromNumber 2)
+        output = ExactFraction.add minN plusOrMinus
 
 divide :: Fraction -> Fraction -> Fraction
-divide a b = Fraction.multiply a (reciprocal b)
+divide (a, ap) (b, bp) = (output, plusOrMinus)
+    where
+        w = ExactFraction.divide (ExactFraction.add a ap) (ExactFraction.add b bp)
+        x = ExactFraction.divide (ExactFraction.add a ap) (ExactFraction.subtract b bp)
+        y = ExactFraction.divide (ExactFraction.subtract a ap) (ExactFraction.add b bp)
+        z = ExactFraction.divide (ExactFraction.subtract a ap) (ExactFraction.subtract b bp)
+        ordered = sortBy ExactFraction.compare [w, x, y, z]
+        minN = head ordered
+        maxN = last ordered
+        dist = ExactFraction.absolute (ExactFraction.subtract maxN minN)
+        plusOrMinus = ExactFraction.divide dist (fromNumber 2)
+        output = ExactFraction.add minN plusOrMinus
