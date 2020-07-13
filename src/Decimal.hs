@@ -78,28 +78,6 @@ findPlusOrMinus whole precision decimals
         isPlusOrMinus = genericLength decimals > precision
         decimals' = Data.List.take (fromIntegral precision) decimals ++ [5]
 
--- addToStates :: Integer -> Integer -> [DivState] -> [DivState]
--- addToStates cur rem states =
---     where
---         withNewState = DivState { stateCur = cur, stateRem = rem, statePre = }
---         withUpdatedStates = map (addToState cur) withNewState
-
--- addToState :: Integer -> DivState -> DivState
--- addToState digit state = state { stateRec = (stateRec state ++ [digit]) }
-
--- fractionToDecimal _ _ 0 = error "Cannot divide by 0!"
--- fractionToDecimal acc num den = (div num den, (fractionToDecimal' acc den (rem num den) []))
-
--- fractionToDecimal' :: Integer -> Integer -> Integer -> [Integer] -> [Integer]
--- fractionToDecimal' precision divisor remainder decimals
---     | maxPrecision = []
---     | noRemainder = decimals
---     | otherwise = fractionToDecimal' precision divisor (rem numberToDivide divisor) (decimals ++ [div numberToDivide divisor])
---     where
---         noRemainder = remainder == 0
---         maxPrecision = length decimals == precision
---         numberToDivide = 10 * remainder
-
 digitsToString :: [Integer] -> String
 digitsToString digits = concat $ Data.List.map show digits
 
