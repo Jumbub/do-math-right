@@ -12,6 +12,7 @@ import Operand
 
 cleanTests = [
         ("sin( 1x ) + cos (1)", "sin(1x)+cos(1)"),
+        ("PLUSORMINUS(1, 0.001)", "PLUSORMINUS(1)(0.001)"),
         ("1 + 1", "1+1"),
         ("", "")
     ]

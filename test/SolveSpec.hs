@@ -28,6 +28,7 @@ diff :: String -> String -> [(String, Context, String)]
 diff a b = [("as fraction", fracCtx, a), ("as decimal", decCtx, b)]
 
 solveTests = [
+        ("PLUSORMINUS(1, 0.001)", same "1 ± 1/1000"),
         ("0.000001", diff "1/1000000" "0.000005 ± 1/200000"),
         ("22/7", diff "22/7" "3.142855 ± 1/200000"),
         ("10/3", diff "10/3" "3.(3)"),

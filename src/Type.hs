@@ -28,7 +28,8 @@ data Operator =
     Cosine |
     Tangent |
 
-    Approximate
+    Approximate |
+    PlusOrMinusOperator
 
     deriving (Eq, Show)
 

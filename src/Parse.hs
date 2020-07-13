@@ -23,7 +23,12 @@ parse input = addImplicitOperations $ parseSplits $ groupSplits $ splitInput $ c
 -- Clean input!
 
 cleanInput :: String -> String
-cleanInput input = filter (\y -> y /= ' ') input
+cleanInput input = commasToBraces $ filter (\y -> y /= ' ') input
+
+commasToBraces :: String -> String
+commasToBraces [] = []
+commasToBraces (',':x) = ")(" ++ commasToBraces x
+commasToBraces (a:x) = (a:commasToBraces x)
 
 -- Split input!
 
