@@ -12,7 +12,7 @@ Solve expressions without any <strong>floating point innaccuracies</strong> or <
 
 Calculate ["pi"](https://www.google.com/search?q=pi), you will be told that the answer is exactly `3.14159265359`
 
-But, everyone knows that Pi has more than 11 decimal places?!
+But everyone knows that Pi has more than 11 decimal places?!
 
 <br>
 
@@ -20,7 +20,7 @@ But, everyone knows that Pi has more than 11 decimal places?!
 
 Calculate ["10 / 3"](https://www.google.com/search?q=10/3), you will be told that the answer is exactly `3.33333333333`
 
-But, most people know that 10 divided by 3 will produce a decimal with a 3 that recurs forever?!
+But everyone knows that the 3 should recur forever, not just 11 times?!
 
 <br>
 
@@ -28,7 +28,7 @@ But, most people know that 10 divided by 3 will produce a decimal with a 3 that 
 
 Calculate ["10^20 + 1"](https://www.google.com/search?q=10/3), you will be told that the answer is exactly `1e+20`
 
-But, `1e+20 = 10^20`. Where did my `+ 1` go?
+But `1e+20 = 10^20`. Where did my `+ 1` go?
 
 Did this calculator just ignore me?!
 
