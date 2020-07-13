@@ -9,7 +9,7 @@ import Data.Map
 import Data.Maybe
 import Debug.Trace
 
-import Type
+import OperandType
 import Utility
 import Fraction
 import Context

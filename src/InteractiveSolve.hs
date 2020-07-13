@@ -7,7 +7,7 @@ import System.IO
 
 import Solve
 import Operand
-import Type
+import Operand
 import Context
 
 solveInteractive :: IO ()

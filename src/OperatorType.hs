@@ -1,7 +1,5 @@
-module Type (
-    Operand(..),
+module OperatorType (
     Operator(..),
-    Expression(..),
 ) where
 
 import Fraction
@@ -27,13 +25,3 @@ data Operator =
     PlusOrMinusOperator
 
     deriving (Eq, Show)
-
-type Variable = Char
-
-data Expression =
-    Fraction Fraction |
-    Variable Variable |
-    Expression ([Expression], Operator)
-    deriving (Eq, Show)
-
-type Operand = Expression

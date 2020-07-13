@@ -9,7 +9,6 @@ import Data.Either
 import Solve
 import Operand
 import Operator
-import Type
 import Context
 
 operationTests = [

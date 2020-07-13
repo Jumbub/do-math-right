@@ -9,9 +9,9 @@ module Operator (
 
 import Data.List
 
-import Operand
 import Utility
-import Type
+import OperandType
+import OperatorType
 import Fraction
 import Context
 

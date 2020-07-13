@@ -14,7 +14,8 @@ import Text.Read
 import Data.List
 import Data.List.Split
 
-import Type
+import OperandType
+import Operator
 import Context
 import Utility
 import Decimal

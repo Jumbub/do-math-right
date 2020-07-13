@@ -8,7 +8,6 @@ import Data.Maybe
 import Data.Either
 
 import Operand
-import Type
 import Context
 
 stringify = [
