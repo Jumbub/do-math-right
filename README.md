@@ -1,6 +1,6 @@
 # `do-math-right`
 
-Solve expressions without any <strong>floating point innacuracies</strong> or <strong> implicit approximations</strong>.
+Solve expressions without any <strong>floating point innaccuracies</strong> or <strong> implicit approximations</strong>.
 
 <br>
 
