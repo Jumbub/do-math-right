@@ -46,8 +46,6 @@ The symbol `±` denotes `plus or minus`, which is an explicit annotation of the 
 
 Therefore if your project only requires an accuracy of `0.0001` units, you can use this result with confidence.
 
-> The accuracy level computed by do-math-right is defined by the user
-
 <br>
 
 ##### Doing rational numbers right!
