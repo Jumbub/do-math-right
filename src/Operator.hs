@@ -12,6 +12,8 @@ import Data.List
 import Operand
 import Utility
 import Type
+import Fraction
+import Context
 
 operatorToString :: Operator -> Maybe String
 operatorToString operator = case operator of
@@ -76,13 +78,13 @@ operatorArguments operator = case operator of
 
 operatorFunction :: Operator -> ((Context, [Operand]) -> (Context, [Operand]))
 operatorFunction operator = case operator of
-    Addition -> simplifyable $ contextless add
-    Division -> simplifyable $ contextless divide
-    LeftParentheses -> contextless noOp
-    Multiplication -> contextless multiply
-    Negation -> simplifyable $ contextless negation
-    RightParentheses -> contextless noOp
-    Subtraction -> simplifyable $ contextless Operator.subtract
+    Addition -> contextless Operator.add
+    Division -> contextless Operator.divide
+    LeftParentheses -> contextless Operator.noOp
+    Multiplication -> contextless Operator.multiply
+    Negation -> contextless Operator.negation
+    RightParentheses -> contextless Operator.noOp
+    Subtraction -> contextless Operator.subtract
     Approximate -> operandless $ Operator.approximate
     PlusOrMinusOperator -> contextless Operator.plusOrMinus
 
@@ -92,49 +94,26 @@ contextless operation = \(ctx, operands) -> (ctx, operation operands)
 operandless :: (Context -> Context) -> ((Context, [Operand]) -> (Context, [Operand]))
 operandless operation = \(ctx, operands) -> (operation ctx, operands)
 
-simplifyable :: ((Context, [Operand]) -> (Context, [Operand])) -> ((Context, [Operand]) -> (Context, [Operand]))
-simplifyable operation = \(ctx, operands) -> (Operator.simplifyFraction $ operation (ctx, operands))
-
-simplifyFraction :: (Context, [Operand]) -> (Context, [Operand])
-simplifyFraction (ctx, [Fraction (num, den, acc)]) = (ctx, [Fraction (numerator, denominator, acc)])
-    where
-        (numerator, denominator) = Utility.simplifyFraction (num, den)
-
 noOp :: [Operand] -> [Operand]
 noOp input = input
 
 add :: [Operand] -> [Operand]
-add [(Fraction (bNum, bDen, bAcc)), (Fraction (aNum, aDen, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
-    where
-        numerator = aNum * bDen + bNum * aDen
-        denominator = aDen * bDen
+add [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.add a b)]
 
 subtract :: [Operand] -> [Operand]
-subtract [(Fraction (bNum, bDen, bAcc)), (Fraction (aNum, aDen, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
-    where
-        numerator = aNum * bDen - bNum * aDen
-        denominator = aDen * bDen
+subtract [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.subtract a b)]
 
 multiply :: [Operand] -> [Operand]
-multiply [(Fraction (bNum, bDen, bAcc)), (Fraction (aNum, aDen, aAcc))] = [(Fraction (numerator, denominator, aAcc))]
-    where
-        numerator = aNum * bNum
-        denominator = aDen * bDen
-multiply [(Variable b), (Variable a)]
-    | a == b = [Expression ([Variable a, num 2], Power)]
-    | otherwise = [Expression ([Variable a, Variable b], Multiplication)]
+multiply [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.multiply a b)]
 
 divide :: [Operand] -> [Operand]
-divide [(Fraction (bNum, bDen, aAcc)), (Fraction (aNum, aDen, bAcc))] = [(Fraction (numerator, denominator, aAcc))]
-    where
-        numerator = aNum * bDen
-        denominator = aDen * bNum
+divide [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.divide a b)]
 
 negation :: [Operand] -> [Operand]
-negation [(Fraction (num, den, accuracy))] = [(Fraction (-num, den, accuracy))]
+negation [(Fraction fraction)] = [(Fraction $ flipSign fraction)]
 
 approximate :: Context -> Context
-approximate ctx = ctx { Type.fractionResult = False }
+approximate ctx = ctx { Context.fractionResult = False }
 
 plusOrMinus :: [Operand] -> [Operand]
-plusOrMinus [(Fraction (bn, bd, Exact)), (Fraction (an, ad, Exact))] = [(Fraction (an, ad, PlusOrMinus (bn, bd)))]
+plusOrMinus [(Fraction ((bn, bd), (0, _))), (Fraction ((an, ad), (0, _)))] = [(Fraction ((an, ad), (bn, bd)))]

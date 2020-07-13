@@ -8,24 +8,25 @@ import Data.Maybe
 import Data.Either
 
 import Decimal
-import Type
+import Context
+import Fraction
 
 fractionToDecimalTests = [
-        ((1, 1000000, PlusOrMinus (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (3, 500000))),
-        ((1, 1000000, PlusOrMinus (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (200001, 200000))),
-        ((1, 100000, PlusOrMinus (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,1], (1, 1))),
-        ((1, 1, PlusOrMinus (1, 1)), PlusOrMinusDecimal (1, [], (1, 1))),
-        ((1, 128, Exact), PlusOrMinusDecimal (0, [0,0,7,8,1,5], (1, 200000))),
-        ((1, 21, Exact), PlusOrMinusDecimal (0, [0,4,7,6,1,5], (1, 200000))),
-        ((1, 1000000, Exact), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (1, 200000))),
-        ((7, 12, Exact), RecurringDecimal (0, [5,8], [3])),
-        ((9, 11, Exact), RecurringDecimal (0, [], [8,1])),
-        ((10, 3, Exact), RecurringDecimal (3, [], [3])),
-        ((4, 2, Exact), ExactDecimal (2, [])),
-        ((2, 2, Exact), ExactDecimal (1, [])),
-        ((1, 4, Exact), ExactDecimal (0, [2,5])),
-        ((1, 2, Exact), ExactDecimal (0, [5])),
-        ((1, 1, Exact), ExactDecimal (1, []))
+        (((1, 1000000), (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (3, 500000))),
+        (((1, 1000000), (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (200001, 200000))),
+        (((1, 100000), (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,1], (1, 1))),
+        (((1, 1), (1, 1)), PlusOrMinusDecimal (1, [], (1, 1))),
+        ((fromExact(1, 128)), PlusOrMinusDecimal (0, [0,0,7,8,1,5], (1, 200000))),
+        ((fromExact(1, 21)), PlusOrMinusDecimal (0, [0,4,7,6,1,5], (1, 200000))),
+        ((fromExact (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (1, 200000))),
+        ((fromExact (7, 12)), RecurringDecimal (0, [5,8], [3])),
+        ((fromExact (9, 11)), RecurringDecimal (0, [], [8,1])),
+        ((fromExact (10, 3)), RecurringDecimal (3, [], [3])),
+        ((fromExact (4, 2)), ExactDecimal (2, [])),
+        ((fromExact (2, 2)), ExactDecimal (1, [])),
+        ((fromExact (1, 4)), ExactDecimal (0, [2,5])),
+        ((fromExact (1, 2)), ExactDecimal (0, [5])),
+        ((fromExact (1, 1)), ExactDecimal (1, []))
     ]
 
 decimalToStringTests = [
@@ -42,9 +43,9 @@ decimalToStringTests = [
     ]
 
 fullTests = [
-        ((22, 7, Exact), "3.142855 ± 1/200000"),
-        ((1, 3, Exact), "0.(3)"),
-        ((1, 1, Exact), "1")
+        (fromExact (22, 7), "3.142855 ± 1/200000"),
+        (fromExact (1, 3), "0.(3)"),
+        (fromExact (1, 1), "1")
     ]
 
 decimalSpec :: IO ()

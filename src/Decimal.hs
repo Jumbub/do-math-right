@@ -11,6 +11,8 @@ import Debug.Trace
 
 import Type
 import Utility
+import Fraction
+import Context
 
 data Decimal =
     ExactDecimal (Integer, [Integer]) |
@@ -19,8 +21,8 @@ data Decimal =
     deriving (Show, Eq)
 
 fractionToDecimal :: Context -> Fraction -> Decimal
-fractionToDecimal _ (_, 0, _) = error "Cannot divide by 0!"
-fractionToDecimal context (numerator, denominator, accuracy)
+fractionToDecimal _ ((_, 0), _) = error "Cannot divide by 0!"
+fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
     | isMoreInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited ++ [5], innaccuracy)
     | isInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, (accNum, accDen))
     | isRecurringDecimal = RecurringDecimal (whole, beforeRecurring, theRecurring)
@@ -28,12 +30,12 @@ fractionToDecimal context (numerator, denominator, accuracy)
     | otherwise = ExactDecimal (whole, decimalsWithoutRemsLimited)
     where
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
-        isInnaccurate = not $ isExactAccuracy accuracy
-        (accNum, accDen) = fromPlusOrMinus accuracy
+        isInnaccurate = accNum /= 0
+        (accNum, accDen) = accuracy
         innaccuracy = simplifyFraction $ Utility.addFraction (accNum, accDen) (5, 10 ^ (precision + 1))
         whole = numerator `div` denominator
         remainder = numerator `rem` denominator
-        precision = Type.decimalPlaces context
+        precision = Context.decimalPlaces context
         hiddenPrecision = precision + 5
         plusOrMinus = findPlusOrMinus whole precision decimalsWithoutRems
         recurringPattern = findRecurring Data.Map.empty decimalsWithRems []

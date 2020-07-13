@@ -2,14 +2,9 @@ module Type (
     Operand(..),
     Operator(..),
     Expression(..),
-    Accuracy(..),
-    isExactAccuracy,
-    fromPlusOrMinus,
-    Context(..),
-    Fraction,
-    defaultContext,
-    approximate,
 ) where
+
+import Fraction
 
 data Operator =
     Addition |
@@ -33,22 +28,6 @@ data Operator =
 
     deriving (Eq, Show)
 
-type SimpleFraction = (Integer, Integer)
-
-isExactAccuracy :: Accuracy -> Bool
-isExactAccuracy Exact = True
-isExactAccuracy (PlusOrMinus _) = False
-
-fromPlusOrMinus :: Accuracy -> SimpleFraction
-fromPlusOrMinus (PlusOrMinus fraction) = fraction
-fromPlusOrMinus _ = error "Nu-uh."
-
-data Accuracy =
-    Exact |
-    PlusOrMinus SimpleFraction
-    deriving (Eq, Show)
-
-type Fraction = (Integer, Integer, Accuracy)
 type Variable = Char
 
 data Expression =
@@ -58,15 +37,3 @@ data Expression =
     deriving (Eq, Show)
 
 type Operand = Expression
-
-data Context = Context {
-    fractionResult :: Bool,
-    decimalPlaces :: Integer
-} deriving (Eq, Show)
-
-defaultContext :: Context
-defaultContext = Context {fractionResult = True, decimalPlaces = 5}
-
-approximate :: Context -> Bool
-approximate Context {fractionResult = True} = False
-approximate _ = True

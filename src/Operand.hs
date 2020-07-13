@@ -15,12 +15,13 @@ import Data.List
 import Data.List.Split
 
 import Type
+import Context
 import Utility
 import Decimal
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand input
-    | isJust fraction = Just $ Fraction (numerator, denominator, Exact)
+    | isJust fraction = Just $ Fraction ((numerator, denominator), (0, 1))
     | isVariable = Just $ Variable (head input)
     | otherwise = Nothing
     where
@@ -42,22 +43,22 @@ stringToFraction input
 operandToString :: Context -> Operand -> String
 operandToString ctx (Variable var) = [var]
 operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
-operandToString Context {fractionResult=True} (Fraction (num, den, Exact))
+operandToString Context {fractionResult=True} (Fraction ((num, den), (0, _)))
     | num == den || den == 1 = show num
     | otherwise = show num ++ "/" ++ show den
-operandToString Context {fractionResult=True} (Fraction (num, den, PlusOrMinus (accNum, accDen)))
+operandToString Context {fractionResult=True} (Fraction ((num, den), (accNum, accDen)))
     | num == den || den == 1 = show num ++ innaccuracy
     | otherwise = show num ++ "/" ++ show den ++ innaccuracy
     where
         innaccuracy = " ± " ++ show accNum ++ "/" ++ show accDen
-operandToString ctx (Fraction (num, den, accuracy))
-    = decimalToString $ fractionToDecimal ctx (num, den, accuracy)
+operandToString ctx (Fraction ((num, den), accuracy))
+    = decimalToString $ fractionToDecimal ctx ((num, den), accuracy)
 
 num :: Integer -> Operand
-num number = Fraction (number, 1, Exact)
+num number = Fraction ((number, 1), (0, 1))
 
 frac :: Integer -> Integer -> Operand
-frac num den = Fraction (num, den, Exact)
+frac num den = Fraction ((num, den), (0, 1))
 
 var :: Char -> Operand
 var letter = Variable letter

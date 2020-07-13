@@ -9,6 +9,7 @@ import Data.Either
 
 import Operand
 import Type
+import Context
 
 stringify = [
         (var 'x', "x"),

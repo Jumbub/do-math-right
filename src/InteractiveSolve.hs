@@ -8,6 +8,7 @@ import System.IO
 import Solve
 import Operand
 import Type
+import Context
 
 solveInteractive :: IO ()
 solveInteractive = do
