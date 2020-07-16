@@ -44,13 +44,13 @@ add (a, ap) (b, bp) = (ExactFraction.add a b, ExactFraction.add ap bp)
 subtract :: Fraction -> Fraction -> Fraction
 subtract a b = Fraction.add a (Fraction.flipSign b)
 
-multiply :: Fraction -> Fraction -> Fraction
-multiply (a, ap) (b, bp) = (output, plusOrMinus)
+operateOnFraction :: (ExactFraction -> ExactFraction -> ExactFraction) -> Fraction -> Fraction -> Fraction
+operateOnFraction operation (a, ap) (b, bp) = (output, plusOrMinus)
     where
-        w = ExactFraction.multiply (ExactFraction.add a ap) (ExactFraction.add b bp)
-        x = ExactFraction.multiply (ExactFraction.add a ap) (ExactFraction.subtract b bp)
-        y = ExactFraction.multiply (ExactFraction.subtract a ap) (ExactFraction.add b bp)
-        z = ExactFraction.multiply (ExactFraction.subtract a ap) (ExactFraction.subtract b bp)
+        w = operation (ExactFraction.add a ap) (ExactFraction.add b bp)
+        x = operation (ExactFraction.add a ap) (ExactFraction.subtract b bp)
+        y = operation (ExactFraction.subtract a ap) (ExactFraction.add b bp)
+        z = operation (ExactFraction.subtract a ap) (ExactFraction.subtract b bp)
         ordered = sortBy ExactFraction.compare [w, x, y, z]
         minN = head ordered
         maxN = last ordered
@@ -58,16 +58,8 @@ multiply (a, ap) (b, bp) = (output, plusOrMinus)
         plusOrMinus = ExactFraction.divide dist (fromNumber 2)
         output = ExactFraction.add minN plusOrMinus
 
+multiply :: Fraction -> Fraction -> Fraction
+multiply a b = operateOnFraction ExactFraction.multiply a b
+
 divide :: Fraction -> Fraction -> Fraction
-divide (a, ap) (b, bp) = (output, plusOrMinus)
-    where
-        w = ExactFraction.divide (ExactFraction.add a ap) (ExactFraction.add b bp)
-        x = ExactFraction.divide (ExactFraction.add a ap) (ExactFraction.subtract b bp)
-        y = ExactFraction.divide (ExactFraction.subtract a ap) (ExactFraction.add b bp)
-        z = ExactFraction.divide (ExactFraction.subtract a ap) (ExactFraction.subtract b bp)
-        ordered = sortBy ExactFraction.compare [w, x, y, z]
-        minN = head ordered
-        maxN = last ordered
-        dist = ExactFraction.absolute (ExactFraction.subtract maxN minN)
-        plusOrMinus = ExactFraction.divide dist (fromNumber 2)
-        output = ExactFraction.add minN plusOrMinus
+divide a b = operateOnFraction ExactFraction.divide a b

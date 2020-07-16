@@ -12,6 +12,7 @@ import Debug.Trace
 import OperandType
 import Utility
 import Fraction
+import ExactFraction
 import Context
 
 data Decimal =
@@ -32,7 +33,7 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
         isInnaccurate = accNum /= 0
         (accNum, accDen) = accuracy
-        innaccuracy = simplifyFraction $ Utility.addFraction (accNum, accDen) (5, 10 ^ (precision + 1))
+        innaccuracy = ExactFraction.add (accNum, accDen) (5, 10 ^ (precision + 1))
         whole = numerator `div` denominator
         remainder = numerator `rem` denominator
         precision = Context.decimalPlaces context

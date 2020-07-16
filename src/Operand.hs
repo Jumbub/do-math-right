@@ -19,14 +19,15 @@ import Operator
 import Context
 import Utility
 import Decimal
+import ExactFraction
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand input
-    | isJust fraction = Just $ Fraction ((numerator, denominator), (0, 1))
+    | isJust fraction = Just $ Fraction (exactFraction, (0, 1))
     | isVariable = Just $ Variable (head input)
     | otherwise = Nothing
     where
-        (numerator, denominator) = simplifyFraction $ fromJust fraction
+        exactFraction = ExactFraction.simplify $ fromJust fraction
         fraction = stringToFraction input
         isVariable = length input == 1 && isLower (head input)
 
