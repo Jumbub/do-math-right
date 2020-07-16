@@ -10,7 +10,7 @@ Solve expressions without any <strong>floating point innaccuracies</strong> or <
 
 ##### They lie about the accuracy of irrational numbers!
 
-Calculate ["pi"](https://www.google.com/search?q=pi), you will be told that the answer is exactly `3.14159265359`
+Calculate ["pi"](https://www.google.com/search?q=pi), and you will be given an answer of `3.14159265359`
 
 But everyone knows that Pi has more than 11 decimal places?!
 
@@ -18,7 +18,7 @@ But everyone knows that Pi has more than 11 decimal places?!
 
 ##### They even lie about rational numbers!
 
-Calculate ["10 / 3"](https://www.google.com/search?q=10/3), you will be told that the answer is exactly `3.33333333333`
+Calculate ["10 / 3"](https://www.google.com/search?q=10/3), and you will be told that the answer is exactly `3.33333333333`
 
 But everyone knows that the 3 should recur forever, not just 11 times?!
 
@@ -26,7 +26,7 @@ But everyone knows that the 3 should recur forever, not just 11 times?!
 
 ##### Heck, they even lie about whole numbers!
 
-Calculate ["10^20 + 1"](https://www.google.com/search?q=10/3), you will be told that the answer is exactly `1e+20`
+Calculate ["10^20 + 1"](https://www.google.com/search?q=10/3), and you will be told that the answer is exactly `1e+20`
 
 But `1e+20 = 10^20`. Where did my `+ 1` go?
 
