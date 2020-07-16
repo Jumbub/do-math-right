@@ -37,7 +37,7 @@ solve' ctx terms operands operators
         (ctx', operands') = performOperation ctx (head operators) operands
         useOperatorsInStack = if (null operators || ((head operators) == LeftParentheses))
             then False
-            else (operatorPrecedence operator) < (operatorPrecedence (head operators))
+            else (operatorPrecedence operator) <= (operatorPrecedence (head operators))
         term = head terms
         isRightParentheses = isOperator && operator == RightParentheses
         nextOnStackLeftParentheses = (head operators) == LeftParentheses
