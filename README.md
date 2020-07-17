@@ -164,35 +164,20 @@ Modes:
 
 - [ ] angle units `IN_RADIANS(..)` `IN_DEGREES(..)`
 - [ ] answer type `AS_FRACTION(..)` `AS_DECIMAL(..)`
-- [ ] decimal accuracy `TO_DECIMAL_ACCURACY(10, ..)`
-
-Algebra:
-
-- [ ] variable assignment `x = 1`
-- [ ] solving with context `2x` (`x = 1`)
-- [ ] solving for variable `2x = 1`
-- [ ] simplifying expression `1x + 6x`
-- [ ] solving for variable, with context `2x + 2y` (`x = 1`)
-- [ ] solving for variable, with no context `2x = 2y`
+- [ ] required accuracy `REQUIRE_ACCURACY(0.000001)`
 
 Interactivity:
 
 - [x] input and output loop
-- [ ] use facts from previous result e.g. `ANS` or `x = 1`
+- [ ] use last result with `ANS`
 
 Display:
 
-- [ ] show steps taken to find solution
 - [ ] output in Latex syntax
 - [ ] expression syntax errors
-
-Parsing:
-
-- [ ] parsing Latex syntax
 
 Research:
 
 - [ ] Can we determine the required accuracy of irrational numbers or function approximations _before_ generating the first result
-- [ ] How do we a number in the state of "plus or minus" (e.g. solving for `x` in `|x| = 1`)
 
 <br>
