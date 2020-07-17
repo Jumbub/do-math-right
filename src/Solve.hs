@@ -13,27 +13,48 @@ import Parse
 import Operator
 import Operand
 import Context
+import Fraction (Fraction)
 
 -- Solve user input!
 
-solve :: Context -> String -> (Context, String)
-solve ctx input = (ctx', operandToString ctx' output)
-    where
-        (ctx', output) = solve' ctx (parse input) [] []
+data Error =
+    NotEnoughOperands |
+    TooManyOperands
+    deriving (Show, Eq)
 
-solve' :: Context -> [Either Operand Operator] -> [Operand] -> [Operator] -> (Context, Operand)
-solve' ctx terms operands operators
-    | null terms && null operators && null operands = error "No resulting operands!"
-    | null terms && null operators && length operands > 1 = error "Too many resulting operands!"
-    | null terms && null operators = (ctx, head operands)
-    | null terms = doOperationFromStack
-    | isRightParentheses && nextOnStackLeftParentheses = solve' ctx (tail terms) operands (tail operators)
-    | isRightParentheses = doOperationFromStack
-    | isOperand = solve' ctx (tail terms) (operand : operands) operators
-    | useOperatorsInStack = doOperationFromStack
-    | otherwise = solve' ctx (tail terms) operands (operator : operators)
+errorToString :: Error -> String
+errorToString NotEnoughOperands = "Not enough operands!"
+errorToString TooManyOperands = "Too many operands!"
+
+
+
+solve :: Context -> String -> (Context, String)
+solve context input
+    | isRight simplified = (context, errorToString $ unsafeError simplified)
+    | fractionResult context = toString $ unsafeResult simplified
+    | otherwise = toString $ Solve.approximate $ unsafeResult simplified
     where
-        doOperationFromStack = solve' ctx' terms operands' (tail operators)
+        firstOp = head parsed
+        parsed = parse input
+        simplified = simplify context parsed [] []
+        unsafeError :: Either (Context, Operand) Error -> Error
+        unsafeError (Right x) = x
+        unsafeResult :: Either (Context, Operand) Error -> (Context, Operand)
+        unsafeResult (Left x) = x
+
+simplify :: Context -> [Either Operand Operator] -> [Operand] -> [Operator] -> Either (Context, Operand) Error
+simplify ctx terms operands operators
+    | null terms && null operators && null operands = Right NotEnoughOperands
+    | null terms && null operators && length operands > 1 = Right TooManyOperands
+    | null terms && null operators = Left $ (ctx, head operands)
+    | null terms = doOperationFromStack
+    | isRightParentheses && nextOnStackLeftParentheses = simplify ctx (tail terms) operands (tail operators)
+    | isRightParentheses = doOperationFromStack
+    | isOperand = simplify ctx (tail terms) (operand : operands) operators
+    | useOperatorsInStack = doOperationFromStack
+    | otherwise = simplify ctx (tail terms) operands (operator : operators)
+    where
+        doOperationFromStack = simplify ctx' terms operands' (tail operators)
         (ctx', operands') = performOperation ctx (head operators) operands
         useOperatorsInStack = if (null operators || ((head operators) == LeftParentheses))
             then False
@@ -46,6 +67,12 @@ solve' ctx terms operands operators
         isOperator = isRight term
         operator = fromRight Addition term
         lastOperator = fromRight Addition (head terms)
+
+approximate :: (Context, Operand) -> (Context, Operand)
+approximate (context, operand) = (context, operand)
+
+toString :: (Context, Operand) -> (Context, String)
+toString (context, operand) = (context, operandToString context operand)
 
 -- Perform an operation on the operand stack
 

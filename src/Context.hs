@@ -10,7 +10,7 @@ data Context = Context {
 } deriving (Eq, Show)
 
 defaultContext :: Context
-defaultContext = Context {fractionResult = True, decimalPlaces = 5}
+defaultContext = Context {fractionResult = False, decimalPlaces = 5}
 
 approximate :: Context -> Bool
 approximate Context {fractionResult = True} = False

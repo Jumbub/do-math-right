@@ -1,5 +1,6 @@
 module Operand (
-    Operand,
+    Operand(..),
+    Irrational(..),
     stringToOperand,
     operandToString,
     num,
@@ -20,6 +21,7 @@ import Context
 import Utility
 import Decimal
 import ExactFraction
+import Irrational
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand input
@@ -43,6 +45,7 @@ stringToFraction input
         (whole:decimals) = splitOn "." input
 
 operandToString :: Context -> Operand -> String
+operandToString _ (Irrational Pi) = "π"
 operandToString ctx (Variable var) = [var]
 operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
 operandToString Context {fractionResult=True} (Fraction ((num, den), (0, _)))

@@ -14,6 +14,7 @@ import OperandType
 import OperatorType
 import Fraction
 import Context
+import Irrational
 
 operatorToString :: Operator -> Maybe String
 operatorToString operator = case operator of
@@ -24,10 +25,6 @@ operatorToString operator = case operator of
     Power -> Just "^"
     LeftParentheses -> Just "("
     RightParentheses -> Just ")"
-    Sine -> Just "SIN"
-    Cosine -> Just "COS"
-    Tangent -> Just "TAN"
-    PlusOrMinusOperator -> Just "PLUSORMINUS"
 
 stringToOperator :: String -> Maybe Operator
 stringToOperator operator = case operator of
@@ -43,6 +40,7 @@ stringToOperator operator = case operator of
     "TAN" -> Just Tangent
     "APPROXIMATE" -> Just Approximate
     "PLUSORMINUS" -> Just PlusOrMinusOperator
+    "PI" -> Just PiOperand
     _ -> Nothing
 
 operatorPrecedence :: Operator -> Integer
@@ -52,6 +50,7 @@ operatorPrecedence operator = case operator of
     Cosine -> 200
     Division -> 200
     LeftParentheses -> 1000
+    PiOperand -> 1100
     Multiplication -> 200
     Negation -> 800
     Power -> 850
@@ -64,7 +63,7 @@ operatorPrecedence operator = case operator of
 operatorArguments :: Operator -> Integer
 operatorArguments operator = case operator of
     Addition -> 2
-    Approximate -> 0
+    Approximate -> 1
     Cosine -> 1
     Division -> 2
     LeftParentheses -> 0
@@ -75,6 +74,7 @@ operatorArguments operator = case operator of
     Subtraction -> 2
     Tangent -> 1
     PlusOrMinusOperator -> 2
+    PiOperand -> 0
 
 operatorFunction :: Operator -> ((Context, [Operand]) -> (Context, [Operand]))
 operatorFunction operator = case operator of
@@ -85,14 +85,22 @@ operatorFunction operator = case operator of
     Negation -> contextless Operator.negation
     RightParentheses -> contextless Operator.noOp
     Subtraction -> contextless Operator.subtract
-    Approximate -> operandless $ Operator.approximate
+    Approximate -> Operator.approximate
     PlusOrMinusOperator -> contextless Operator.plusOrMinus
+    PiOperand -> addIrrational Pi
 
 contextless :: ([Operand] -> [Operand]) -> ((Context, [Operand]) -> (Context, [Operand]))
 contextless operation = \(ctx, operands) -> (ctx, operation operands)
 
 operandless :: (Context -> Context) -> ((Context, [Operand]) -> (Context, [Operand]))
 operandless operation = \(ctx, operands) -> (operation ctx, operands)
+
+addIrrational :: Irrational -> ((Context, [Operand]) -> (Context, [Operand]))
+addIrrational irrational = operandOperator
+    where
+        operandOperator :: ((Context, [Operand]) -> (Context, [Operand]))
+        operandOperator (context@Context { Context.fractionResult = True }, operands) = (context, operands ++ [Irrational irrational])
+        operandOperator (context, operands) = (context, operands ++ [Fraction $ rationalise (Context.decimalPlaces context) irrational])
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
@@ -112,8 +120,9 @@ divide [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.divide a b)]
 negation :: [Operand] -> [Operand]
 negation [(Fraction fraction)] = [(Fraction $ flipSign fraction)]
 
-approximate :: Context -> Context
-approximate ctx = ctx { Context.fractionResult = False }
+approximate :: (Context, [Operand]) -> (Context, [Operand])
+approximate (ctx, [x@(Fraction ((1, _), _))]) = (ctx { Context.fractionResult = False }, [x])
+approximate (ctx, [x@(Fraction ((0, _), _))]) = (ctx { Context.fractionResult = True }, [x])
 
 plusOrMinus :: [Operand] -> [Operand]
 plusOrMinus [(Fraction ((bn, bd), (0, _))), (Fraction ((an, ad), (0, _)))] = [(Fraction ((an, ad), (bn, bd)))]

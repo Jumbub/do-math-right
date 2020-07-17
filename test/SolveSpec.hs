@@ -11,23 +11,29 @@ import Operand
 import Operator
 import Context
 
-operationTests = [
-        (
-            ([num 1, num 1], Addition),
-            [num 2]
-        )
-    ]
-
 fracCtx = defaultContext { fractionResult = True }
 decCtx = defaultContext { fractionResult = False, decimalPlaces = 5 }
 
-same :: String -> [(String, Context, String)]
-same input = [("as fraction", fracCtx, input), ("as decimal", decCtx, input)]
+same :: String -> [(String, Context, String, Context)]
+same input = [("as fraction", fracCtx, input, fracCtx), ("as decimal", decCtx, input, decCtx)]
 
-diff :: String -> String -> [(String, Context, String)]
-diff a b = [("as fraction", fracCtx, a), ("as decimal", decCtx, b)]
+diff :: String -> String -> [(String, Context, String, Context)]
+diff a b = [("as fraction", fracCtx, a, fracCtx), ("as decimal", decCtx, b, decCtx)]
+
+ctxChange :: String -> (Context -> Context) -> [(String, Context, String, Context)]
+ctxChange input change = [("as fraction", fracCtx, input, change fracCtx), ("as decimal", decCtx, input, change decCtx)]
+
+setFractional :: Bool -> (Context -> Context)
+setFractional val = setFractional'
+    where
+        setFractional' :: Context -> Context
+        setFractional' context = context {fractionResult = val}
 
 solveTests = [
+        ("", same "Not enough operands!"),
+        ("APPROXIMATE(1)", ctxChange "1" (setFractional False)),
+        ("APPROXIMATE(0)", ctxChange "0" (setFractional True)),
+        ("PI", diff "π" "3.141595 ± 1/100000"),
         ("5-5-5", diff "-5" "-5"),
         ("5/5/5", diff "1/5" "0.2"),
         ("PLUSORMINUS(1, 0.001) + PLUSORMINUS(1, 0.001)", same "2 ± 1/500"),
@@ -56,17 +62,10 @@ operandsToString context operands = show (map (operandToString context) operands
 
 solveSpec :: IO ()
 solveSpec = hspec $ do
-    let ctx = defaultContext
-    describe "can perform operations (default context)" $ do
-        forM_ operationTests $ \((operands, operation), output) -> do
-            it ("'" ++ operandsToString ctx operands ++ ", " ++ (show operation) ++ "'") $ do
-                let (ctx', actual) = performOperation ctx operation operands
-                actual `shouldBe` output
-                ctx' `shouldBe` ctx
     describe "can solve expressions" $ do
         forM_ solveTests $ \(input, outputs) -> do
-            forM_ outputs $ \(label, ctx, output) -> do
+            forM_ outputs $ \(label, ctx, output, expectedCtx) -> do
                 it (input ++ " => " ++ output ++ " (" ++ label ++ ")") $ do
                     let (ctx', actual) = solve ctx input
                     actual `shouldBe` output
-                    ctx' `shouldBe` ctx
+                    ctx' `shouldBe` expectedCtx

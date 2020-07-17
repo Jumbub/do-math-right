@@ -21,6 +21,8 @@ data Operator =
     Cosine |
     Tangent |
 
+    PiOperand |
+
     Approximate |
     PlusOrMinusOperator
 

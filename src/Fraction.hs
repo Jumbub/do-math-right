@@ -1,5 +1,5 @@
 module Fraction (
-    Fraction(..),
+    Fraction,
     Fraction.simplify,
     Fraction.flipSign,
     Fraction.reciprocal,

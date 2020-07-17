@@ -33,7 +33,7 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
         isInnaccurate = accNum /= 0
         (accNum, accDen) = accuracy
-        innaccuracy = ExactFraction.add (accNum, accDen) (5, 10 ^ (precision + 1))
+        innaccuracy = ExactFraction.add (accNum, accDen) (1, (10 ^ precision) * 2)
         whole = numerator `div` denominator
         remainder = numerator `rem` denominator
         precision = Context.decimalPlaces context

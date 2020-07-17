@@ -24,6 +24,7 @@ dependencies:
 - containers
 - split
 - sort
+- numbers
 
 library:
   source-dirs: src

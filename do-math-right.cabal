@@ -29,6 +29,8 @@ library
       ExactFraction
       Fraction
       InteractiveSolve
+      Irrational
+      IrrationalType
       Operand
       OperandType
       Operator
@@ -44,6 +46,7 @@ library
       base >=4.7 && <5
     , containers
     , hspec
+    , numbers
     , sort
     , split
   default-language: Haskell2010
@@ -60,6 +63,7 @@ executable do-math-right-exe
     , containers
     , do-math-right
     , hspec
+    , numbers
     , sort
     , split
   default-language: Haskell2010
@@ -83,6 +87,7 @@ test-suite do-math-right-test
     , containers
     , do-math-right
     , hspec
+    , numbers
     , sort
     , split
   default-language: Haskell2010

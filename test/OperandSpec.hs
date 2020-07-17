@@ -26,12 +26,15 @@ operandify = [
         ("1", Just $ num 1)
     ]
 
+ctx :: Context
+ctx = defaultContext { fractionResult = True }
+
 operandSpec :: IO ()
 operandSpec = hspec $ do
     describe "can convert operand to string" $ do
         forM_ stringify $ \(input, output) -> do
             it (show input ++ " => " ++ output) $ do
-                operandToString defaultContext input `shouldBe` output
+                operandToString ctx input `shouldBe` output
     describe "can convert string to operand" $ do
         forM_ operandify $ \(input, output) -> do
             it (input ++ " => " ++ show output) $ do

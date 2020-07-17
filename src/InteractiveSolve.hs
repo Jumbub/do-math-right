@@ -13,9 +13,9 @@ import Context
 solveInteractive :: IO ()
 solveInteractive = do
     putStrLn "\
-        \╔═════════════╗\n\
-        \║do-math-right║\n\
-        \╚═════════════╝\n\
+        \╔═══════════════╗\n\
+        \║ do-math-right ║\n\
+        \╚═══════════════╝\n\
         \Enter '1+1'\n"
     solveInteractive' defaultContext
 
