@@ -12,13 +12,13 @@ import Context
 import Fraction
 
 fractionToDecimalTests = [
-        (((1, 1000000), (1, 1000000)), PlusOrMinusDecimal (Positive, 0, [0,0,0,0,0], (11, 1000000))),
-        (((1, 1000000), (1, 1)), PlusOrMinusDecimal (Positive, 0, [0,0,0,0,0], (100001, 100000))),
+        (((1, 1000000), (1, 1000000)), PlusOrMinusDecimal (Positive, 0, [], (11, 1000000))),
+        (((1, 1000000), (1, 1)), PlusOrMinusDecimal (Positive, 0, [], (100001, 100000))),
         (((1, 100000), (1, 1)), PlusOrMinusDecimal (Positive, 0, [0,0,0,0,1], (1, 1))),
         (((1, 1), (1, 1)), PlusOrMinusDecimal (Positive, 1, [], (1, 1))),
         ((fromExact(1, 128)), PlusOrMinusDecimal (Positive, 0, [0,0,7,8,1], (1, 100000))),
         ((fromExact(1, 21)), PlusOrMinusDecimal (Positive, 0, [0,4,7,6,1], (1, 100000))),
-        ((fromExact (1, 1000000)), PlusOrMinusDecimal (Positive, 0, [0,0,0,0,0], (1, 100000))),
+        ((fromExact (1, 1000000)), PlusOrMinusDecimal (Positive, 0, [], (1, 100000))),
         ((fromExact (7, 12)), RecurringDecimal (Positive, 0, [5,8], [3])),
         ((fromExact (9, 11)), RecurringDecimal (Positive, 0, [], [8,1])),
         ((fromExact (10, 3)), RecurringDecimal (Positive, 3, [], [3])),

@@ -52,7 +52,7 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         (beforeRecurring, theRecurring) = fromMaybe ([], []) recurringPattern
         decimalsWithRems = findDecimalsWithRems hiddenPrecision denominator remainder []
         decimalsWithoutRems = Data.List.map (\(dec, rem) -> dec) decimalsWithRems
-        decimalsWithoutRemsLimited = Data.List.take (fromIntegral precision) decimalsWithoutRems
+        decimalsWithoutRemsLimited = Decimal.removeTrailingZeros $ Data.List.take (fromIntegral precision) decimalsWithoutRems
 
 findDecimalsWithRems :: Integer -> Integer -> Integer -> [(Integer, Integer)] -> [(Integer, Integer)]
 findDecimalsWithRems precision divisor lastRemainder decimals
@@ -83,11 +83,12 @@ findRecurring recs decs prev
 
 findPlusOrMinus :: Sign -> Integer -> Integer -> [Integer] -> Maybe Decimal
 findPlusOrMinus sign whole precision decimals
-    | isPlusOrMinus = Just $ PlusOrMinusDecimal (sign, whole, decimals', (1, 10 ^ precision))
+    | isPlusOrMinus = Just $ PlusOrMinusDecimal (sign, whole, decimals'', (1, 10 ^ precision))
     | otherwise = Nothing
     where
         isPlusOrMinus = genericLength decimals > precision
         decimals' = Data.List.take (fromIntegral precision) decimals
+        decimals'' = Decimal.removeTrailingZeros $ decimals'
 
 digitsToString :: [Integer] -> String
 digitsToString digits = concat $ Data.List.map show digits
@@ -106,3 +107,11 @@ decimalToString (PlusOrMinusDecimal (sign, whole, decimals, (numerator, denomina
 addSign :: Sign -> String -> String
 addSign Positive decimal = decimal
 addSign Negative decimal = ('-':decimal)
+
+removeTrailingZeros :: [Integer] -> [Integer]
+removeTrailingZeros x = reverse $ removeTrailingZeros' $ reverse x
+    where
+        removeTrailingZeros' :: [Integer] -> [Integer]
+        removeTrailingZeros' [] = []
+        removeTrailingZeros' (0:xs) = removeTrailingZeros' xs
+        removeTrailingZeros' x = x

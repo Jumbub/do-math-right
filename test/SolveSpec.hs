@@ -33,8 +33,8 @@ setDecimalResult val = setDecimalResult'
         setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
-        ("SIN(PI)", ignoreFraction "0.00000 ± 1/50000"),
-        ("SIN(3.14159)", ignoreFraction "0.00000 ± 1/50000"),
+        ("SIN(PI)", ignoreFraction "0 ± 1/50000"),
+        ("SIN(3.14159)", ignoreFraction "0 ± 1/50000"),
         ("SIN(1)", diff "305353/362880 ± 1/100000" "0.84147 ± 1/50000"),
         ("SIN(0)", same "0 ± 1/100000"),
         ("", same "Not enough operands!"),
@@ -45,7 +45,7 @@ solveTests = [
         ("5-5-5", diff "-5" "-5"),
         ("5/5/5", diff "1/5" "0.2"),
         ("PLUSORMINUS(1, 0.001) + PLUSORMINUS(1, 0.001)", same "2 ± 1/500"),
-        ("0.000001", diff "1/1000000" "0.00000 ± 1/100000"),
+        ("0.000001", diff "1/1000000" "0 ± 1/100000"),
         ("22/7", diff "22/7" "3.14285 ± 1/100000"),
         ("10/3", diff "10/3" "3.(3)"),
         ("1-(-1)", same "2"),
