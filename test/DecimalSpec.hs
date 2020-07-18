@@ -30,15 +30,15 @@ fractionToDecimalTests = [
     ]
 
 decimalToStringTests = [
-        (PlusOrMinusDecimal (Positive, 12, [34], (123, 321)), "12.34 ± 123/321"),
-        (PlusOrMinusDecimal (Positive, 12, [34], (1, 1000)), "12.34 ± 1/1000"),
+        (PlusOrMinusDecimal (Positive, 12, [3,4], (123, 321)), "12.34 ± 123/321"),
+        (PlusOrMinusDecimal (Positive, 12, [3,4], (1, 1000)), "12.34 ± 1/1000"),
         (PlusOrMinusDecimal (Positive, 12, [], (1, 1000)), "12 ± 1/1000"),
-        (RecurringDecimal (Positive, 12, [34], []), "12.34"),
-        (RecurringDecimal (Positive, 12, [34], [56]), "12.34(56)"),
-        (RecurringDecimal (Positive, 12, [], [34]), "12.(34)"),
-        (RecurringDecimal (Positive, 12, [34], []), "12.34"),
+        (RecurringDecimal (Positive, 12, [3,4], []), "12.34"),
+        (RecurringDecimal (Positive, 12, [3,4], [5,6]), "12.34(56)"),
+        (RecurringDecimal (Positive, 12, [], [3,4]), "12.(34)"),
+        (RecurringDecimal (Positive, 12, [3,4], []), "12.34"),
         (RecurringDecimal (Positive, 12, [], []), "12"),
-        (ExactDecimal (Positive, 12, [34]), "12.34"),
+        (ExactDecimal (Positive, 12, [3,4]), "12.34"),
         (ExactDecimal (Positive, 12, []), "12")
     ]
 
