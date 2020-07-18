@@ -10,11 +10,10 @@ import IrrationalType
 import Fraction
 
 rationalise :: Integer -> Irrational -> Fraction
-rationalise dp Pi = ((piNumber, (10 ^ (dp + 1))), accuracy)
+rationalise dp Pi = ((piNumber, 10 ^ dp), (1, 10 ^ dp))
     where
-        piString = "3" ++ (drop 2 $ showCReal (fromIntegral dp) pi) ++ "5"
+        piString = "3" ++ (drop 2 $ showCReal (fromIntegral dp) pi)
         piNumber = stringToIntegral piString
-        accuracy = (1, (10 ^ dp) * 2)
 
 stringToIntegral :: String -> Integer
 stringToIntegral [] = 0

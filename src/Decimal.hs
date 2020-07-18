@@ -24,7 +24,7 @@ data Decimal =
 fractionToDecimal :: Context -> Fraction -> Decimal
 fractionToDecimal _ ((_, 0), _) = error "Cannot divide by 0!"
 fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
-    | isMoreInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited ++ [5], innaccuracy)
+    | isMoreInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, innaccuracy)
     | isInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, (accNum, accDen))
     | isRecurringDecimal = RecurringDecimal (whole, beforeRecurring, theRecurring)
     | isJust plusOrMinus = fromJust plusOrMinus
@@ -33,7 +33,7 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
         isInnaccurate = accNum /= 0
         (accNum, accDen) = accuracy
-        innaccuracy = ExactFraction.add (accNum, accDen) (1, (10 ^ precision) * 2)
+        innaccuracy = ExactFraction.add (accNum, accDen) (1, (10 ^ precision))
         whole = numerator `div` denominator
         remainder = numerator `rem` denominator
         precision = Context.decimalPlaces context
@@ -75,11 +75,11 @@ findRecurring recs decs prev
 
 findPlusOrMinus :: Integer -> Integer -> [Integer] -> Maybe Decimal
 findPlusOrMinus whole precision decimals
-    | isPlusOrMinus = Just $ PlusOrMinusDecimal (whole, decimals', (1, (10 ^ precision) * 2))
+    | isPlusOrMinus = Just $ PlusOrMinusDecimal (whole, decimals', (1, 10 ^ precision))
     | otherwise = Nothing
     where
         isPlusOrMinus = genericLength decimals > precision
-        decimals' = Data.List.take (fromIntegral precision) decimals ++ [5]
+        decimals' = Data.List.take (fromIntegral precision) decimals
 
 digitsToString :: [Integer] -> String
 digitsToString digits = concat $ Data.List.map show digits

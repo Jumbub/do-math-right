@@ -40,7 +40,7 @@ Did this calculator just ignore me?!
 
 ##### Doing irrational numbers right!
 
-Calculating `PI` on _this_ app would result in something _similar_ to: `3.141595 ± 1/200000`
+Calculating `PI` on _this_ app would result in something _similar_ to: `3.14159 ± 1/100000`
 
 The symbol `±` denotes `plus or minus`, which is an explicit annotation of the accuracy of the result.
 
@@ -104,7 +104,7 @@ The app never operates on decimals, it is only used as an _optional_ method of r
 
 `10 / 3` represented decimally is `3.(3)`
 
-`Pi` represented decimally is `3.141595 ± 1/200000`
+`Pi` represented decimally is `3.14159 ± 1/100000`
 
 <br>
 

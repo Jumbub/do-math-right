@@ -12,13 +12,13 @@ import Context
 import Fraction
 
 fractionToDecimalTests = [
-        (((1, 1000000), (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (3, 500000))),
-        (((1, 1000000), (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (200001, 200000))),
+        (((1, 1000000), (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0], (11, 1000000))),
+        (((1, 1000000), (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,0], (100001, 100000))),
         (((1, 100000), (1, 1)), PlusOrMinusDecimal (0, [0,0,0,0,1], (1, 1))),
         (((1, 1), (1, 1)), PlusOrMinusDecimal (1, [], (1, 1))),
-        ((fromExact(1, 128)), PlusOrMinusDecimal (0, [0,0,7,8,1,5], (1, 200000))),
-        ((fromExact(1, 21)), PlusOrMinusDecimal (0, [0,4,7,6,1,5], (1, 200000))),
-        ((fromExact (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0,5], (1, 200000))),
+        ((fromExact(1, 128)), PlusOrMinusDecimal (0, [0,0,7,8,1], (1, 100000))),
+        ((fromExact(1, 21)), PlusOrMinusDecimal (0, [0,4,7,6,1], (1, 100000))),
+        ((fromExact (1, 1000000)), PlusOrMinusDecimal (0, [0,0,0,0,0], (1, 100000))),
         ((fromExact (7, 12)), RecurringDecimal (0, [5,8], [3])),
         ((fromExact (9, 11)), RecurringDecimal (0, [], [8,1])),
         ((fromExact (10, 3)), RecurringDecimal (3, [], [3])),
@@ -43,10 +43,11 @@ decimalToStringTests = [
     ]
 
 fullTests = [
-        (((31415925, 10000000), (1, 2000000)), "3.141595 ± 11/2000000"),
-        (((3141595,  1000000),  (1, 200000)), "3.141595 ± 1/100000"),
-        (((314155,   100000),   (1, 20000)), "3.14155 ± 1/20000"),
-        (fromExact (22, 7), "3.142855 ± 1/200000"),
+        (((3141592, 1000000), (1, 1)), "3.14159 ± 100001/100000"),
+        (((3141592, 1000000), (1, 1000000)), "3.14159 ± 11/1000000"),
+        (((314159,  100000),  (1, 100000)),  "3.14159 ± 1/100000"),
+        (((31415,   10000),   (1, 10000)),   "3.1415 ± 1/10000"),
+        (fromExact (22, 7), "3.14285 ± 1/100000"),
         (fromExact (1, 3), "0.(3)"),
         (fromExact (1, 1), "1")
     ]
@@ -62,7 +63,7 @@ decimalSpec = hspec $ do
         forM_ decimalToStringTests $ \(input, output) -> do
             it (show input ++ " => " ++ output) $ do
                 decimalToString input `shouldBe` output
-    describe "fraction to decimal string" $ do
+    describe "fraction to decimal to string" $ do
         forM_ fullTests $ \(input, output) -> do
             it (show input ++ " => " ++ output) $ do
                 (decimalToString $ fractionToDecimal context input) `shouldBe` output
