@@ -11,7 +11,6 @@ import Operand
 import Context
 
 stringify = [
-        (var 'x', "x"),
         (frac 10 3, "10/3"),
         (frac 1 256, "1/256"),
         (frac 1 2, "1/2"),
@@ -27,7 +26,7 @@ operandify = [
     ]
 
 ctx :: Context
-ctx = defaultContext { fractionResult = True }
+ctx = defaultContext { decimalResult = False }
 
 operandSpec :: IO ()
 operandSpec = hspec $ do

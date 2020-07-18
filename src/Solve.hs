@@ -31,8 +31,8 @@ errorToString TooManyOperands = "Too many operands!"
 solve :: Context -> String -> (Context, String)
 solve context input
     | isRight simplified = (context, errorToString $ unsafeError simplified)
-    | fractionResult context = toString $ unsafeResult simplified
-    | otherwise = toString $ Solve.approximate $ unsafeResult simplified
+    | decimalResult context = toString $ unsafeResult simplified
+    | otherwise = toString $ unsafeResult simplified
     where
         firstOp = head parsed
         parsed = parse input
@@ -67,9 +67,6 @@ simplify ctx terms operands operators
         isOperator = isRight term
         operator = fromRight Addition term
         lastOperator = fromRight Addition (head terms)
-
-approximate :: (Context, Operand) -> (Context, Operand)
-approximate (context, operand) = (context, operand)
 
 toString :: (Context, Operand) -> (Context, String)
 toString (context, operand) = (context, operandToString context operand)

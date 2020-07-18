@@ -11,8 +11,8 @@ import Operand
 import Operator
 import Context
 
-fracCtx = defaultContext { fractionResult = True }
-decCtx = defaultContext { fractionResult = False, decimalPlaces = 5 }
+fracCtx = defaultContext { decimalResult = False }
+decCtx = defaultContext { decimalResult = True, decimalPlaces = 5 }
 
 same :: String -> [(String, Context, String, Context)]
 same input = [("as fraction", fracCtx, input, fracCtx), ("as decimal", decCtx, input, decCtx)]
@@ -23,17 +23,18 @@ diff a b = [("as fraction", fracCtx, a, fracCtx), ("as decimal", decCtx, b, decC
 ctxChange :: String -> (Context -> Context) -> [(String, Context, String, Context)]
 ctxChange input change = [("as fraction", fracCtx, input, change fracCtx), ("as decimal", decCtx, input, change decCtx)]
 
-setFractional :: Bool -> (Context -> Context)
-setFractional val = setFractional'
+setDecimalResult :: Bool -> (Context -> Context)
+setDecimalResult val = setDecimalResult'
     where
-        setFractional' :: Context -> Context
-        setFractional' context = context {fractionResult = val}
+        setDecimalResult' :: Context -> Context
+        setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
         ("", same "Not enough operands!"),
-        ("APPROXIMATE(1)", ctxChange "1" (setFractional False)),
-        ("APPROXIMATE(0)", ctxChange "0" (setFractional True)),
-        ("PI", diff "π" "3.14159 ± 1/100000"),
+        ("APPROXIMATE(1)", ctxChange "1" (setDecimalResult True)),
+        ("APPROXIMATE(0)", ctxChange "0" (setDecimalResult False)),
+        ("PI-PI", same "0 ± 1/50000"),
+        ("PI", diff "314159/100000 ± 1/100000" "3.14159 ± 1/100000"),
         ("5-5-5", diff "-5" "-5"),
         ("5/5/5", diff "1/5" "0.2"),
         ("PLUSORMINUS(1, 0.001) + PLUSORMINUS(1, 0.001)", same "2 ± 1/500"),

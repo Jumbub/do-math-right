@@ -35,10 +35,6 @@ parseTests = [
             [Right Sine, Right LeftParentheses, Left $ num 1, Right Addition, Left $ num 5, Right RightParentheses]
         ),
         (
-            ["2", "x"],
-            [Left $ num 2, Left $ var 'x']
-        ),
-        (
             ["1"],
             [Left $ num 1]
         ),
@@ -71,59 +67,10 @@ implicitOperatorTests = [
             [Right Negation, Left $ num 2]
         ),
         (
-            "(2x)x",
-            [Right LeftParentheses, Left $ num 2, Left $ var 'x', Right RightParentheses, Left $ var 'x'],
-            [
-                Right LeftParentheses, Left $ num 2, Right Multiplication, Left $ var 'x',
-                Right RightParentheses, Right Multiplication, Left $ var 'x'
-            ]
-        ),
-        (
-            "2(x)",
-            [Left $ num 2, Right LeftParentheses, Left $ var 'x', Right RightParentheses],
-            [
-                Left $ num 2, Right Multiplication, Right LeftParentheses, Left $ var 'x', Right RightParentheses
-            ]
-        ),
-        (
-            "(2)x",
-            [Right LeftParentheses, Left $ num 2, Right RightParentheses, Left $ var 'x'],
-            [
-                Right LeftParentheses, Left $ num 2, Right RightParentheses, Right Multiplication, Left $ var 'x'
-            ]
-        ),
-        (
-            "2xy+xy",
-            [Left $ num 2, Left $ var 'x', Left $ var 'y', Right Addition, Left $ var 'x', Left $ var 'y'],
-            [
-                Left $ num 2, Right Multiplication, Left $ var 'x', Right Multiplication, Left $ var 'y',
-                Right Addition, Left $ var 'x', Right Multiplication, Left $ var 'y'
-            ]
-        ),
-        (
-            "2xy",
-            [Left $ num 2, Left $ var 'x', Left $ var 'y'],
-            [Left $ num 2, Right Multiplication, Left $ var 'x', Right Multiplication, Left $ var 'y']
-        ),
-        (
-            "2x",
-            [Left $ num 2, Left $ var 'x'],
-            [Left $ num 2, Right Multiplication, Left $ var 'x']
-        ),
-        (
-            "xy",
-            [Left $ var 'x', Left $ var 'y'],
-            [Left $ var 'x', Right Multiplication, Left $ var 'y']
-        ),
-        (
-            "x",
-            [Left $ var 'x'],
-            [Left $ var 'x']
-        ),
-        (
             "2",
             [Left $ num 2],
-            [Left $ num 2])
+            [Left $ num 2]
+        )
     ]
 
 parseSpec :: IO ()

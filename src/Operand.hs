@@ -4,7 +4,6 @@ module Operand (
     stringToOperand,
     operandToString,
     num,
-    var,
     frac,
 ) where
 
@@ -26,12 +25,10 @@ import Irrational
 stringToOperand :: String -> Maybe Operand
 stringToOperand input
     | isJust fraction = Just $ Fraction (exactFraction, (0, 1))
-    | isVariable = Just $ Variable (head input)
     | otherwise = Nothing
     where
         exactFraction = ExactFraction.simplify $ fromJust fraction
         fraction = stringToFraction input
-        isVariable = length input == 1 && isLower (head input)
 
 stringToFraction :: String -> Maybe (Integer, Integer)
 stringToFraction input
@@ -45,13 +42,10 @@ stringToFraction input
         (whole:decimals) = splitOn "." input
 
 operandToString :: Context -> Operand -> String
-operandToString _ (Irrational Pi) = "π"
-operandToString ctx (Variable var) = [var]
-operandToString ctx (Expression ([Variable b, Variable a], Multiplication)) = [b] ++ [a]
-operandToString Context {fractionResult=True} (Fraction ((num, den), (0, _)))
+operandToString Context {decimalResult=False} (Fraction ((num, den), (0, _)))
     | num == den || den == 1 = show num
     | otherwise = show num ++ "/" ++ show den
-operandToString Context {fractionResult=True} (Fraction ((num, den), (accNum, accDen)))
+operandToString Context {decimalResult=False} (Fraction ((num, den), (accNum, accDen)))
     | num == den || den == 1 = show num ++ innaccuracy
     | otherwise = show num ++ "/" ++ show den ++ innaccuracy
     where
@@ -64,6 +58,3 @@ num number = Fraction ((number, 1), (0, 1))
 
 frac :: Integer -> Integer -> Operand
 frac num den = Fraction ((num, den), (0, 1))
-
-var :: Char -> Operand
-var letter = Variable letter

@@ -99,7 +99,6 @@ addIrrational :: Irrational -> ((Context, [Operand]) -> (Context, [Operand]))
 addIrrational irrational = operandOperator
     where
         operandOperator :: ((Context, [Operand]) -> (Context, [Operand]))
-        operandOperator (context@Context { Context.fractionResult = True }, operands) = (context, operands ++ [Irrational irrational])
         operandOperator (context, operands) = (context, operands ++ [Fraction $ rationalise (Context.decimalPlaces context) irrational])
 
 noOp :: [Operand] -> [Operand]
@@ -121,8 +120,8 @@ negation :: [Operand] -> [Operand]
 negation [(Fraction fraction)] = [(Fraction $ flipSign fraction)]
 
 approximate :: (Context, [Operand]) -> (Context, [Operand])
-approximate (ctx, [x@(Fraction ((1, _), _))]) = (ctx { Context.fractionResult = False }, [x])
-approximate (ctx, [x@(Fraction ((0, _), _))]) = (ctx { Context.fractionResult = True }, [x])
+approximate (ctx, [x@(Fraction ((1, _), _))]) = (ctx { Context.decimalResult = True }, [x])
+approximate (ctx, [x@(Fraction ((0, _), _))]) = (ctx { Context.decimalResult = False }, [x])
 
 plusOrMinus :: [Operand] -> [Operand]
 plusOrMinus [(Fraction ((bn, bd), (0, _))), (Fraction ((an, ad), (0, _)))] = [(Fraction ((an, ad), (bn, bd)))]
