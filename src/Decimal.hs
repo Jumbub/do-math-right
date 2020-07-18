@@ -1,5 +1,6 @@
 module Decimal (
     Decimal(..),
+    Sign(..),
     decimalToString,
     fractionToDecimal,
 ) where
@@ -15,30 +16,37 @@ import Fraction
 import ExactFraction
 import Context
 
+data Sign =
+    Positive |
+    Negative
+    deriving (Show, Eq)
+
 data Decimal =
-    ExactDecimal (Integer, [Integer]) |
-    RecurringDecimal (Integer, [Integer], [Integer]) |
-    PlusOrMinusDecimal (Integer, [Integer], (Integer, Integer))
+    ExactDecimal (Sign, Integer, [Integer]) |
+    RecurringDecimal (Sign, Integer, [Integer], [Integer]) |
+    PlusOrMinusDecimal (Sign, Integer, [Integer], (Integer, Integer))
     deriving (Show, Eq)
 
 fractionToDecimal :: Context -> Fraction -> Decimal
 fractionToDecimal _ ((_, 0), _) = error "Cannot divide by 0!"
 fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
-    | isMoreInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, innaccuracy)
-    | isInnaccurate = PlusOrMinusDecimal (whole, decimalsWithoutRemsLimited, (accNum, accDen))
-    | isRecurringDecimal = RecurringDecimal (whole, beforeRecurring, theRecurring)
+    | isMoreInnaccurate = PlusOrMinusDecimal (sign, whole, decimalsWithoutRemsLimited, innaccuracy)
+    | isInnaccurate = PlusOrMinusDecimal (sign, whole, decimalsWithoutRemsLimited, (accNum, accDen))
+    | isRecurringDecimal = RecurringDecimal (sign, whole, beforeRecurring, theRecurring)
     | isJust plusOrMinus = fromJust plusOrMinus
-    | otherwise = ExactDecimal (whole, decimalsWithoutRemsLimited)
+    | otherwise = ExactDecimal (sign, whole, decimalsWithoutRemsLimited)
     where
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
         isInnaccurate = accNum /= 0
         (accNum, accDen) = accuracy
         innaccuracy = ExactFraction.add (accNum, accDen) (1, (10 ^ precision))
-        whole = numerator `div` denominator
-        remainder = numerator `rem` denominator
+        sign = if numerator < 0 then Negative else Positive
+        numerator' = abs numerator
+        whole = numerator' `div` denominator
+        remainder = numerator' `rem` denominator
         precision = Context.decimalPlaces context
         hiddenPrecision = precision + 5
-        plusOrMinus = findPlusOrMinus whole precision decimalsWithoutRems
+        plusOrMinus = findPlusOrMinus sign whole precision decimalsWithoutRems
         recurringPattern = findRecurring Data.Map.empty decimalsWithRems []
         isRecurringDecimal = isJust recurringPattern && ((genericLength beforeRecurring + genericLength theRecurring) <= precision)
         (beforeRecurring, theRecurring) = fromMaybe ([], []) recurringPattern
@@ -73,9 +81,9 @@ findRecurring recs decs prev
         recs' = Data.Map.insert dec (prev, []) recs
         recs'' = Data.Map.map (\(prev, rec) -> (prev, rec ++ [decimalValue])) recs'
 
-findPlusOrMinus :: Integer -> Integer -> [Integer] -> Maybe Decimal
-findPlusOrMinus whole precision decimals
-    | isPlusOrMinus = Just $ PlusOrMinusDecimal (whole, decimals', (1, 10 ^ precision))
+findPlusOrMinus :: Sign -> Integer -> Integer -> [Integer] -> Maybe Decimal
+findPlusOrMinus sign whole precision decimals
+    | isPlusOrMinus = Just $ PlusOrMinusDecimal (sign, whole, decimals', (1, 10 ^ precision))
     | otherwise = Nothing
     where
         isPlusOrMinus = genericLength decimals > precision
@@ -85,12 +93,16 @@ digitsToString :: [Integer] -> String
 digitsToString digits = concat $ Data.List.map show digits
 
 decimalToString :: Decimal -> String
-decimalToString (ExactDecimal (whole, [])) = show whole
-decimalToString (ExactDecimal (whole, decimals)) = show whole ++ "." ++ digitsToString decimals
-decimalToString (RecurringDecimal (whole, decimals, [])) = decimalToString (ExactDecimal (whole, decimals))
-decimalToString (RecurringDecimal (whole, [], recurring))
-    = decimalToString (ExactDecimal (whole, [])) ++ ".(" ++ digitsToString recurring ++ ")"
-decimalToString (RecurringDecimal (whole, decimals, recurring))
-    = decimalToString (ExactDecimal (whole, decimals)) ++ "(" ++ digitsToString recurring ++ ")"
-decimalToString (PlusOrMinusDecimal (whole, decimals, (numerator, denominator)))
-    = decimalToString (ExactDecimal (whole, decimals)) ++ " ± " ++ show numerator ++ "/" ++ show denominator
+decimalToString (ExactDecimal (sign, whole, [])) = addSign sign $ show whole
+decimalToString (ExactDecimal (sign, whole, decimals)) = addSign sign $ show whole ++ "." ++ digitsToString decimals
+decimalToString (RecurringDecimal (sign, whole, decimals, [])) = decimalToString (ExactDecimal (sign, whole, decimals))
+decimalToString (RecurringDecimal (sign, whole, [], recurring))
+    = decimalToString (ExactDecimal (sign, whole, [])) ++ ".(" ++ digitsToString recurring ++ ")"
+decimalToString (RecurringDecimal (sign, whole, decimals, recurring))
+    = decimalToString (ExactDecimal (sign, whole, decimals)) ++ "(" ++ digitsToString recurring ++ ")"
+decimalToString (PlusOrMinusDecimal (sign, whole, decimals, (numerator, denominator)))
+    = decimalToString (ExactDecimal (sign, whole, decimals)) ++ " ± " ++ show numerator ++ "/" ++ show denominator
+
+addSign :: Sign -> String -> String
+addSign Positive decimal = decimal
+addSign Negative decimal = ('-':decimal)
