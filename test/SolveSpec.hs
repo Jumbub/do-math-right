@@ -23,6 +23,9 @@ diff a b = [("as fraction", fracCtx, a, fracCtx), ("as decimal", decCtx, b, decC
 ctxChange :: String -> (Context -> Context) -> [(String, Context, String, Context)]
 ctxChange input change = [("as fraction", fracCtx, input, change fracCtx), ("as decimal", decCtx, input, change decCtx)]
 
+ignoreFraction :: String -> [(String, Context, String, Context)]
+ignoreFraction input = [("as decimal", decCtx, input, decCtx)]
+
 setDecimalResult :: Bool -> (Context -> Context)
 setDecimalResult val = setDecimalResult'
     where
@@ -30,7 +33,8 @@ setDecimalResult val = setDecimalResult'
         setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
-        ("SIN(3.14159)", diff "9518227391009679320912384811353319549729293627013273811890769234926237187804339888277857859119/3556874280960000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 ± 1/100000" "0.00000 ± 1/50000"),
+        ("SIN(PI)", ignoreFraction "0.00000 ± 1/50000"),
+        ("SIN(3.14159)", ignoreFraction "0.00000 ± 1/50000"),
         ("SIN(1)", diff "305353/362880 ± 1/100000" "0.84147 ± 1/50000"),
         ("SIN(0)", same "0 ± 1/100000"),
         ("", same "Not enough operands!"),
