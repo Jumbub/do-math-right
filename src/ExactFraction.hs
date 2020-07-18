@@ -10,6 +10,7 @@ module ExactFraction (
     ExactFraction.flipSign,
     ExactFraction.commonDenominators,
     ExactFraction.compare,
+    ExactFraction.powerN,
 ) where
 
 import Data.Sort
@@ -68,12 +69,21 @@ subtract' a (bn, bd) = add' a (-bn, bd)
 
 multiply' :: ExactFraction -> ExactFraction -> ExactFraction
 multiply' (an, ad) (bn, bd) = (an * bn, ad * bd)
-        
+
 divide' :: ExactFraction -> ExactFraction -> ExactFraction
 divide' a (bn, bd) = multiply' a (bd, bn)
-        
+
 absolute' :: ExactFraction -> ExactFraction
 absolute' (n, d) = (abs n, d)
 
 flipSign' :: ExactFraction -> ExactFraction
 flipSign' (n, d) = (-n, d)
+
+powerN :: Integer -> ExactFraction -> ExactFraction
+powerN 0 (_, _) = (1, 1)
+powerN _ (0, _) = (0, 1)
+powerN i x = powerN' i x
+    where
+        powerN' :: Integer -> ExactFraction -> ExactFraction
+        powerN' 0 _ = (1, 1)
+        powerN' i x = ExactFraction.multiply x (powerN' (i-1) x)

@@ -46,6 +46,13 @@ divideTests = [
     (((-1, 1), (-1, 1)), (1, 1)),
     (((1, 1), (1, 1)), (1, 1)) ]
 
+powerNTests = [
+    ((5, 1), 3, (125, 1)),
+    ((5, 1), 2, (25, 1)),
+    ((5, 1), 1, (5, 1)),
+    ((5, 1), 0, (1, 1)),
+    ((0, 1), 0, (1, 1)) ]
+
 exactFractionSpec :: IO ()
 exactFractionSpec = hspec $ do
     describe "operations on exact fractions" $ do
@@ -64,3 +71,6 @@ exactFractionSpec = hspec $ do
         forM_ divideTests $ \((a, b), c) -> do
             it (show a ++ " / " ++ show b ++ " = " ++ show c) $ do
                 ExactFraction.divide a b `shouldBe` c
+        forM_ powerNTests $ \(x, n, o) -> do
+            it (show x ++ " ^ " ++ show n ++ " = " ++ show o) $ do
+                ExactFraction.powerN n x `shouldBe` o
