@@ -80,20 +80,25 @@ divide a b = operateOnFractionAB ExactFraction.divide a b
 powerN :: Integer -> Fraction -> Fraction
 powerN n a = operateOnFractionA (ExactFraction.powerN n) a
 
-biggestExact :: Fraction -> ExactFraction
-biggestExact (a, ap) = ExactFraction.add a ap
+absBiggestExact :: Fraction -> ExactFraction
+absBiggestExact (a@(n, d), ap)
+    | n < 0 = ExactFraction.add (-n, d) ap
+    | otherwise = ExactFraction.add a ap
 
 sin :: Integer -> Fraction -> Fraction
-sin dp x = (result, (1, 10 ^ dp))
+sin dp x = (result, requiredAccuracy)
     where
-        (result, _) = sin' dp x x True x x 1 1
-        sin' :: Integer -> Fraction -> Fraction -> Bool -> Fraction -> Fraction -> Integer -> Integer -> Fraction
-        sin' iters acc@(xn, xp) lastVal lastAdd lastNum x lastDen lastFact
-            | iters == 0 = (xn, ExactFraction.add xp (biggestExact lastVal))
-            | otherwise = sin' (iters - 1) acc' currentVal (not lastAdd) num x den (lastFact + 2)
+        (result, _) = sin' requiredAccuracy x x True x x 1 1
+        requiredAccuracy = (1, 10 ^ dp)
+        sin' :: ExactFraction -> Fraction -> Fraction -> Bool -> Fraction -> Fraction -> Integer -> Integer -> Fraction
+        sin' required acc@(xn, xp) lastVal lastAdd lastNum x lastDen lastFact
+            | ExactFraction.compare accuracy required == LT = (xn, finalAccuracy)
+            | otherwise = sin' required acc' currentVal (not lastAdd) num x den (lastFact + 2)
             where
                 acc' = operator acc currentVal
                 operator = if (lastAdd) then Fraction.subtract else Fraction.add
                 currentVal = Fraction.divide num ((den, 1), (0, 1))
                 num = Fraction.multiply x $ Fraction.multiply x lastNum
                 den = lastDen * (lastFact + 1) * (lastFact + 2)
+                accuracy = absBiggestExact lastVal
+                finalAccuracy = ExactFraction.add xp accuracy

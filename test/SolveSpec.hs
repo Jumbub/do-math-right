@@ -30,7 +30,8 @@ setDecimalResult val = setDecimalResult'
         setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
-        ("SIN(1)", diff "33588829/39916800 ± 1/100000" "0.84147 ± 1/50000"),
+        ("SIN(3.14159)", diff "9518227391009679320912384811353319549729293627013273811890769234926237187804339888277857859119/3556874280960000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 ± 1/100000" "0.00000 ± 1/50000"),
+        ("SIN(1)", diff "305353/362880 ± 1/100000" "0.84147 ± 1/50000"),
         ("SIN(0)", same "0 ± 1/100000"),
         ("", same "Not enough operands!"),
         ("APPROXIMATE(1)", ctxChange "1" (setDecimalResult True)),
