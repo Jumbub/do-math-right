@@ -28,6 +28,7 @@ library
       Decimal
       ExactFraction
       Fraction
+      FractionType
       InteractiveSolve
       Irrational
       IrrationalType

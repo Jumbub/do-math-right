@@ -1,6 +1,7 @@
 module Fraction (
     Fraction,
     Fraction.fromExact,
+    Fraction.fromInteger,
     Fraction.simplify,
     Fraction.flipSign,
     Fraction.reciprocal,
@@ -9,13 +10,17 @@ module Fraction (
     Fraction.multiply,
     Fraction.divide,
     Fraction.sin,
+    Fraction.mod,
 ) where
 
 import Data.Sort
 
+import FractionType
 import ExactFraction
+import Irrational
 
-type Fraction = (ExactFraction, ExactFraction)
+fromInteger :: Integer -> Fraction
+fromInteger x = fromExact (x, 1)
 
 fromExact :: ExactFraction -> Fraction
 fromExact a = (a, (0, 1))
@@ -45,6 +50,30 @@ add (a, ap) (b, bp) = (ExactFraction.add a b, ExactFraction.add ap bp)
 subtract :: Fraction -> Fraction -> Fraction
 subtract a b = Fraction.add a (Fraction.flipSign b)
 
+operateOnFractionABSimple :: (ExactFraction -> ExactFraction -> ExactFraction) -> Fraction -> Fraction -> Fraction
+operateOnFractionABSimple operation (a, ap) (b, bp) = (output, plusOrMinus)
+    where
+        w = operation (ExactFraction.add a ap) (ExactFraction.add b bp)
+        x = operation (ExactFraction.add a ap) (ExactFraction.subtract b bp)
+        y = operation (ExactFraction.subtract a ap) (ExactFraction.add b bp)
+        z = operation (ExactFraction.subtract a ap) (ExactFraction.subtract b bp)
+        -- ordered = sortBy ExactFraction.compare [w, x, y, z]
+        -- minN = head ordered
+        -- maxN = last ordered
+        -- output = operation a b
+        -- a = ExactFraction.absolute (ExactFraction.subtract output minN)
+        -- b = ExactFraction.absolute (ExactFraction.subtract output maxN)
+        -- ordered' = sortBy ExactFraction.compare [a, b]
+        -- plusOrMinus = ExactFraction.divide (last ordered') (ExactFraction.fromInteger 2)
+        ordered = sortBy ExactFraction.compare [w, x, y, z]
+        minN = head ordered
+        maxN = last ordered
+        output = operation a b
+        minD = ExactFraction.absolute (ExactFraction.subtract output minN)
+        maxD = ExactFraction.absolute (ExactFraction.subtract output maxN)
+        ordered' = sortBy ExactFraction.compare [minD, maxD]
+        plusOrMinus = ExactFraction.divide (last ordered') (ExactFraction.fromInteger 2)
+
 operateOnFractionAB :: (ExactFraction -> ExactFraction -> ExactFraction) -> Fraction -> Fraction -> Fraction
 operateOnFractionAB operation (a, ap) (b, bp) = (output, plusOrMinus)
     where
@@ -56,7 +85,7 @@ operateOnFractionAB operation (a, ap) (b, bp) = (output, plusOrMinus)
         minN = head ordered
         maxN = last ordered
         dist = ExactFraction.absolute (ExactFraction.subtract maxN minN)
-        plusOrMinus = ExactFraction.divide dist (fromNumber 2)
+        plusOrMinus = ExactFraction.divide dist (ExactFraction.fromInteger 2)
         output = ExactFraction.add minN plusOrMinus
 
 operateOnFractionA :: (ExactFraction -> ExactFraction) -> Fraction -> Fraction
@@ -68,7 +97,7 @@ operateOnFractionA operation (a, ap) = (output, plusOrMinus)
         minN = head ordered
         maxN = last ordered
         dist = ExactFraction.absolute (ExactFraction.subtract maxN minN)
-        plusOrMinus = ExactFraction.divide dist (fromNumber 2)
+        plusOrMinus = ExactFraction.divide dist (ExactFraction.fromInteger 2)
         output = ExactFraction.add minN plusOrMinus
 
 multiply :: Fraction -> Fraction -> Fraction
@@ -85,10 +114,14 @@ absBiggestExact (a@(n, d), ap)
     | n < 0 = ExactFraction.add (-n, d) ap
     | otherwise = ExactFraction.add a ap
 
+mod :: Fraction -> Fraction -> Fraction
+mod x m = operateOnFractionABSimple ExactFraction.mod x m
+
 sin :: Integer -> Fraction -> Fraction
 sin dp x = (result, requiredAccuracy)
     where
-        (result, _) = sin' requiredAccuracy x x True x x 1 1
+        x' = Fraction.mod x (Fraction.multiply (Fraction.fromInteger 2) $ rationalise dp Pi)
+        (result, _) = sin' requiredAccuracy x' x' True x' x' 1 1
         requiredAccuracy = (1, 10 ^ dp)
         sin' :: ExactFraction -> Fraction -> Fraction -> Bool -> Fraction -> Fraction -> Integer -> Integer -> Fraction
         sin' required acc@(xn, xp) lastVal lastAdd lastNum x lastDen lastFact

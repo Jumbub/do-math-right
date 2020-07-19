@@ -45,6 +45,16 @@ divideTests = [
     ((fromExact one, (two, point1)), ((200, 399), (10, 399))),
     ((fromExact one, fromExact two), fromExact half) ]
 
+modTests = [
+    (((5, 1), (1, 1)), ((2, 1), (1, 1000)), ((1, 1), (999, 2000))),
+    (Fraction.fromExact (62831853, 100000), Fraction.fromExact (31415926, 100000), Fraction.fromExact (1, 100000)),
+    (Fraction.fromExact (1, 4), Fraction.fromExact (1, 2), Fraction.fromExact (1, 4)),
+    (Fraction.fromExact (1, 2), Fraction.fromExact (1, 4), Fraction.fromInteger 0),
+    (Fraction.fromInteger (-1), Fraction.fromInteger (-2), Fraction.fromInteger 1),
+    (Fraction.fromInteger 1, Fraction.fromInteger (-2), Fraction.fromInteger 1),
+    (Fraction.fromInteger 1, Fraction.fromInteger 2, Fraction.fromInteger 1),
+    (Fraction.fromInteger 2, Fraction.fromInteger 1, Fraction.fromInteger 0) ]
+
 fractionSpec :: IO ()
 fractionSpec = hspec $ do
     describe "operations on fractions with accuracies" $ do
@@ -60,3 +70,6 @@ fractionSpec = hspec $ do
         forM_ divideTests $ \((a, b), c) -> do
             it (show a ++ " / " ++ show b ++ " = " ++ show c) $ do
                 Fraction.divide a b `shouldBe` c
+        forM_ modTests $ \(a, b, c) -> do
+            it (show a ++ " % " ++ show b ++ " = " ++ show c) $ do
+                Fraction.mod a b `shouldBe` c

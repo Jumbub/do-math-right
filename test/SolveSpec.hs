@@ -33,6 +33,8 @@ setDecimalResult val = setDecimalResult'
         setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
+        ("PI*100000", ignoreFraction "314159 ± 1/1"),
+        ("SIN(2*100*PI + 1)", ignoreFraction "0.84146 ± 1/50000"),
         ("SIN(PI/PI)", ignoreFraction "0.84147 ± 1/50000"),
         ("SIN(PI)", ignoreFraction "0 ± 1/50000"),
         ("SIN(3.14159)", ignoreFraction "0 ± 1/50000"),

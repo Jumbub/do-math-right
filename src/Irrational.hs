@@ -7,7 +7,7 @@ import Data.Number.CReal
 import Data.Char
 
 import IrrationalType
-import Fraction
+import FractionType
 
 rationalise :: Integer -> Irrational -> Fraction
 rationalise dp Pi = ((piNumber, 10 ^ dp), (1, 10 ^ dp))

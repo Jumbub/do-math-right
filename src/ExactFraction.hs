@@ -1,6 +1,6 @@
 module ExactFraction (
     ExactFraction,
-    ExactFraction.fromNumber,
+    ExactFraction.fromInteger,
     ExactFraction.simplify,
     ExactFraction.add,
     ExactFraction.subtract,
@@ -11,6 +11,7 @@ module ExactFraction (
     ExactFraction.commonDenominators,
     ExactFraction.compare,
     ExactFraction.powerN,
+    ExactFraction.mod,
 ) where
 
 import Data.Sort
@@ -24,9 +25,10 @@ multiply a b = simplify $ multiply' (normalise a) (normalise b)
 divide a b = simplify $ divide' (normalise a) (normalise b)
 absolute a = simplify $ absolute' (normalise a)
 flipSign a = simplify $ flipSign' (normalise a)
+mod a b = simplify $ mod' (normalise a) (normalise b)
 
-fromNumber :: Integer -> ExactFraction
-fromNumber a = (a, 1)
+fromInteger :: Integer -> ExactFraction
+fromInteger a = (a, 1)
 
 compare :: ExactFraction -> ExactFraction -> Ordering
 compare a b
@@ -82,8 +84,15 @@ flipSign' (n, d) = (-n, d)
 powerN :: Integer -> ExactFraction -> ExactFraction
 powerN 0 (_, _) = (1, 1)
 powerN _ (0, _) = (0, 1)
-powerN i x = powerN' i x
+powerN n x = powerN' n x
     where
         powerN' :: Integer -> ExactFraction -> ExactFraction
         powerN' 0 _ = (1, 1)
-        powerN' i x = ExactFraction.multiply x (powerN' (i-1) x)
+        powerN' n x = ExactFraction.multiply x (powerN' (n-1) x)
+
+mod' :: ExactFraction -> ExactFraction -> ExactFraction
+mod' _ (0, _) = error "Cannot mod by 0"
+mod' x m = (modxn, d)
+    where
+        ((xn, _), (mn, d)) = commonDenominators (x, m)
+        modxn = Prelude.mod (abs xn) (abs mn)

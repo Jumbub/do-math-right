@@ -10,8 +10,8 @@ import FractionSpec
 main :: IO ()
 main = do
     parseSpec
+    exactFractionSpec
+    fractionSpec
     operandSpec
     decimalSpec
     solveSpec
-    exactFractionSpec
-    fractionSpec
