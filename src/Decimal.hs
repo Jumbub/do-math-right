@@ -101,6 +101,8 @@ decimalToString (RecurringDecimal (sign, whole, [], recurring))
     = decimalToString (ExactDecimal (sign, whole, [])) ++ ".(" ++ digitsToString recurring ++ ")"
 decimalToString (RecurringDecimal (sign, whole, decimals, recurring))
     = decimalToString (ExactDecimal (sign, whole, decimals)) ++ "(" ++ digitsToString recurring ++ ")"
+decimalToString (PlusOrMinusDecimal (sign, whole, decimals, (numerator, 1)))
+    = decimalToString (ExactDecimal (sign, whole, decimals)) ++ " ± " ++ show numerator
 decimalToString (PlusOrMinusDecimal (sign, whole, decimals, (numerator, denominator)))
     = decimalToString (ExactDecimal (sign, whole, decimals)) ++ " ± " ++ show numerator ++ "/" ++ show denominator
 
