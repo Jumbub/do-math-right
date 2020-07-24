@@ -4,6 +4,7 @@ module InteractiveSolve (
 
 import Data.Maybe
 import System.IO
+import Control.Monad
 
 import Solve
 import Operand

@@ -88,6 +88,8 @@ operatorFunction operator = case operator of
     Approximate -> Operator.approximate
     PlusOrMinusOperator -> contextless Operator.plusOrMinus
     Sine -> Operator.sine
+    Cosine -> Operator.cosine
+    Tangent -> Operator.tangent
     PiOperand -> addIrrational Pi
 
 contextless :: ([Operand] -> [Operand]) -> ((Context, [Operand]) -> (Context, [Operand]))
@@ -129,3 +131,9 @@ plusOrMinus [(Fraction ((bn, bd), (0, _))), (Fraction ((an, ad), (0, _)))] = [(F
 
 sine :: (Context, [Operand]) -> (Context, [Operand])
 sine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.sin (Context.decimalPlaces ctx) x])
+
+cosine :: (Context, [Operand]) -> (Context, [Operand])
+cosine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.cosine (Context.decimalPlaces ctx) x])
+
+tangent :: (Context, [Operand]) -> (Context, [Operand])
+tangent (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.tan (Context.decimalPlaces ctx) x])
