@@ -15,6 +15,7 @@ module ExactFraction (
 ) where
 
 import Data.Sort
+import Data.List
 
 type ExactFraction = (Integer, Integer)
 
@@ -84,11 +85,12 @@ flipSign' (n, d) = (-n, d)
 powerN :: Integer -> ExactFraction -> ExactFraction
 powerN 0 (_, _) = (1, 1)
 powerN _ (0, _) = (0, 1)
-powerN n x = powerN' n x
+powerN n x
+    | n < 0 = foldl ExactFraction.divide (1, 1) numbers
+    | otherwise = foldl ExactFraction.multiply (1, 1) numbers
     where
-        powerN' :: Integer -> ExactFraction -> ExactFraction
-        powerN' 0 _ = (1, 1)
-        powerN' n x = ExactFraction.multiply x (powerN' (n-1) x)
+        numbers :: [ExactFraction]
+        numbers = genericTake (abs n) $ repeat x
 
 mod' :: ExactFraction -> ExactFraction -> ExactFraction
 mod' _ (0, _) = error "Cannot mod by 0"

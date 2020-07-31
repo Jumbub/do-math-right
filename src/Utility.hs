@@ -1,6 +1,7 @@
 module Utility (
     uniqueValues,
     removeTrailingZeros,
+    factorial,
 ) where
 
 uniqueValues :: [Char] -> [Char]
@@ -27,3 +28,7 @@ removeTrailingZeros input = reverse (removeTrailingZeros' (reverse input))
         removeTrailingZeros' :: String -> String
         removeTrailingZeros' ('0' : rest) = removeTrailingZeros' rest
         removeTrailingZeros' rest = rest
+
+factorial :: Integer -> Integer
+factorial 0 = 1
+factorial n = n * factorial (n-1)
