@@ -26,7 +26,7 @@ But everyone knows that the 3 should recur forever, not just 11 times?!
 
 ##### Heck, they even lie about whole numbers!
 
-Calculate ["10^20 + 1"](https://www.google.com/search?q=10/3), and you will be told that the answer is exactly `1e+20`
+Calculate ["10^20 + 1"](https://www.google.com/search?q=10^20%2b1), and you will be told that the answer is exactly `1e+20`
 
 But `1e+20 = 10^20`. Where did my `+ 1` go?
 
