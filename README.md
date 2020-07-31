@@ -4,7 +4,8 @@ Solve expressions without any <strong>floating point innaccuracies</strong> or <
 
 <br>
 
-## Calculators are liars
+Read the following to understand why this exists
+## Conventional calculators are liars
 
 <br>
 
@@ -40,7 +41,11 @@ Did this calculator just ignore me?!
 
 ##### Doing irrational numbers right!
 
-Calculating `PI` on _this_ app would result in something _similar_ to: `3.14159 ± 1/100000`
+```nothing
+$ do-math-right
+>  PI
+=> 3.1415926536 ± 1/10000000000
+```
 
 The symbol `±` denotes `plus or minus`, which is an explicit annotation of the accuracy of the result.
 
@@ -50,7 +55,11 @@ Therefore if your project only requires an accuracy of `0.0001` units, you can u
 
 ##### Doing rational numbers right!
 
-Calculating `10/3` on _this_ app would result in something similar to: `3.(3)`
+```nothing
+$ do-math-right
+>  10/3
+=> 3.(3)
+```
 
 The decimal `(3)` denotes `3 recurring`, which describes an infinitely repeating pattern in the decimal.
 
@@ -60,7 +69,11 @@ Therefore regardless of the accuracy of your project, you can use this result wi
 
 ##### Doing whole numbers right!
 
-Calculating `10^20 + 1` on _this_ app would result in the correct answer of `100000000000000000001`.
+```nothing
+$ do-math-right
+>  10*10*10*10*10*10*10*10*10*10*10*10*10*10*10*10*10*10*10*10+1
+=> 100000000000000000001
+```
 
 The numbers in this application are not stored as traditional fixed size floating points.
 
@@ -70,15 +83,14 @@ Therefore this calculator can _theoretically_ perform operations accurately on n
 
 ## How does it work?
 
-#### Numbers are never represented as fixed floating points, (duh)
+### Numbers are never represented as floats, (duh)
 
 ##### Every number is represented as a fraction `numerator / denominator`
 
 All numbers are converted to their fractional representations using the formula `(n * 10^d) / (10^d)`, where `n` is the decimal number, and `d` is the number of decimal places.
 
-`3 + 2` becomes `(3/1) + (2/1)`
-
-`0.2` becomes `(2/10)`
+- `3 + 2` becomes `(3/1) + (2/1)`
+- `0.2` becomes `(2/10)`
 
 ##### Every number can be infinitely large
 
@@ -86,35 +98,33 @@ Numbers in this app can be infinitely large because they are not constrained by 
 
 <br>
 
-#### Be clear about the decimal accuracy of a result,
+### Inaccuracies are made explicit,
 
 ##### Every number has an associated `accuracy`
 
-The app can operate on `Exact` numbers, or numbers which are within `Plus or minus x`.
+Every number `x` has an associated accuracy `y` where `x ± y`.
 
-An `Exact` number, implies that the number is perfectly accurate.
+A result of `x ± y` implies that the exact result lies between `n - x` and `n + x`.
 
-A number `n` with an accuracy of `Plus or minus x` implies that the number is between `n - x` and `n + x`.
+- Whole numbers such as `2` would be `2 ± 0` (which simplifies to `2`)
+- Approximations such as `Pi` would be `3.14 ± 1/100`
 
-Each operation will have it's own effect on the resulting numbers accuracy level.
-
-##### Decimal representations of numbers are only created for display purposes
+##### Innaccurate decimal representations of numbers are only created for display purposes
 
 The app never operates on decimals, it is only used as an _optional_ method of representing the result.
 
-`10 / 3` represented decimally is `3.(3)`
-
-`Pi` represented decimally is `3.14159 ± 1/100000`
-
-<br>
+- `10 / 3` represented decimally is `3.(3)`
+- `22 / 7` represented decimally is `3.14285 ± 1/100000`
 
 <br>
 
-#### Replay approximate operations to achieve higher accuracies,
+<br>
 
-All irrational numbers (Pi) and approximate functions (sine) only generate approximations, and when those approximations are operated on they can rapidly become very inaccurate. To combat that, the solver will repeat certain calculations with increasing level of approximation accuracy, until the desired resulting accuracy is achieved.
+### Approximate calculations are replyed until desired accuracy is reached,
 
-An expression `PI * 100` may initially resolve to an accuracy of 3 decimal points, because it made an initial approximation of Pi to only 5 decimal places. But if you user requests 5 decimal places of accuracy, the calculation will be replayed with a higher approximation of Pi until an accuracy of 5 DP is reached.
+All irrational numbers (Pi) and approximate functions (sine) cannot be represented fractionally and therefore have innaccuracies, and when those approximations are operated on they can rapidly become very inaccurate. So to achieve higher accuracies the solver will repeat your calculation with increasingly accurate approximations until the requirement is met.
+
+E.g. `PI * 100` may internally resolve to `314.159 ± 1/1000`, because we only generate Pi to 5 DP. But if our accuracy requirement is `1/100000`, this result will not satisfy us. So the solver will re-evaluate with a more accurate approximation of Pi, it achieves our desired result of `314.159 ± 1/100000`.
 
 <br>
 
@@ -159,14 +169,15 @@ Arithmetic:
 
 Modes:
 
+- [x] answer type `APPROXIMATE(1)` `APPROXIMATE(0)`
+- [x] required accuracy `SETDP(10)`
 - [ ] angle units `IN_RADIANS(..)` `IN_DEGREES(..)`
-- [ ] answer type `AS_FRACTION(..)` `AS_DECIMAL(..)`
-- [ ] required accuracy `REQUIRE_ACCURACY(0.000001)`
 
 Interactivity:
 
 - [x] input and output loop
 - [ ] use last result with `ANS`
+- [ ] arrow key support
 
 Display:
 
@@ -176,5 +187,3 @@ Display:
 Research:
 
 - [ ] Can we determine the required accuracy of irrational numbers or function approximations _before_ generating the first result
-
-<br>
