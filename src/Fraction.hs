@@ -10,6 +10,8 @@ module Fraction (
     Fraction.multiply,
     Fraction.divide,
     Fraction.sin,
+    Fraction.cosine,
+    Fraction.tan,
     Fraction.mod,
 ) where
 
@@ -106,6 +108,9 @@ multiply a b = operateOnFractionAB ExactFraction.multiply a b
 divide :: Fraction -> Fraction -> Fraction
 divide a b = operateOnFractionAB ExactFraction.divide a b
 
+(//) :: Fraction -> Fraction -> Fraction
+(//) = Fraction.divide
+
 powerN :: Integer -> Fraction -> Fraction
 powerN n a = operateOnFractionA (ExactFraction.powerN n) a
 
@@ -135,3 +140,9 @@ sin dp x = (result, requiredAccuracy)
                 den = lastDen * (lastFact + 1) * (lastFact + 2)
                 accuracy = absBiggestExact lastVal
                 finalAccuracy = ExactFraction.add xp accuracy
+
+cosine :: Integer -> Fraction -> Fraction
+cosine dp x = Fraction.sin dp (Fraction.add x $ (rationalise dp Pi) // (Fraction.fromInteger 2))
+
+tan :: Integer -> Fraction -> Fraction
+tan dp x = Fraction.divide (Fraction.sin dp x) (Fraction.cosine dp x)
