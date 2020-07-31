@@ -133,7 +133,7 @@ sine :: (Context, [Operand]) -> (Context, [Operand])
 sine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.sin (Context.internalDecimalPlaces ctx) x])
 
 cosine :: (Context, [Operand]) -> (Context, [Operand])
-cosine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.cosine (Context.internalDecimalPlaces ctx) x])
+cosine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.cos (Context.internalDecimalPlaces ctx) x])
 
 tangent :: (Context, [Operand]) -> (Context, [Operand])
 tangent (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.tan (Context.internalDecimalPlaces ctx) x])

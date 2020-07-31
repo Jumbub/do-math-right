@@ -34,12 +34,12 @@ setDecimalResult val = setDecimalResult'
 
 solveTests = [
         ("PI*100000", ignoreFraction "314159.26536 ± 1/100000"),
-        ("SIN(2*100*PI + 1)", ignoreFraction "0.84146 ± 1/50000"),
-        ("SIN(PI/PI)", ignoreFraction "0.84147 ± 1/50000"),
-        ("SIN(PI)", ignoreFraction "0 ± 1/50000"),
-        ("SIN(3.14159)", ignoreFraction "0 ± 1/50000"),
-        ("SIN(1)", ignoreFraction "0.84147 ± 1/50000"),
-        ("SIN(0)", same "0 ± 1/100000"),
+        -- ("COS(2*100*PI + 1)", ignoreFraction "0.84146 ± 1/50000"),
+        -- ("COS(PI/PI)", ignoreFraction "0.84147 ± 1/50000"),
+        -- ("COS(3.14159)", ignoreFraction "0 ± 1/50000"),
+        -- ("COS(1)", ignoreFraction "0.84147 ± 1/50000"),
+        ("COS(PI*2)", ignoreFraction "1"),
+        ("COS(0)", same "1"),
         ("", same "Not enough operands!"),
         ("APPROXIMATE(1)", ctxChange "1" (setDecimalResult True)),
         ("APPROXIMATE(0)", ctxChange "0" (setDecimalResult False)),

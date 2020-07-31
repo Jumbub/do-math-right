@@ -10,7 +10,7 @@ module Fraction (
     Fraction.multiply,
     Fraction.divide,
     Fraction.sin,
-    Fraction.cosine,
+    Fraction.cos,
     Fraction.tan,
     Fraction.mod,
 ) where
@@ -20,6 +20,7 @@ import Data.Sort
 import FractionType
 import ExactFraction
 import Irrational
+import Utility
 
 fromInteger :: Integer -> Fraction
 fromInteger x = fromExact (x, 1)
@@ -123,26 +124,38 @@ mod :: Fraction -> Fraction -> Fraction
 mod x m = operateOnFractionAB ExactFraction.mod x m
 
 sin :: Integer -> Fraction -> Fraction
-sin dp x = (result, requiredAccuracy)
+-- Where idp is the internal decimal place. This function does not gaurantee accuracy to the value of idp.
+-- sin idp x = sin' (1, 10 ^ idp) x' x' True x' x' 1 1
+sin idp x = sin' (1, 10 ^ idp) x x True x x 1 1
     where
-        x' = Fraction.mod x (Fraction.multiply (Fraction.fromInteger 2) $ rationalise dp Pi)
-        (result, _) = sin' requiredAccuracy x' x' True x' x' 1 1
-        requiredAccuracy = (1, 10 ^ dp)
+        -- x' = Fraction.mod x (Fraction.multiply (Fraction.fromInteger 2) $ rationalise idp Pi)
         sin' :: ExactFraction -> Fraction -> Fraction -> Bool -> Fraction -> Fraction -> Integer -> Integer -> Fraction
-        sin' required acc@(xn, xp) lastVal lastAdd lastNum x lastDen lastFact
-            | ExactFraction.compare accuracy required == LT = (xn, finalAccuracy)
-            | otherwise = sin' required acc' currentVal (not lastAdd) num x den (lastFact + 2)
+        sin' required result@(_, resultp) lastVal lastAdd lastNum x lastDen lastFactorial
+        -- sin (x) = ((-1)^n * x^ (2n + 1)) / (2n + 1)!
+            | ExactFraction.compare result'p required == GT = error "nope"
+            | ExactFraction.compare result'p required /= GT = result'
+            | otherwise = sin' required result' currentVal (not lastAdd) num x den (lastFactorial + 2)
             where
-                acc' = operator acc currentVal
+                result'@(_, result'p) = operator result currentVal
                 operator = if (lastAdd) then Fraction.subtract else Fraction.add
-                currentVal = Fraction.divide num ((den, 1), (0, 1))
+                currentVal@(cv, cvp) = Fraction.divide num ((den, 1), (0, 1))
                 num = Fraction.multiply x $ Fraction.multiply x lastNum
-                den = lastDen * (lastFact + 1) * (lastFact + 2)
-                accuracy = absBiggestExact lastVal
-                finalAccuracy = ExactFraction.add xp accuracy
+                den = lastDen * (lastFactorial + 1) * (lastFactorial + 2)
 
-cosine :: Integer -> Fraction -> Fraction
-cosine dp x = Fraction.sin dp (Fraction.add x $ (rationalise dp Pi) // (Fraction.fromInteger 2))
+cos :: Integer -> Fraction -> Fraction
+-- cos dp x = Fraction.sin dp (Fraction.add x $ (rationalise dp Pi) // (Fraction.fromInteger 2))
+cos idp x = cos' (1, 10 ^ idp) x 0
+    where
+        -- x' = Fraction.mod x (Fraction.multiply (Fraction.fromInteger 2) $ rationalise idp Pi)
+        cos' :: ExactFraction -> Fraction -> Integer -> Fraction
+        cos' required x n
+            | otherwise = frac
+            where
+                xpowd = Fraction.powerN (2*n) x
+                sign = (-1) ^ n
+                num = Fraction.multiply (Fraction.fromInteger sign) xpowd
+                den = factorial (2 * n)
+                frac = Fraction.divide num (Fraction.fromInteger den)
 
 tan :: Integer -> Fraction -> Fraction
-tan dp x = Fraction.divide (Fraction.sin dp x) (Fraction.cosine dp x)
+tan dp x = Fraction.divide (Fraction.sin dp x) (Fraction.cos dp x)
