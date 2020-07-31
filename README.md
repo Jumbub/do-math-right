@@ -110,13 +110,11 @@ The app never operates on decimals, it is only used as an _optional_ method of r
 
 <br>
 
-🚧 Details beyond this point are not implemented 🚧
+#### Replay approximate operations to achieve higher accuracies,
 
-#### Replay operations to achieve higher accuracies,
+All irrational numbers (Pi) and approximate functions (sine) only generate approximations, and when those approximations are operated on they can rapidly become very inaccurate. To combat that, the solver will repeat certain calculations with increasing level of approximation accuracy, until the desired resulting accuracy is achieved.
 
-If an expression resolves to an `accuracy` level under your `requested accuracy`, it will increase the decimal precision at which it operates at to increase the accuracy.
-
-An expression `SIN(PI)` may initially resolve to an accuracy of `5` decimal points. But if you request an accuracy of 7 decimal points, it will increase the decimal accuracy of `PI` and the number of iterations by the `SIN` approximation.
+An expression `PI * 100` may initially resolve to an accuracy of 3 decimal points, because it made an initial approximation of Pi to only 5 decimal places. But if you user requests 5 decimal places of accuracy, the calculation will be replayed with a higher approximation of Pi until an accuracy of 5 DP is reached.
 
 <br>
 
@@ -128,7 +126,7 @@ An expression `SIN(PI)` may initially resolve to an accuracy of `5` decimal poin
 - Decimal numbers between `1` and `-1` must precede with `0`
     - the number `.2` will fail to be parsed, where the number `0.2` will succeed
 - Constants `PI` are all upper case
-- Functions `POW(2, 10)` are all upper case, and arguments are wrapped in parentheses and comma seperated
+- Functions `SIN(1)` are all upper case, and arguments are wrapped in parentheses
 
 <br>
 
@@ -156,8 +154,8 @@ Arithmetic:
 - [x] basic operators `+` `-` `/` `*`
 - [x] scoping operators `(` `)`
 - [x] decimal numbers `1.0`
-- [ ] constants `PI`
-- [ ] functions `SIN(180)`
+- [x] constants `PI`
+- [x] functions `SIN(180)`
 
 Modes:
 
