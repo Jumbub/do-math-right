@@ -39,7 +39,7 @@ solveTests = [
         ("SIN(PI)", ignoreFraction "0 ± 1/50000"),
         ("SIN(3.14159)", ignoreFraction "0 ± 1/50000"),
         ("SIN(1)", ignoreFraction "0.84147 ± 1/50000"),
-        ("SIN(0)", same "0"),
+        ("SIN(0)", same "0 ± 1/100000"),
         ("", same "Not enough operands!"),
         ("APPROXIMATE(1)", ctxChange "1" (setDecimalResult True)),
         ("APPROXIMATE(0)", ctxChange "0" (setDecimalResult False)),
