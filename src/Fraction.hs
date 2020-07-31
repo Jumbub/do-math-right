@@ -16,6 +16,7 @@ module Fraction (
 ) where
 
 import Data.Sort
+import Debug.Trace
 
 import FractionType
 import ExactFraction
@@ -109,9 +110,6 @@ multiply a b = operateOnFractionAB ExactFraction.multiply a b
 divide :: Fraction -> Fraction -> Fraction
 divide a b = operateOnFractionAB ExactFraction.divide a b
 
-(//) :: Fraction -> Fraction -> Fraction
-(//) = Fraction.divide
-
 powerN :: Integer -> Fraction -> Fraction
 powerN n a = operateOnFractionA (ExactFraction.powerN n) a
 
@@ -124,38 +122,27 @@ mod :: Fraction -> Fraction -> Fraction
 mod x m = operateOnFractionAB ExactFraction.mod x m
 
 sin :: Integer -> Fraction -> Fraction
--- Where idp is the internal decimal place. This function does not gaurantee accuracy to the value of idp.
--- sin idp x = sin' (1, 10 ^ idp) x' x' True x' x' 1 1
-sin idp x = sin' (1, 10 ^ idp) x x True x x 1 1
+sin idp x = sin' (1, 10 ^ idp) x 1
     where
-        -- x' = Fraction.mod x (Fraction.multiply (Fraction.fromInteger 2) $ rationalise idp Pi)
-        sin' :: ExactFraction -> Fraction -> Fraction -> Bool -> Fraction -> Fraction -> Integer -> Integer -> Fraction
-        sin' required result@(_, resultp) lastVal lastAdd lastNum x lastDen lastFactorial
-        -- sin (x) = ((-1)^n * x^ (2n + 1)) / (2n + 1)!
-            | ExactFraction.compare result'p required == GT = error "nope"
-            | ExactFraction.compare result'p required /= GT = result'
-            | otherwise = sin' required result' currentVal (not lastAdd) num x den (lastFactorial + 2)
+        -- x = x'
+        -- req = required accuracy
+        -- sum = summation
+        -- n = depth of summation
+        sin' :: ExactFraction -> Fraction -> Integer -> Fraction
+        sin' req sum n
+            | ExactFraction.compare fracAccuracy req /= GT = newSum
+            | otherwise = sin' req newSum (n + 1)
             where
-                result'@(_, result'p) = operator result currentVal
-                operator = if (lastAdd) then Fraction.subtract else Fraction.add
-                currentVal@(cv, cvp) = Fraction.divide num ((den, 1), (0, 1))
-                num = Fraction.multiply x $ Fraction.multiply x lastNum
-                den = lastDen * (lastFactorial + 1) * (lastFactorial + 2)
-
-cos :: Integer -> Fraction -> Fraction
--- cos dp x = Fraction.sin dp (Fraction.add x $ (rationalise dp Pi) // (Fraction.fromInteger 2))
-cos idp x = cos' (1, 10 ^ idp) x 0
-    where
-        -- x' = Fraction.mod x (Fraction.multiply (Fraction.fromInteger 2) $ rationalise idp Pi)
-        cos' :: ExactFraction -> Fraction -> Integer -> Fraction
-        cos' required x n
-            | otherwise = frac
-            where
-                xpowd = Fraction.powerN (2*n) x
+                xpowd = Fraction.powerN (2 * n + 1) x
                 sign = (-1) ^ n
                 num = Fraction.multiply (Fraction.fromInteger sign) xpowd
-                den = factorial (2 * n)
-                frac = Fraction.divide num (Fraction.fromInteger den)
+                den = factorial (2 * n + 1)
+                frac@(frace, fracp) = Fraction.divide num (Fraction.fromInteger den)
+                fracAccuracy = ExactFraction.add (ExactFraction.absolute frace) fracp
+                newSum = Fraction.add sum frac
+
+cos :: Integer -> Fraction -> Fraction
+cos dp x = Fraction.sin dp (Fraction.add x $ Fraction.divide (rationalise dp Pi) (Fraction.fromInteger 2))
 
 tan :: Integer -> Fraction -> Fraction
 tan dp x = Fraction.divide (Fraction.sin dp x) (Fraction.cos dp x)

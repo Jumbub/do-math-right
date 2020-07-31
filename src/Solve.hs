@@ -16,6 +16,7 @@ import Parse
 import Operator
 import Operand
 import Context
+import Decimal
 import ExactFraction (compare, ExactFraction)
 import Fraction (Fraction)
 
@@ -53,7 +54,7 @@ solveUntilAccuracy lastAccuracy context parsed
     -- Prevent infinite recursion
     | isJust lastAccuracy && ExactFraction.compare (fromJust lastAccuracy) accuracy == EQ = result
     -- If the accuracy is smaller than the required accuracy, accept the result
-    | ExactFraction.compare accuracy minimumAccuracy /= GT = result
+    | meetsAccuracy (fractionToDecimal context (unsafeFraction operand)) minimumAccuracy = result
     -- Recurse until result satisfies accuracy requirement
     | otherwise = solveUntilAccuracy (Just accuracy) moreAccurateContext parsed
     where
@@ -63,6 +64,11 @@ solveUntilAccuracy lastAccuracy context parsed
         currentDecimals = internalDecimalPlaces context
         minimumAccuracy = (1, 10 ^ (decimalPlaces context))
         moreAccurateContext = context {internalDecimalPlaces = (currentDecimals + 1)}
+
+meetsAccuracy :: Decimal -> ExactFraction -> Bool
+meetsAccuracy (RecurringDecimal _) _ = True
+meetsAccuracy (ExactDecimal _) _ = True
+meetsAccuracy (PlusOrMinusDecimal (_, _, _, xp)) minAcc = ExactFraction.compare xp minAcc /= GT
 
 simplify :: Context -> [Either Operand Operator] -> [Operand] -> [Operator] -> Either (Context, Operand) Error
 simplify ctx terms operands operators

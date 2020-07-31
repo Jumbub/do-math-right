@@ -18,7 +18,8 @@ hard1 = ((37, 84), (29, 78))
 hard2 = ((29, 18), (42, 33))
 
 addTests = [
-    ((hard1, hard2), ((517,252),(1411,858))),
+    ((Fraction.fromInteger 1, Fraction.fromInteger (-1)), Fraction.fromInteger 0),
+    ((hard1, hard2), ((517,252), (1411,858))),
     (((one, point1), (one, point1)), (two, point2)),
     (((one, point1), fromExact one), (two, point1)),
     ((fromExact one, (one, point1)), (two, point1)),

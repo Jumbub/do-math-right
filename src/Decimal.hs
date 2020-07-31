@@ -28,9 +28,12 @@ data Decimal =
     deriving (Show, Eq)
 
 fractionToDecimal :: Context -> Fraction -> Decimal
-fractionToDecimal _ ((_, 0), _) = error "Cannot divide by 0!"
-fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
-    | isMoreInnaccurate = PlusOrMinusDecimal (sign, whole, decimalsWithoutRemsLimited, innaccuracy)
+fractionToDecimal ctx frac = normalise $ fractionToDecimal' ctx frac
+
+fractionToDecimal' :: Context -> Fraction -> Decimal
+fractionToDecimal' _ ((_, 0), _) = error "Cannot divide by 0!"
+fractionToDecimal' context ((numerator, denominator), accuracy@(accNum, accDen))
+    | isMoreInnaccurate = PlusOrMinusDecimal (sign, whole, decimalsWithoutRemsLimited, innaccuracy')
     | isInnaccurate = PlusOrMinusDecimal (sign, whole, decimalsWithoutRemsLimited, (accNum, accDen))
     | isRecurringDecimal = RecurringDecimal (sign, whole, beforeRecurring, theRecurring)
     | isJust plusOrMinus = fromJust plusOrMinus
@@ -39,12 +42,14 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         isMoreInnaccurate = isInnaccurate && (genericLength decimalsWithoutRems > precision)
         isInnaccurate = accNum /= 0
         (accNum, accDen) = accuracy
-        innaccuracy = ExactFraction.add (accNum, accDen) (1, (10 ^ precision))
+        decAccuracy = (1, (10 ^ precision))
+        innaccuracy = ExactFraction.add (accNum, accDen) decAccuracy
+        innaccuracy' = if ExactFraction.compare accuracy decAccuracy == LT then decAccuracy else innaccuracy
         sign = if numerator < 0 then Negative else Positive
         numerator' = abs numerator
         whole = numerator' `div` denominator
         remainder = numerator' `rem` denominator
-        precision = Context.internalDecimalPlaces context
+        precision = Context.decimalPlaces context
         hiddenPrecision = precision + 5
         plusOrMinus = findPlusOrMinus sign whole precision decimalsWithoutRems
         recurringPattern = findRecurring Data.Map.empty decimalsWithRems []
@@ -53,6 +58,12 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         decimalsWithRems = findDecimalsWithRems hiddenPrecision denominator remainder []
         decimalsWithoutRems = Data.List.map (\(dec, rem) -> dec) decimalsWithRems
         decimalsWithoutRemsLimited = Decimal.removeTrailingZeros $ Data.List.take (fromIntegral precision) decimalsWithoutRems
+
+normalise :: Decimal -> Decimal
+normalise (ExactDecimal (Negative, 0, [])) = ExactDecimal (Positive, 0, [])
+normalise (RecurringDecimal (Negative, 0, [], [])) = RecurringDecimal (Positive, 0, [], [])
+normalise (PlusOrMinusDecimal (Negative, 0, [], p)) = PlusOrMinusDecimal (Positive, 0, [], p)
+normalise x = x
 
 findDecimalsWithRems :: Integer -> Integer -> Integer -> [(Integer, Integer)] -> [(Integer, Integer)]
 findDecimalsWithRems precision divisor lastRemainder decimals

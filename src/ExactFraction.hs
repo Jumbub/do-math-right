@@ -26,7 +26,9 @@ multiply a b = simplify $ multiply' (normalise a) (normalise b)
 divide a b = simplify $ divide' (normalise a) (normalise b)
 absolute a = simplify $ absolute' (normalise a)
 flipSign a = simplify $ flipSign' (normalise a)
+powerN n x = simplify $ powerN' n (normalise x)
 mod a b = simplify $ mod' (normalise a) (normalise b)
+commonDenominators (a, b) = commonDenominators' (normalise a, normalise b)
 
 fromInteger :: Integer -> ExactFraction
 fromInteger a = (a, 1)
@@ -39,8 +41,8 @@ compare a b
     where
         ((an, ad), (bn, bd)) = commonDenominators (a, b)
 
-commonDenominators :: (ExactFraction, ExactFraction) -> (ExactFraction, ExactFraction)
-commonDenominators ((an, ad), (bn, bd)) = (a', b')
+commonDenominators' :: (ExactFraction, ExactFraction) -> (ExactFraction, ExactFraction)
+commonDenominators' ((an, ad), (bn, bd)) = (a', b')
     where
         commonDen = lcm ad bd
         am = div commonDen ad
@@ -82,10 +84,10 @@ absolute' (n, d) = (abs n, d)
 flipSign' :: ExactFraction -> ExactFraction
 flipSign' (n, d) = (-n, d)
 
-powerN :: Integer -> ExactFraction -> ExactFraction
-powerN 0 (_, _) = (1, 1)
-powerN _ (0, _) = (0, 1)
-powerN n x
+powerN' :: Integer -> ExactFraction -> ExactFraction
+powerN' 0 (_, _) = (1, 1)
+powerN' _ (0, _) = (0, 1)
+powerN' n x
     | n < 0 = foldl ExactFraction.divide (1, 1) numbers
     | otherwise = foldl ExactFraction.multiply (1, 1) numbers
     where
