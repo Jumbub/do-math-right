@@ -44,7 +44,7 @@ fractionToDecimal context ((numerator, denominator), accuracy@(accNum, accDen))
         numerator' = abs numerator
         whole = numerator' `div` denominator
         remainder = numerator' `rem` denominator
-        precision = Context.decimalPlaces context
+        precision = Context.internalDecimalPlaces context
         hiddenPrecision = precision + 5
         plusOrMinus = findPlusOrMinus sign whole precision decimalsWithoutRems
         recurringPattern = findRecurring Data.Map.empty decimalsWithRems []

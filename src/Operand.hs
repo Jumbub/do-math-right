@@ -5,6 +5,7 @@ module Operand (
     operandToString,
     num,
     frac,
+    unsafeFraction,
 ) where
 
 import Data.Maybe
@@ -21,6 +22,7 @@ import Utility
 import Decimal
 import ExactFraction
 import Irrational
+import Fraction
 
 stringToOperand :: String -> Maybe Operand
 stringToOperand input
@@ -58,3 +60,6 @@ num number = Fraction ((number, 1), (0, 1))
 
 frac :: Integer -> Integer -> Operand
 frac num den = Fraction ((num, den), (0, 1))
+
+unsafeFraction :: Operand -> Fraction
+unsafeFraction (Fraction x) = x

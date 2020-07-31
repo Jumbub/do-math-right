@@ -56,7 +56,7 @@ fullTests = [
 
 decimalSpec :: IO ()
 decimalSpec = hspec $ do
-    let context = defaultContext {decimalResult = True, decimalPlaces = 5}
+    let context = defaultContext {decimalResult = True, internalDecimalPlaces = 5}
     describe "fraction to decimal" $ do
         forM_ fractionToDecimalTests $ \(input, output) -> do
             it (show input ++ " => " ++ show output) $ do

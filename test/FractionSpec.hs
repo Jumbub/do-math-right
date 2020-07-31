@@ -46,7 +46,6 @@ divideTests = [
     ((fromExact one, fromExact two), fromExact half) ]
 
 modTests = [
-    (((5, 1), (1, 1)), ((2, 1), (1, 1000)), ((1, 1), (999, 2000))),
     (Fraction.fromExact (62831853, 100000), Fraction.fromExact (31415926, 100000), Fraction.fromExact (1, 100000)),
     (Fraction.fromExact (1, 4), Fraction.fromExact (1, 2), Fraction.fromExact (1, 4)),
     (Fraction.fromExact (1, 2), Fraction.fromExact (1, 4), Fraction.fromInteger 0),

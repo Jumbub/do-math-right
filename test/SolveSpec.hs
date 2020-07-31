@@ -12,7 +12,7 @@ import Operator
 import Context
 
 fracCtx = defaultContext { decimalResult = False }
-decCtx = defaultContext { decimalResult = True, decimalPlaces = 5 }
+decCtx = defaultContext { decimalResult = True, internalDecimalPlaces = 5 }
 
 same :: String -> [(String, Context, String, Context)]
 same input = [("as fraction", fracCtx, input, fracCtx), ("as decimal", decCtx, input, decCtx)]
@@ -33,17 +33,17 @@ setDecimalResult val = setDecimalResult'
         setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
-        ("PI*100000", ignoreFraction "314159 ± 1"),
+        ("PI*100000", ignoreFraction "314159.26536 ± 1/100000"),
         ("SIN(2*100*PI + 1)", ignoreFraction "0.84146 ± 1/50000"),
         ("SIN(PI/PI)", ignoreFraction "0.84147 ± 1/50000"),
         ("SIN(PI)", ignoreFraction "0 ± 1/50000"),
         ("SIN(3.14159)", ignoreFraction "0 ± 1/50000"),
         ("SIN(1)", ignoreFraction "0.84147 ± 1/50000"),
-        ("SIN(0)", same "0 ± 1/100000"),
+        ("SIN(0)", same "0"),
         ("", same "Not enough operands!"),
         ("APPROXIMATE(1)", ctxChange "1" (setDecimalResult True)),
         ("APPROXIMATE(0)", ctxChange "0" (setDecimalResult False)),
-        ("PI-PI", same "0 ± 1/50000"),
+        ("PI-PI", same "0 ± 1/500000"),
         ("PI", diff "314159/100000 ± 1/100000" "3.14159 ± 1/100000"),
         ("5-5-5", diff "-5" "-5"),
         ("5/5/5", diff "1/5" "0.2"),
@@ -79,4 +79,5 @@ solveSpec = hspec $ do
                 it (input ++ " => " ++ output ++ " (" ++ label ++ ")") $ do
                     let (ctx', actual) = solve ctx input
                     actual `shouldBe` output
-                    ctx' `shouldBe` expectedCtx
+                    decimalPlaces ctx' `shouldBe` decimalPlaces expectedCtx
+                    decimalResult ctx' `shouldBe` decimalResult expectedCtx

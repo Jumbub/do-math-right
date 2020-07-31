@@ -115,7 +115,7 @@ absBiggestExact (a@(n, d), ap)
     | otherwise = ExactFraction.add a ap
 
 mod :: Fraction -> Fraction -> Fraction
-mod x m = operateOnFractionABSimple ExactFraction.mod x m
+mod x m = operateOnFractionAB ExactFraction.mod x m
 
 sin :: Integer -> Fraction -> Fraction
 sin dp x = (result, requiredAccuracy)

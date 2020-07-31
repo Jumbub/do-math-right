@@ -100,7 +100,7 @@ addIrrational :: Irrational -> ((Context, [Operand]) -> (Context, [Operand]))
 addIrrational irrational = operandOperator
     where
         operandOperator :: ((Context, [Operand]) -> (Context, [Operand]))
-        operandOperator (context, operands) = (context, operands ++ [Fraction $ rationalise (Context.decimalPlaces context) irrational])
+        operandOperator (context, operands) = (context, operands ++ [Fraction $ rationalise (Context.internalDecimalPlaces context) irrational])
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
@@ -128,4 +128,4 @@ plusOrMinus :: [Operand] -> [Operand]
 plusOrMinus [(Fraction ((bn, bd), (0, _))), (Fraction ((an, ad), (0, _)))] = [(Fraction ((an, ad), (bn, bd)))]
 
 sine :: (Context, [Operand]) -> (Context, [Operand])
-sine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.sin (Context.decimalPlaces ctx) x])
+sine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.sin (Context.internalDecimalPlaces ctx) x])

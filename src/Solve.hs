@@ -1,6 +1,7 @@
 module Solve (
     solve,
     performOperation,
+    unsafeFraction,
 ) where
 
 import Data.Char
@@ -8,39 +9,60 @@ import Data.Maybe
 import Text.Read
 import Data.Either
 import Data.List
+import Data.Sort
+import Debug.Trace
 
 import Parse
 import Operator
 import Operand
 import Context
+import ExactFraction (compare, ExactFraction)
 import Fraction (Fraction)
 
 -- Solve user input!
 
 data Error =
     NotEnoughOperands |
-    TooManyOperands
+    TooManyOperands |
+    CannotAchieveAccuracy
     deriving (Show, Eq)
 
 errorToString :: Error -> String
 errorToString NotEnoughOperands = "Not enough operands!"
 errorToString TooManyOperands = "Too many operands!"
+errorToString CannotAchieveAccuracy = "Cannot achieve accuracy!"
 
+unsafeError :: Either (Context, Operand) Error -> Error
+unsafeError (Right x) = x
 
+unsafeResult :: Either (Context, Operand) Error -> (Context, Operand)
+unsafeResult (Left x) = x
 
 solve :: Context -> String -> (Context, String)
 solve context input
-    | isRight simplified = (context, errorToString $ unsafeError simplified)
-    | decimalResult context = toString $ unsafeResult simplified
-    | otherwise = toString $ unsafeResult simplified
+    | isRight result = (context, errorToString $ unsafeError result)
+    | otherwise = toString $ unsafeResult result
     where
         firstOp = head parsed
         parsed = parse input
-        simplified = simplify context parsed [] []
-        unsafeError :: Either (Context, Operand) Error -> Error
-        unsafeError (Right x) = x
-        unsafeResult :: Either (Context, Operand) Error -> (Context, Operand)
-        unsafeResult (Left x) = x
+        result = solveUntilAccuracy Nothing context parsed
+
+solveUntilAccuracy :: Maybe ExactFraction -> Context -> [Either Operand Operator] -> Either (Context, Operand) Error
+solveUntilAccuracy lastAccuracy context parsed
+    | isRight result = result
+    -- Prevent infinite recursion
+    | isJust lastAccuracy && ExactFraction.compare (fromJust lastAccuracy) accuracy == EQ = result
+    -- If the accuracy is smaller than the required accuracy, accept the result
+    | ExactFraction.compare accuracy minimumAccuracy /= GT = result
+    -- Recurse until result satisfies accuracy requirement
+    | otherwise = solveUntilAccuracy (Just accuracy) moreAccurateContext parsed
+    where
+        result = simplify context parsed [] []
+        (_, operand) = unsafeResult result
+        (_, accuracy) = unsafeFraction operand
+        currentDecimals = internalDecimalPlaces context
+        minimumAccuracy = (1, 10 ^ (decimalPlaces context))
+        moreAccurateContext = context {internalDecimalPlaces = (currentDecimals + 1)}
 
 simplify :: Context -> [Either Operand Operator] -> [Operand] -> [Operator] -> Either (Context, Operand) Error
 simplify ctx terms operands operators
