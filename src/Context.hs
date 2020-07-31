@@ -12,4 +12,4 @@ data Context = Context {
 } deriving (Eq, Show)
 
 defaultContext :: Context
-defaultContext = Context {decimalResult = True, decimalPlaces = 5, internalDecimalPlaces = 5}
+defaultContext = Context {decimalResult = True, decimalPlaces = 10, internalDecimalPlaces = 10}

@@ -11,8 +11,8 @@ import Operand
 import Operator
 import Context
 
-fracCtx = defaultContext { decimalResult = False }
-decCtx = defaultContext { decimalResult = True, internalDecimalPlaces = 5 }
+fracCtx = defaultContext { decimalResult = False, decimalPlaces = 5, internalDecimalPlaces = 5 }
+decCtx = defaultContext { decimalResult = True, decimalPlaces = 5, internalDecimalPlaces = 5 }
 
 same :: String -> [(String, Context, String, Context)]
 same input = [("as fraction", fracCtx, input, fracCtx), ("as decimal", decCtx, input, decCtx)]

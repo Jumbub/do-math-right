@@ -23,6 +23,7 @@ data Operator =
     PiOperand |
 
     Approximate |
-    PlusOrMinusOperator
+    PlusOrMinusOperator |
+    SetDp
 
     deriving (Eq, Show)

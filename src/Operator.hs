@@ -38,6 +38,7 @@ stringToOperator operator = case operator of
     "SIN" -> Just Sine
     "COS" -> Just Cosine
     "APPROXIMATE" -> Just Approximate
+    "SETDP" -> Just SetDp
     "PLUSORMINUS" -> Just PlusOrMinusOperator
     "PI" -> Just PiOperand
     _ -> Nothing
@@ -46,6 +47,7 @@ operatorPrecedence :: Operator -> Integer
 operatorPrecedence operator = case operator of
     Addition -> 100
     Approximate -> 50
+    SetDp -> 50
     Cosine -> 200
     Division -> 200
     LeftParentheses -> 1000
@@ -62,6 +64,7 @@ operatorArguments :: Operator -> Integer
 operatorArguments operator = case operator of
     Addition -> 2
     Approximate -> 1
+    SetDp -> 1
     Cosine -> 1
     Division -> 2
     LeftParentheses -> 0
@@ -87,6 +90,7 @@ operatorFunction operator = case operator of
     Sine -> Operator.sine
     Cosine -> Operator.cosine
     PiOperand -> addIrrational Pi
+    SetDp -> setDp
 
 contextless :: ([Operand] -> [Operand]) -> ((Context, [Operand]) -> (Context, [Operand]))
 contextless operation = \(ctx, operands) -> (ctx, operation operands)
@@ -102,6 +106,9 @@ addIrrational irrational = operandOperator
 
 noOp :: [Operand] -> [Operand]
 noOp input = input
+
+setDp :: (Context, [Operand]) -> (Context, [Operand])
+setDp (ctx, [(Fraction ((dp, 1), (0, 1)))]) = (ctx { decimalPlaces = dp }, [(Fraction $ Fraction.fromInteger 1)])
 
 add :: [Operand] -> [Operand]
 add [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.add a b)]
