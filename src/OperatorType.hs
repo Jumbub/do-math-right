@@ -19,7 +19,6 @@ data Operator =
 
     Sine |
     Cosine |
-    Tangent |
 
     PiOperand |
 

@@ -11,7 +11,6 @@ module Fraction (
     Fraction.divide,
     Fraction.sin,
     Fraction.cos,
-    Fraction.tan,
     Fraction.mod,
 ) where
 
@@ -143,6 +142,3 @@ sin idp x = sin' (1, 10 ^ idp) x 1
 
 cos :: Integer -> Fraction -> Fraction
 cos dp x = Fraction.sin dp (Fraction.add x $ Fraction.divide (rationalise dp Pi) (Fraction.fromInteger 2))
-
-tan :: Integer -> Fraction -> Fraction
-tan dp x = Fraction.divide (Fraction.sin dp x) (Fraction.cos dp x)

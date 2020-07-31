@@ -37,7 +37,6 @@ stringToOperator operator = case operator of
     ")" -> Just RightParentheses
     "SIN" -> Just Sine
     "COS" -> Just Cosine
-    "TAN" -> Just Tangent
     "APPROXIMATE" -> Just Approximate
     "PLUSORMINUS" -> Just PlusOrMinusOperator
     "PI" -> Just PiOperand
@@ -57,7 +56,6 @@ operatorPrecedence operator = case operator of
     RightParentheses -> 0
     Sine -> 200
     Subtraction -> 100
-    Tangent -> 200
     PlusOrMinusOperator -> 900
 
 operatorArguments :: Operator -> Integer
@@ -72,7 +70,6 @@ operatorArguments operator = case operator of
     RightParentheses -> 0
     Sine -> 1
     Subtraction -> 2
-    Tangent -> 1
     PlusOrMinusOperator -> 2
     PiOperand -> 0
 
@@ -89,7 +86,6 @@ operatorFunction operator = case operator of
     PlusOrMinusOperator -> contextless Operator.plusOrMinus
     Sine -> Operator.sine
     Cosine -> Operator.cosine
-    Tangent -> Operator.tangent
     PiOperand -> addIrrational Pi
 
 contextless :: ([Operand] -> [Operand]) -> ((Context, [Operand]) -> (Context, [Operand]))
@@ -134,6 +130,3 @@ sine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.sin (Context.internalDec
 
 cosine :: (Context, [Operand]) -> (Context, [Operand])
 cosine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.cos (Context.internalDecimalPlaces ctx) x])
-
-tangent :: (Context, [Operand]) -> (Context, [Operand])
-tangent (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.tan (Context.internalDecimalPlaces ctx) x])
