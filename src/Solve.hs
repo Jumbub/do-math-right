@@ -25,13 +25,13 @@ import Fraction (Fraction)
 data Error =
     NotEnoughOperands |
     TooManyOperands |
-    CannotAchieveAccuracy
+    EscapingRecursion
     deriving (Show, Eq)
 
 errorToString :: Error -> String
 errorToString NotEnoughOperands = "Not enough operands!"
 errorToString TooManyOperands = "Too many operands!"
-errorToString CannotAchieveAccuracy = "Cannot achieve accuracy!"
+errorToString EscapingRecursion = "Could not achieve required accuracy with 25 extra decimals of accuracy!"
 
 unsafeError :: Either (Context, Operand) Error -> Error
 unsafeError (Right x) = x
@@ -46,17 +46,19 @@ solve context input
     where
         firstOp = head parsed
         parsed = parse input
-        result = solveUntilAccuracy Nothing context parsed
+        result = solveUntilAccuracy 0 Nothing context parsed
 
-solveUntilAccuracy :: Maybe ExactFraction -> Context -> [Either Operand Operator] -> Either (Context, Operand) Error
-solveUntilAccuracy lastAccuracy context parsed
+solveUntilAccuracy :: Integer -> Maybe ExactFraction -> Context -> [Either Operand Operator] -> Either (Context, Operand) Error
+solveUntilAccuracy n lastAccuracy context parsed
     | isRight result = result
     -- Prevent infinite recursion
     | isJust lastAccuracy && ExactFraction.compare (fromJust lastAccuracy) accuracy == EQ = result
     -- If the accuracy is smaller than the required accuracy, accept the result
     | meetsAccuracy (fractionToDecimal context (unsafeFraction operand)) minimumAccuracy = result
+    -- Plz stop
+    | n > 25 = Right EscapingRecursion
     -- Recurse until result satisfies accuracy requirement
-    | otherwise = solveUntilAccuracy (Just accuracy) moreAccurateContext parsed
+    | otherwise = solveUntilAccuracy (n + 1) (Just accuracy) moreAccurateContext parsed
     where
         result = simplify context parsed [] []
         (_, operand) = unsafeResult result

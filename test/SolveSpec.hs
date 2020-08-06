@@ -33,6 +33,7 @@ setDecimalResult val = setDecimalResult'
         setDecimalResult' context = context {decimalResult = val}
 
 solveTests = [
+        ("SIN(PLUSORMINUS(PI/2, 1))", ignoreFraction "Could not achieve required accuracy with 25 extra decimals of accuracy!"),
         ("COS(1)", ignoreFraction "0.5403 ± 1/100000"),
         ("COS(0)", ignoreFraction "1 ± 1/100000"),
         ("PI*100000", ignoreFraction "314159.26536 ± 1/100000"),

@@ -15,6 +15,7 @@ import OperatorType
 import Fraction
 import Context
 import Irrational
+import ExactFraction
 
 operatorToString :: Operator -> Maybe String
 operatorToString operator = case operator of
@@ -123,14 +124,16 @@ divide :: [Operand] -> [Operand]
 divide [(Fraction b), (Fraction a)] = [(Fraction $ Fraction.divide a b)]
 
 negation :: [Operand] -> [Operand]
-negation [(Fraction fraction)] = [(Fraction $ flipSign fraction)]
+negation [(Fraction fraction)] = [(Fraction $ Fraction.flipSign fraction)]
 
 approximate :: (Context, [Operand]) -> (Context, [Operand])
 approximate (ctx, [x@(Fraction ((1, _), _))]) = (ctx { Context.decimalResult = True }, [x])
 approximate (ctx, [x@(Fraction ((0, _), _))]) = (ctx { Context.decimalResult = False }, [x])
 
 plusOrMinus :: [Operand] -> [Operand]
-plusOrMinus [(Fraction ((bn, bd), (0, _))), (Fraction ((an, ad), (0, _)))] = [(Fraction ((an, ad), (bn, bd)))]
+plusOrMinus [(Fraction (plusOrMinus, plusOrMinusP)), (Fraction (value, valueP))] = [(Fraction (value, outP))]
+    where
+        outP = ExactFraction.add (ExactFraction.absolute plusOrMinus) (ExactFraction.add plusOrMinusP valueP)
 
 sine :: (Context, [Operand]) -> (Context, [Operand])
 sine (ctx, [(Fraction x)]) = (ctx, [Fraction $ Fraction.sin (Context.internalDecimalPlaces ctx) x])
