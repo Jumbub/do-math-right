@@ -1,10 +1,9 @@
 # `do-math-right`
 
-Solve expressions without any <strong>floating point innaccuracies</strong> or <strong> implicit approximations</strong>.
+With this app you can solve expressions without any <strong>floating point innaccuracies</strong> or <strong> implicit approximations</strong>.
 
 <br>
 
-Read the following to understand why this exists
 ## Conventional calculators are liars
 
 <br>
